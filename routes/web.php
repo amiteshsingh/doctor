@@ -5,8 +5,9 @@ use App\Http\Controllers\PageController;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Doctor\DoctorController;
+use App\Http\Controllers\Admin\HospitalController;
 
+use App\Http\Controllers\Doctor\DoctorController;
 use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
@@ -48,6 +49,9 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset']);
 // Admin Routes
 Route::middleware(['admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/hospital', [HospitalController::class, 'index'])->name('admin.hospital');
+    Route::get('/admin/hospital/add', [HospitalController::class, 'add'])->name('admin.hospital.add');
+    Route::get('/admin/hospital/delete', [HospitalController::class, 'delete'])->name('admin.hospital.delete');
 });
 
 // Doctor Routes

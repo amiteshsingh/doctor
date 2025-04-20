@@ -24,7 +24,7 @@ class AdminController extends Controller
 	{
 		$user = Auth::user();
 		$userRole = UserRole::where('user_id', $user->id)->first();
-
+		
 		if (!$user || !$userRole || $userRole->role !== 'admin') {
 			return redirect('/');
 		}
