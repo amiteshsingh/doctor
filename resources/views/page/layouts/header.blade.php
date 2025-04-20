@@ -27,9 +27,22 @@
                         <a class="text-body ps-2" href="">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a class="text-body ps-2 " href="{{ route('login') }}">
-                            Login
-                        </a>
+                        
+                        @if (isset(Auth::user()->role->role) == 'admin')
+                            <a class="text-body ps-2" target="_blank" href="{{ route('admin.dashboard') }}">
+                            Click to Dashboard
+                            </a>
+                        @elseif (isset(Auth::user()->role->role) == 'doctor')
+                            <a class="text-body ps-2" target="_blank" href="{{ route('doctor.dashboard') }}">
+                                Click to Dashboard
+                            </a>
+                        @else
+                            <a class="text-body ps-2" target="_blank" href="{{ route('login') }}">
+                                Login
+                            </a>
+                        @endif
+
+
                     </div>
                 </div>
             </div>
