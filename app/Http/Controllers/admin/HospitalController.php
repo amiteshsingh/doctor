@@ -21,7 +21,7 @@ class HospitalController extends Controller
                 $records = Hospital::getResult($page, $page_size, $filter);
                 $total = Hospital::getTotalResult($filter);
                 $content_html =  view('admin.hospital.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
-                $pagination_html = view('pagination.pagination')->with(['url'=> 'hospital', 'recTotal' => $total, 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'banner'])->render();
+                $pagination_html = view('pagination.pagination')->with(['url'=> 'hospital', 'recTotal' => $total, 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'hospital'])->render();
                 $result['pagination_html'] = $pagination_html;
                 $result['content_html'] = $content_html;
                 $result['error'] = 0;
@@ -33,7 +33,7 @@ class HospitalController extends Controller
                 $result['total_count'] = Hospital::getTotalResult($filter);
                 $result['page'] = $page;
                 $result['page_size'] = $page_size;
-                $pagination_html = view('pagination.pagination')->with(['url'=> 'hospital', 'recTotal' => $result['total_count'], 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'banner'])->render();
+                $pagination_html = view('pagination.pagination')->with(['url'=> 'hospital', 'recTotal' => $result['total_count'], 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'hospital'])->render();
                 $result['pagination_html'] = $pagination_html;
                 $content_html =  view('admin.hospital.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
                 $result['content_html'] = $content_html;
