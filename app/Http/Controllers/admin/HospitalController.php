@@ -42,8 +42,8 @@ class HospitalController extends Controller
             var_dump($e->getMessage()); die;
             return redirect()->back()->withError('Something went wrong');
         }
-        
-        return view('admin.hospital.index', compact('result')); 
+        $title = "Hospital List";
+        return view('admin.hospital.index', compact('result', 'title')); 
 
 
         // return view('admin.hospital.index');

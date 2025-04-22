@@ -7,30 +7,57 @@
     <div class="content">
         <div class="row">
             <div class="col-sm-8 col-5">
-                <h4 class="page-title">Expenses</h4>
+                <h4 class="page-title">{{$title}}</h4>
             </div>
             <div class="col-sm-4 col-7 text-right m-b-30">
                 <a href="add-expense.html" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Expense</a>
             </div>
         </div>
         <div class="row filter-row">
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="col-md-5">
                 <div class="form-group form-focus">
-                    <label class="focus-label">Item Name</label>
-                    <input type="text" class="form-control floating">
+                    <label class="focus-label">Name, Phone, City, State, Pin Code</label>
+                    <input type="text" class="form-control floating filterHospital" id="search" >
+                    <input type="hidden" name="sortBy" id="sortBy" value="">
+                    <input type="hidden" name="orderBy" id="orderBy" value="">
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="form-group form-focus select-focus">
+                    <label class="focus-label">Status</label>
+                    <select class="select floating filterHospital" id="status">
+                        <option> -- Select -- </option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="form-group form-focus select-focus">
+                    <label class="focus-label filterHospital">Approve Status</label>
+                    <select class="select floating"  id="approve_status">
+                        <option> -- Select -- </option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                        <option>Block</option>
+                    </select>
                 </div>
             </div>
           
         
            
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <a href="#" class="btn btn-success btn-block"> Search </a>
+            <div class="col-md-3">
+                <!-- <a href="#" class=""> Reset </a> -->
+                <a href="javascript:void(0)" class="btn btn-success btn-block" onclick="FilterReset(1,'hospital','hospital','filterHospital')">Clear All Filters</a>
+
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="table-responsive">
-                    <table class="table table-striped custom-table mb-0 datatable">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>#</th>

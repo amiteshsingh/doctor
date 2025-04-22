@@ -15,6 +15,8 @@
     <script src="{{ asset('admin/assets/js/select2.min.js') }}"></script>
     <script src="{{ asset('admin/assets/js/moment.min.js') }}"></script>
     <script src="{{ asset('admin/assets/js/bootstrap-datetimepicker.min.js') }}"></script>
+    
+    <script src="{{ asset('admin/assets/js/ajaxbackend.js') }}"></script>
 
 
 </body>
