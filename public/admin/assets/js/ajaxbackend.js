@@ -10,9 +10,6 @@ APP_URL = "http://127.0.0.1:8000/admin/";
     var base_url = APP_URL;
 }
 
-
-alert(APP_URL.endsWith('/'));
-alert(base_url);
 $(document).ready(function(){
     
   
@@ -90,20 +87,18 @@ function ajaxSearching(current_page, filtertype, url) {
         }
         //console.log(data);
     }else if(type === 'hospital'){ 
-        alert(type)
         var url = base_url + url;
-        alert(url)
         var search = $("#search").val();
 		var sortBy = $("#sortBy").val();
 		var orderBy = $("#orderBy").val();
         var status = $("#status").val();
-        var status = $("#approve_status").val();
-        alert(search)
+        var approval_status = $("#approval_status").val();
         var data = {
             sortBy: sortBy,
 			orderBy: orderBy,
 			search: search,
             status: status,
+            approval_status: approval_status,
             page: page,
         }
     }else {
@@ -111,6 +106,9 @@ function ajaxSearching(current_page, filtertype, url) {
         return;
 	}
     $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
 		url: url,
 		type: 'post',
 		dataType: 'json',

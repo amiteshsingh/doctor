@@ -48,7 +48,8 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset']);
 
 // Admin Routes
 Route::middleware(['admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::any('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    
     Route::any('/admin/hospital', [HospitalController::class, 'index'])->name('admin.hospital');
     Route::any('/admin/hospital/add', [HospitalController::class, 'add'])->name('admin.hospital.add');
     Route::any('/admin/hospital/delete', [HospitalController::class, 'delete'])->name('admin.hospital.delete');

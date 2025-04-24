@@ -14,6 +14,7 @@
             </div>
         </div>
         <div class="row filter-row">
+            
             <div class="col-md-5">
                 <div class="form-group form-focus">
                     <label class="focus-label">Name, Phone, City, State, Pin Code</label>
@@ -27,9 +28,9 @@
                 <div class="form-group form-focus select-focus">
                     <label class="focus-label">Status</label>
                     <select class="select floating filterHospital" id="status">
-                        <option> -- Select -- </option>
-                        <option>Active</option>
-                        <option>Inactive</option>
+                        <option value=""> -- Select -- </option>
+                        <option value="1">Active</option>
+                        <option  value="0">Inactive</option>
                     </select>
                 </div>
             </div>
@@ -37,11 +38,11 @@
             <div class="col-md-2">
                 <div class="form-group form-focus select-focus">
                     <label class="focus-label filterHospital">Approve Status</label>
-                    <select class="select floating"  id="approve_status">
-                        <option> -- Select -- </option>
-                        <option>Active</option>
-                        <option>Inactive</option>
-                        <option>Block</option>
+                    <select class="select floating"  id="approval_status">
+                        <option value=""> -- Select -- </option>
+                        <option value="1">Active</option>
+                        <option  value="0">Inactive</option>
+                        <option  value="2">Block</option>
                     </select>
                 </div>
             </div>
@@ -61,14 +62,14 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Name <i class="ajaxSort sorting_desc"  data-type="hospital" data-sort_by="name" data-sort_order="asc" style="width: 9.60417px;"></i></th>
-                                <th class="ajaxSort"  data-type="hospital" data-sort_by="phone_no" data-sort_order="asc" style="width: 9.60417px;" >Phone </th>
+                                <th>Name <i class="fas ajaxSorting fa-sort " data-type="hospital" data-sort_by="name" data-sort_order="asc"></i> </th>
+                                <th>Phone <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="phone_no" data-sort_order="asc"></i></th>
                                 <!-- <th>Email</th> -->
-                                <th>City</th>
-                                <th>State</th>
-                                <th class="text-center">Pin Code</th>
-                                <th >Status</th>
-                                <th>Approve</th>
+                                <th>City <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="city" data-sort_order="asc"></i></th>
+                                <th>State <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="state" data-sort_order="asc"></i></th>
+                                <th>Pin Code <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="pin_code" data-sort_order="asc"></i></th>
+                                <th >Status <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="status" data-sort_order="asc"></i></th>
+                                <th>Approve <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="approval_status" data-sort_order="asc"></i></th>
                                 <th class="text-right">Actions</th>
 
                             </tr>

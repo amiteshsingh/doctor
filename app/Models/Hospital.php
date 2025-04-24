@@ -31,10 +31,17 @@ class Hospital extends Model
                 if(isset($filter['status']) && $filter['status'] != ""){
                     $query->where('hospitals.status','=', $filter['status']);
                 }
+                if(isset($filter['approval_status']) && $filter['approval_status'] != ""){
+                    $query->where('hospitals.approval_status','=', $filter['approval_status']);
+                }
                 if(isset($filter['search']) && $filter['search'] !=""){
                     $search = $filter['search'];
                     $query->where(function($query) use ($search){
-                        $query->Where('name', 'LIKE','%' . $search . '%');
+                        $query->Where('name', 'LIKE','%' . $search . '%')
+                        ->orWhere('phone_no', 'LIKE','%' . $search . '%')
+                        ->orWhere('city', 'LIKE','%' . $search . '%')
+                        ->orWhere('city', 'LIKE','%' . $search . '%');
+                        $query->orWhere('zip_code', 'LIKE','%' . $search . '%');
                     });   
                 }
         $data = $query->get()->toArray();
@@ -52,13 +59,21 @@ class Hospital extends Model
                 if(isset($filter['status']) && $filter['status'] != ""){
                     $query->where('hospitals.status','=', $filter['status']);
                 }
+                if(isset($filter['approval_status']) && $filter['approval_status'] != ""){
+                    $query->where('hospitals.approval_status','=', $filter['approval_status']);
+                }
                 if(isset($filter['search']) && $filter['search'] !=""){
                     $search = $filter['search'];
                     $query->where(function($query) use ($search){
-                        $query->Where('name', 'LIKE','%' . $search . '%');
+                        $query->Where('name', 'LIKE','%' . $search . '%')
+                        ->orWhere('phone_no', 'LIKE','%' . $search . '%')
+                        ->orWhere('city', 'LIKE','%' . $search . '%')
+                        ->orWhere('city', 'LIKE','%' . $search . '%')
+                        ->orWhere('zip_code', 'LIKE','%' . $search . '%');
                     });   
                 }
-        $data = $query->get()->toArray();
-        return count($data);
+                // echo $data = $query->toSQL(); die;
+                $data = $query->get()->toArray();
+                return count($data);
     }
 }

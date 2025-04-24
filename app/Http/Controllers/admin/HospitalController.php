@@ -51,10 +51,87 @@ class HospitalController extends Controller
 
 
     public function add(Request $request){
-        echo "Hospital add"; die;
+        // echo "Hospital add";
+
+        $data = $request->all();
+        if($request->isMethod('post') && $request->ajax()){
+            try{
+                $request->validate([
+                    'name' => 'required',
+                    'phone_no' => 'required',
+                    'address' => 'required',
+                    'city' => 'required',
+                    'state' => 'required',
+                    'pin_code' => 'required',
+                    'status' => 'required',
+                    'Approval_status' => 'required',
+                ]);
+                
+                if(isset($data['id']) && $data['id'] !=""){
+                    //Update hospital
+                    $update['name'] = $data['name'];
+                    $update['phone_no'] = $data['phone_no'];
+                    $update['email'] = $data['email'];
+                    $update['address'] = $data['address'];
+                    $update['city'] = $data['city'];
+                    $update['pin_code'] = $data['pin_code'];
+                    $update['state'] = $data['state'];
+                    $update['Approval_status'] = $data['Approval_status'];
+                    $update['latitude'] = $data['latitude'];
+                    $update['longitude'] = $data['longitude'];
+                    $update['update_on'] = date('Y-m-d H:i:s');
+                    
+                   
+                    if(DB::table('hospitals')->where('id', $data['id'])->update($update)){
+                        return response()->json(["status"=>200,"msg"=>"hospitals updated successfully."]);
+                    }else{
+                        return response()->json(["status"=>403,"msg"=>'hospitals not updated.']);
+                    }
+                }else{
+                    //Save hospital 
+                    $hospital = new Hospital;
+                    $hospital->name = isset($data['name'])?$data['name']:'';
+                    $hospital->phone_no = isset($data['phone_no'])?$data['phone_no']:'';
+                    $hospital->address = isset($data['naddressame'])?$data['address']:'';
+                    $hospital->email = isset($data['email'])?$data['email']:'';
+                    $hospital->city = isset($data['city'])?$data['city']:'';
+                    $hospital->state = isset($data['state'])?$data['state']:'';
+                    $hospital->zip_code = isset($data['zip_code'])?$data['zip_code']:'';
+                    $hospital->latitude = isset($data['latitude'])?$data['latitude']:'';
+                    $hospital->longitude = isset($data['longitude'])?$data['longitude']:'';
+                    $hospital->status = isset($data['status'])?$data['status']:'';
+                    $hospital->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
+                    $hospital->added_on = date('Y-m-d H:i:s');
+                    if($hospital->save()){
+                        return response()->json(["status"=>200,"msg"=>"banner saved successfully."]);
+                    }else{
+                        return response()->json(["status"=>403,"msg"=>'Invalid request']);
+                    }
+                }
+            }catch(\Exception $e){
+                return response()->json(["status"=>402,"msg"=>$e->getMessage()]); 
+            }
+            
+        }else{
+            $hospital = (object)[];
+            if(isset($data['id']) && !empty($data['id'])){
+                $id = $data['id'];
+                $hospital = Hospital::find($id);
+            }
+            // dd($hospital); die;
+            // $service_categories = DB::table('service_categories')->where('is_active', 1)->get()->toArray();
+            return view('admin.hospital.add', compact('hospital'));
+        }
     }
 
     public function delete(Request $request){
         echo "Hospital delete"; die;
+
+        if(empty(Session::get('user_id'))){
+			return redirect('/');
+		}
+        $data = DB::table('hospital')->where('id','=',$id)->delete();
+        $request->session()->flash('msg','hospital delete successfully.');
+        return redirect('banner');  
     }
 }
