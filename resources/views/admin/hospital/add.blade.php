@@ -25,7 +25,7 @@
             <div class="col-lg-12">
                 <div class="card-box">
                     <h4 class="card-title">{{ $form }} Hospital</h4>
-                    <form  method="POST" id="hopital_form" name="hopital_form">
+                    <form  method="POST" id="hospital_form" name="hospital_form">
                         {{ csrf_field() }}
                         <input type="hidden" name="id" value="{{isset($hospital->id)?$hospital->id:''}}">
                         <div class="form-group row">
@@ -94,7 +94,7 @@
                             <label class="col-form-label col-md-2">Status</label>
                             <div class="col-md-9">
                                 <select class="select" name="status" id="status" >
-                                    <option>Select status</option>
+                                    <option value="">Select status</option>
                                     <option value="1" {{ (isset($hospital->status) && $hospital->status == 1) ? 'selected':''}}>Active</option>
                                     <option value="0"  {{ (isset($hospital->status) && $hospital->status == 0) ? 'selected':''}}>Inactive</option>
                                 </select>
@@ -105,7 +105,7 @@
                             <label class="col-form-label col-md-2">	Approval Status</label>
                             <div class="col-md-9">
                                 <select class="select" name="approval_status" id="approval_status" >
-                                    <option>Select Status</option>
+                                    <option value="">Select Status</option>
                                     <option value="1"  {{ (isset($hospital->approval_status) && $hospital->approval_status == 1) ? 'selected':''}}>Active</option>
                                     <option value="0" {{ (isset($hospital->approval_status) && $hospital->approval_status == 0) ? 'selected':''}}>Inactive</option>
                                     <option value="2" {{ (isset($hospital->approval_status) && $hospital->approval_status == 2) ? 'selected':''}}>Block</option>
@@ -114,8 +114,8 @@
                         </div>
 
                             <div class="col-md-4 text-right">
+                            <button type="submit" id="save_hospital" class="btn btn-primary">Submit</button>
                             <a href="{{ route('admin.hospital') }}" type="submit" class="btn btn-primary">Back</a>
-                            <button type="submit" class="btn btn-primary">Submit</button>
                                 
                         </div>
                        

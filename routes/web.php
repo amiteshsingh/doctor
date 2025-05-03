@@ -52,7 +52,7 @@ Route::middleware(['admin'])->group(function () {
     
     Route::any('/admin/hospital', [HospitalController::class, 'index'])->name('admin.hospital');
     Route::any('/admin/hospital/add', [HospitalController::class, 'add'])->name('admin.hospital.add');
-    Route::any('/admin/hospital/delete', [HospitalController::class, 'delete'])->name('admin.hospital.delete');
+    Route::any('/admin/hospital/delete/{id}', [HospitalController::class, 'delete'])->name('admin.hospital.delete');
 });
 
 // Doctor Routes

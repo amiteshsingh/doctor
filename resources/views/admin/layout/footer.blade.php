@@ -2,7 +2,9 @@
     <div class="sidebar-overlay" data-reff=""></div>
 
 
+
     <script src="{{ asset('admin/assets/js/jquery-3.2.1.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
 	<script src="{{ asset('admin/assets/js/popper.min.js') }}"></script>
     <script src="{{ asset('admin/assets/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('admin/assets/js/jquery.slimscroll.js') }}"></script>
@@ -17,6 +19,15 @@
     <script src="{{ asset('admin/assets/js/bootstrap-datetimepicker.min.js') }}"></script>
     
     <script src="{{ asset('admin/assets/js/ajaxbackend.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/formajaxbackend.js') }}"></script>
+
+
+
+    <!-- jGrowl CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.5.1/jquery.jgrowl.min.css" rel="stylesheet" />
+
+    <!-- jGrowl JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.5.1/jquery.jgrowl.min.js"></script>
 
 
 </body>

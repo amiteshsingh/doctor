@@ -24,15 +24,71 @@
 		<script src="assets/js/html5shiv.min.js"></script>
 		<script src="assets/js/respond.min.js"></script>
 	<![endif]-->
+    <style>
+    .hidden {
+        display: none !important;
+    }
+
+    .loaderDiv {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1050;
+    }
+
+    </style>
+
+    <style>
+
+
+    /* Success theme for jGrowl */
+    .jGrowl-notification.success-theme {
+        background-color: #4CAF50 !important; /* Green */
+        color: white !important;
+    }
+
+    /* Error theme for jGrowl */
+    .jGrowl-notification.error-theme {
+        background-color: #f44336 !important; /* Red */
+        color: white !important;
+    }
+
+    /* Make header text larger */
+    .jGrowl .jGrowl-notification .jGrowl-header {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+  
+
+
+    </style>
+
+
 </head>
 
 <body>
+
+<div class="loaderDiv hidden">
+  <div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+<div id="growl" class="growl"></div>
+
+
 <div class="main-wrapper">
 
 <div class="header">
     <div class="header-left">
         <a href="{{ route('admin.dashboard') }}" class="logo">
-            <img src="assets/img/logo.png" width="35" height="35" alt=""> <span>Preclinic</span>
+            <img src="{{ asset('admin/assets/img/logo.png') }}" width="35" height="35" alt=""> <span>Preclinic</span>
         </a>
     </div>
     <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
@@ -50,7 +106,7 @@
                             <a href="activities.html">
                                 <div class="media">
                                     <span class="avatar">
-                                        <img alt="John Doe" src="assets/img/user.jpg" class="img-fluid">
+                                        <img alt="John Doe" src="{{ asset('admin/assets/img/user.jpg') }}" class="img-fluid">
                                     </span>
                                     <div class="media-body">
                                         <p class="noti-details"><span class="noti-title">John Doe</span> added new task <span class="noti-title">Patient appointment booking</span></p>
@@ -116,7 +172,7 @@
         <li class="nav-item dropdown has-arrow">
             <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
                 <span class="user-img">
-                    <img class="rounded-circle" src="assets/img/user.jpg" width="24" alt="Admin">
+                    <img class="rounded-circle" src="{{ asset('admin/assets/img/user.jpg') }}" width="24" alt="Admin">
                     <span class="status online"></span>
                 </span>
                 <span>{{ Auth::user()->name }}</span>

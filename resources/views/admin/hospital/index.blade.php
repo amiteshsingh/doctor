@@ -10,7 +10,7 @@
                 <h4 class="page-title">{{$title}}</h4>
             </div>
             <div class="col-sm-4 col-7 text-right m-b-30">
-                <a href="add-expense.html" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Expense</a>
+                <a href="{{ route('admin.hospital.add') }}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Hospital</a>
             </div>
         </div>
         <div class="row filter-row">
@@ -27,7 +27,7 @@
             <div class="col-md-2">
                 <div class="form-group form-focus select-focus">
                     <label class="focus-label">Status</label>
-                    <select class="select floating filterHospital" id="status">
+                    <select class="filterHospital select floating" id="status">
                         <option value=""> -- Select -- </option>
                         <option value="1">Active</option>
                         <option  value="0">Inactive</option>
@@ -37,8 +37,8 @@
 
             <div class="col-md-2">
                 <div class="form-group form-focus select-focus">
-                    <label class="focus-label filterHospital">Approve Status</label>
-                    <select class="select floating"  id="approval_status">
+                    <label class="focus-label">Approve Status</label>
+                    <select class="filterHospital select floating"  id="approval_status">
                         <option value=""> -- Select -- </option>
                         <option value="1">Active</option>
                         <option  value="0">Inactive</option>
@@ -311,9 +311,9 @@
         <div class="modal-content">
             <div class="modal-body text-center">
                 <img src="assets/img/sent.png" alt="" width="50" height="46">
-                <h3>Are you sure want to delete this expense?</h3>
+                <h3>Are you sure want to delete this Hospital?</h3>
                 <div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <a href="#" class="btn btn-danger" id="confirmDelete">Delete</a>
                 </div>
             </div>
         </div>
@@ -321,6 +321,20 @@
 </div>
 
 
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteLinks = document.querySelectorAll('[data-toggle="modal"][data-target="#delete_expense"]');
+    const confirmDelete = document.getElementById("confirmDelete");
+
+    deleteLinks.forEach(link => {
+        link.addEventListener("click", function () {
+            const deleteUrl = this.getAttribute("data-url");
+            confirmDelete.setAttribute("href", deleteUrl);
+        });
+    });
+});
+</script>
 
 
 

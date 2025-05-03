@@ -1,0 +1,61 @@
+$( function() {
+
+    /**
+     * Validate Hospital Form add, edit.
+     */
+     $(document).on("click", "#save_hospital", function(){
+        $("#hospital_form").validate({
+            rules: {
+                name: {
+                    required: true
+                },
+               
+                status: {
+                    required: true
+                },
+        
+            },
+            messages: {
+                name: {
+                    required: "This field required."
+                },
+               
+                status: {
+                    required: "This field required."
+                }
+
+            },
+            submitHandler: function () {
+                var formData = new FormData($("#hospital_form")[0]);
+                let url = base_url + "hospital/add";
+                $.ajax({
+                    url: url,
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    beforeSend: function () {
+                        $(".loaderDiv").removeClass("hidden");
+                    },
+                    success: function (response) {
+                        $(".loaderDiv").addClass("hidden");
+                        if (response.status === 200) {
+                            // alert(response.status);
+                            $.jGrowl(response.msg, { header: "Hospital", theme: 'success-theme' });
+
+                            window.setTimeout(function () {
+                                window.location.href = base_url + "hospital";
+                            }, 2000);
+                        } else {
+                            $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+
+
+  });

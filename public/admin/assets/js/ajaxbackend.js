@@ -136,22 +136,14 @@ function ajaxSearching(current_page, filtertype, url) {
 				// $("#data_listing2").html(response.content_html1);
 				// $("#pagination_data2").html(response.pagination_html1);
 
-                // $('#data_listing3').empty();
-				// $("#pagination_data3").empty();
-				// $("#data_listing3").html(response.content_html2);
-				// $("#pagination_data3").html(response.pagination_html2);
 
 			} else {
 				$('#data_listing').html('<div class="block-item"><div class="item fullwidth"><p class="custom_error center mb0">No Data Found!</p></div></div>');
-
 
 				// $('#data_listing1').html('<div class="block-item"><div class="item fullwidth"><p class="custom_error center mb0">No Data Found!</p></div></div>');
 
 				// $('#data_listing2').html('<div class="block-item"><div class="item fullwidth"><p class="custom_error center mb0">No Data Found!</p></div></div>');
 				
-                // $('#data_listing3').html('<div class="block-item"><div class="item fullwidth"><p class="custom_error center mb0">No Data Found!</p></div></div>');
-                
-                // $('#data_listing3').html('<div class="block-item"><div class="item fullwidth"><p class="custom_error center mb0">No Data Found!</p></div></div>');
             }
 			if (filtertype == 'dashboard') {
 
@@ -167,10 +159,9 @@ Reset Filter and Pagination
 @Param first page and which module section and url
 @Result Clear all filter binding section
 */
-function FilterReset(page,type, url){
-   
-    // $('.filterBanner').val('');
-    $('.filterHospital').val('');
+function FilterReset(page, type, url){
+
+    $('.filterHospital').val('').trigger('change');
 
     $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
 
@@ -266,99 +257,6 @@ $(document).ready(function () {
 
 
 
-
-
-$( function() {
-    $('#send_to').on('keyup', function () {
-        var from_email = $("#send_to").val();
-        
-        $.ajax({
-            url: base_url + "notification/fetch-email",
-            type: "GET",
-            data: {
-                from_email: from_email,
-            },
-            dataType: 'json',
-            success: function (result) {
-                //console.log(result);
-                var availableTags = [];
-                $.each(result, function (key, value) {
-                    availableTags.push(value.email);
-                });
-                $( "#send_to" ).autocomplete({
-                    source: availableTags
-                });
-                
-            }
-        });
-    });
-
-
-
-    /**
-     * Validate banner Form add, edit.
-     */
-     $(document).on("click", "#save_banner", function(){
-        $("#banner_form").validate({
-            rules: {
-                banner_name: {
-                    required: true
-                },
-               
-                status: {
-                    required: true
-                },
-        
-            },
-            messages: {
-                banner_name: {
-                    required: "This field required."
-                },
-               
-                status: {
-                    required: "This field required."
-                }
-
-            },
-            submitHandler: function () {
-                var formData = new FormData($("#banner_form")[0]);
-                let url = base_url + "banner/add";
-                $.ajax({
-                    url: url,
-                    data: formData,
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    type: 'POST',
-                    beforeSend: function () {
-                        $(".loaderDiv").removeClass("hidden");
-                    },
-                    success: function (response) {
-                        $(".loaderDiv").addClass("hidden");
-                        if (response.status === 200) {
-                            $.growl.notice({ title: "Banner", message: response.msg, size: 'large' });
-                            window.setTimeout(function () {
-                                window.location.href = base_url + "banner";
-                            }, 2000);
-                        } else {
-                            $.growl.error({ message: response.msg, size: 'large' });
-                        }
-                    }
-                });
-            }
-        });
-    });
-
-
-    //Vendor document aprrove status
-    $(".removedoc").on("click", this, function(){
-        showdoc = $(".showdoc", this).val();
-        $("#showdoc_"+showdoc).css('display','none');
-        $("#uploadImage_"+showdoc).css('display','block');
-    })
-
-
-  });
 
   /* Video File validaton on category add and update page */
 function videoValidation() {
