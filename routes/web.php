@@ -6,6 +6,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\HospitalController;
+use App\Http\Controllers\Admin\SpecializationController;
 
 use App\Http\Controllers\Doctor\DoctorController;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,11 @@ Route::middleware(['admin'])->group(function () {
     Route::any('/admin/hospital', [HospitalController::class, 'index'])->name('admin.hospital');
     Route::any('/admin/hospital/add', [HospitalController::class, 'add'])->name('admin.hospital.add');
     Route::any('/admin/hospital/delete/{id}', [HospitalController::class, 'delete'])->name('admin.hospital.delete');
+
+    Route::any('/admin/specialization', [SpecializationController::class, 'index'])->name('admin.specialization');
+    Route::any('/admin/specialization/add', [SpecializationController::class, 'add'])->name('admin.specialization.add');
+    Route::any('/admin/specialization/delete/{id}', [SpecializationController::class, 'delete'])->name('admin.specialization.delete');
+
 });
 
 // Doctor Routes

@@ -17,6 +17,10 @@ $(document).ready(function(){
         $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
         ajaxSearching(1, 'hospital', 'hospital');
     })
+    $(document).on("change keyup",".filterSpecialization", function(){
+        $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+        ajaxSearching(1, 'specialization', 'specialization');
+    })
 
     
     
@@ -101,6 +105,19 @@ function ajaxSearching(current_page, filtertype, url) {
             approval_status: approval_status,
             page: page,
         }
+    }else if(type === 'specialization'){ 
+        var url = base_url + url;
+        var search = $("#search").val();
+		var sortBy = $("#sortBy").val();
+		var orderBy = $("#orderBy").val();
+        var status = $("#status").val();
+        var data = {
+            sortBy: sortBy,
+			orderBy: orderBy,
+			search: search,
+            status: status,
+            page: page,
+        }
     }else {
         console.log('clothNot url defile here');
         return;
@@ -162,6 +179,7 @@ Reset Filter and Pagination
 function FilterReset(page, type, url){
 
     $('.filterHospital').val('').trigger('change');
+    $('.filterSpecialization').val('').trigger('change');
 
     $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
 

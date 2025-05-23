@@ -76,8 +76,9 @@ class HospitalController extends Controller
                     $update['email'] = $data['email'];
                     $update['address'] = $data['address'];
                     $update['city'] = $data['city'];
-                    $update['zip_code'] = $data['zip_code'];
                     $update['state'] = $data['state'];
+                    $update['zip_code'] = $data['zip_code'];
+                    $update['status'] = $data['status'];
                     $update['approval_status'] = $data['approval_status'];
                     $update['latitude'] = $data['latitude'];
                     $update['longitude'] = $data['longitude'];
@@ -105,7 +106,7 @@ class HospitalController extends Controller
                     $hospital->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
                     $hospital->added_on = date('Y-m-d H:i:s');
                     if($hospital->save()){
-                        return response()->json(["status"=>200,"msg"=>"banner saved successfully."]);
+                        return response()->json(["status"=>200,"msg"=>"Hospitals saved successfully."]);
                     }else{
                         return response()->json(["status"=>403,"msg"=>'Invalid request']);
                     }

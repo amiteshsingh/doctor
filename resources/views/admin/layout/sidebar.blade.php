@@ -6,12 +6,16 @@
                         <li class="active">
                             <a href="index-2.html"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
+                         <li>
+                            <a href="{{ route('admin.hospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.specialization') }}"><i class="fa fa-hospital-o"></i> <span>Specialization</span></a>
+                        </li>
 						<li>
                             <a href="doctors.html"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
                         </li>
-                        <li>
-                            <a href="{{ route('admin.hospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
-                        </li>
+                       
                         <li>
                             <a href="patients.html"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
@@ -21,9 +25,7 @@
                         <li>
                             <a href="schedule.html"><i class="fa fa-calendar-check-o"></i> <span>Doctor Schedule</span></a>
                         </li>
-                        <li>
-                            <a href="departments.html"><i class="fa fa-hospital-o"></i> <span>Departments</span></a>
-                        </li>
+                        
 						<li class="submenu">
 							<a href="#"><i class="fa fa-user"></i> <span> Employees </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
