@@ -117,19 +117,56 @@ class HospitalController extends Controller
             
         }else{
             $hospital = (object)[];
+            $selected_specializations = [];
             if(isset($data['id']) && !empty($data['id'])){
                 $id = $data['id'];
                 $hospital = Hospital::find($id);
+
+                $selected_specializations = DB::table('hospital_specializations')
+                ->where('hospital_id', $data['id'])
+                ->pluck('specialization_id')
+                ->toArray();
+                $hospital->specialization_data = $selected_specializations;
             }
-            // dd($hospital); die;
-            // $service_categories = DB::table('service_categories')->where('is_active', 1)->get()->toArray();
-            return view('admin.hospital.add', compact('hospital'));
+            $specializations = DB::table('specializations')->where('status', 1)->get()->toArray();
+            return view('admin.hospital.add', compact('hospital', 'specializations'));
         }
     }
 
+    public function hospitalSpecializations(Request $request){
+
+        if(empty(Session::get('user_id'))){ 
+            return redirect('/');
+        }
+        $data = $request->all();
+        if($request->isMethod('post') && $request->ajax()){
+            try{
+                $request->validate([
+                    'specialization_ids' => 'required|array',
+                ]);
+                if(!isset($data['id']) || empty($data['id'])){
+                    return response()->json(["status"=>403,"msg"=>"Invalid hospital id."]);
+                }
+                $hospital_specialization = DB::table('hospital_specializations')->where('hospital_id', $data['id'])->delete();
+                if(isset($data['specialization_ids']) && !empty($data['specialization_ids'])){
+                    foreach($data['specialization_ids'] as $spec){
+                        $insert = [
+                            'hospital_id' => $data['id'],
+                            'specialization_id' => $spec,
+                            'created_at' => date('Y-m-d H:i:s'),
+                        ];
+                        DB::table('hospital_specializations')->insert($insert);
+                    }
+                }
+                return response()->json(["status"=>200,"msg"=>"Hospital specializations updated successfully.", "hospital_id" => $data['id']]);
+            }catch(\Exception $e){
+                return response()->json(["status"=>402,"msg"=>$e->getMessage()]); 
+            }  
+        }
+    }
+
+
     public function delete(Request $request, $id){
-        // echo "Hospital delete"; die;
-        // echo Session::get('user_id'); die;
         if(empty(Session::get('user_id'))){
 			return redirect('/');
 		}
