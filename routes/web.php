@@ -7,8 +7,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\HospitalController;
 use App\Http\Controllers\Admin\SpecializationController;
+use App\Http\Controllers\Admin\DoctorController;
 
-use App\Http\Controllers\Doctor\DoctorController;
+use App\Http\Controllers\Doctor\DoctorController as DoctorPanelController;
 use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
@@ -60,11 +61,17 @@ Route::middleware(['admin'])->group(function () {
     Route::any('/admin/specialization/add', [SpecializationController::class, 'add'])->name('admin.specialization.add');
     Route::any('/admin/specialization/delete/{id}', [SpecializationController::class, 'delete'])->name('admin.specialization.delete');
 
+    Route::any('/admin/doctor', [DoctorController::class, 'index'])->name('admin.doctor');
+    Route::any('/admin/doctor/add', [DoctorController::class, 'add'])->name('admin.doctor.add');
+    Route::any('/admin/doctor/delete/{id}', [DoctorController::class, 'delete'])->name('admin.doctor.delete');
+    Route::any('/admin/doctor/doctor_specialization', [DoctorController::class, 'doctorSpecializations'])->name('admin.doctor.hospital_specialization');
+
+
 });
 
 // Doctor Routes
 Route::middleware(['doctor'])->group(function () {
-    Route::get('/doctor/dashboard', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
+    Route::get('/doctor/dashboard', [DoctorPanelController::class, 'dashboard'])->name('doctor.dashboard');
 });
 
 // Auth Routes

@@ -21,6 +21,10 @@ $(document).ready(function(){
         $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
         ajaxSearching(1, 'specialization', 'specialization');
     })
+    $(document).on("change keyup",".filterDoctor", function(){
+        $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+        ajaxSearching(1, 'doctor', 'doctor');
+    })
 
     
     
@@ -116,6 +120,21 @@ function ajaxSearching(current_page, filtertype, url) {
 			orderBy: orderBy,
 			search: search,
             status: status,
+            page: page,
+        }
+    }else if(type === 'doctor'){ 
+        var url = base_url + url;
+        var search = $("#search").val();
+		var sortBy = $("#sortBy").val();
+		var orderBy = $("#orderBy").val();
+        var status = $("#status").val();
+        var approval_status = $("#approval_status").val();
+        var data = {
+            sortBy: sortBy,
+			orderBy: orderBy,
+			search: search,
+            status: status,
+            approval_status: approval_status,
             page: page,
         }
     }else {

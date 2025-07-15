@@ -164,5 +164,109 @@ $(function() {
     });
 
 
+       /**
+     * Validate doctor Form add, edit for admin panel.
+     */
+     $(document).on("click", "#save_doctor", function(){
+        $("#doctor_form").validate({
+            rules: {
+                name: {
+                    required: true
+                },
+               
+                status: {
+                    required: true
+                },
+        
+            },
+            messages: {
+                name: {
+                    required: "This field required."
+                },
+                status: {
+                    required: "This field required."
+                }
+            },
+            submitHandler: function () {
+                var formData = new FormData($("#doctor_form")[0]);
+                let url = base_url + "doctor/add";
+                $.ajax({
+                    url: url,
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    beforeSend: function () {
+                        $(".loaderDiv").removeClass("hidden");
+                    },
+                    success: function (response) {
+                        $(".loaderDiv").addClass("hidden");
+                        if (response.status === 200) {
+                            // alert(response.status);
+                            $.jGrowl(response.msg, { header: "Doctor", theme: 'success-theme' });
+
+                            window.setTimeout(function () {
+                                window.location.href = base_url + "doctor";
+                            }, 2000);
+                        } else {
+                            $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+        /**
+     * Validate save_doctor_specialization Form add, edit.
+     */
+    $(document).on("click", "#save_doctor_specialization", function(){
+        
+        $("#doctor_specialization_form").validate({  
+
+            rules: {
+                specialization_ids: {
+                    required: true
+                }
+            },
+            messages: {
+                specialization_ids: {
+                    required: "This field required."
+                }
+            },
+            submitHandler: function () {
+                var formData = new FormData($("#doctor_specialization_form")[0]);
+                let url = base_url + "doctor/doctor_specialization";
+                $.ajax({
+                    url: url,
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    beforeSend: function () {
+                        $(".loaderDiv").removeClass("hidden");
+                    },
+                    success: function (response) {
+                        $(".loaderDiv").addClass("hidden");
+                        // console.log(response);
+                        if (response.status === 200) {
+                            // alert(response.status);
+                            $.jGrowl(response.msg, { header: "Doctor Specialization", theme: 'success-theme' });
+
+                            window.setTimeout(function () {
+                                window.location.href = base_url + `doctor/add?id=${response.doctor_id}#basictab2`;
+                            }, 2000);
+                        } else {
+                            $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+
 
   });

@@ -10,10 +10,10 @@
                             <a href="{{ route('admin.hospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.specialization') }}"><i class="fa fa-hospital-o"></i> <span>Specialization</span></a>
+                            <a href="{{ route('admin.doctor') }}"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
                         </li>
-						<li>
-                            <a href="doctors.html"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
+                        <li>
+                            <a href="{{ route('admin.specialization') }}"><i class="fa fa-hospital-o"></i> <span>Specialization</span></a>
                         </li>
                        
                         <li>
