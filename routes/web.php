@@ -65,6 +65,7 @@ Route::middleware(['admin'])->group(function () {
     Route::any('/admin/doctor/add', [DoctorController::class, 'add'])->name('admin.doctor.add');
     Route::any('/admin/doctor/delete/{id}', [DoctorController::class, 'delete'])->name('admin.doctor.delete');
     Route::any('/admin/doctor/doctor_specialization', [DoctorController::class, 'doctorSpecializations'])->name('admin.doctor.hospital_specialization');
+    Route::any('/admin/doctor/doctor_location', [DoctorController::class, 'doctorLocation'])->name('admin.doctor.doctor_location');
 
 
 });

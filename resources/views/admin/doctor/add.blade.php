@@ -27,9 +27,12 @@
                     <h4 class="card-title">{{ $form }} Doctor</h4>
 
                     <ul class="nav nav-tabs nav-tabs-top">
-                        <li class="nav-item"><a class="nav-link active" href="#basictab1" data-toggle="tab">Doctor Details</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="#basictab1" data-toggle="tab">Doctor's Details</a></li>
                         <?php if(isset($doctor->id) && $doctor->id != ''){ ?>
-                        <li class="nav-item"><a class="nav-link" href="#basictab2" data-toggle="tab">Doctor Specialization</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#basictab2" data-toggle="tab">Doctor's Specialization</a></li>
+                        <?php } ?>
+                         <?php if(isset($doctor->id) && $doctor->id != ''){ ?>
+                        <li class="nav-item"><a class="nav-link" href="#basictab3" data-toggle="tab">Personal Information</a></li>
                         <?php } ?>
                     </ul>
 
@@ -103,9 +106,9 @@
                                 </div>
                             
                             </form>
-                         </div>
+                        </div>
 
-                          <div class="tab-pane" id="basictab2">
+                        <div class="tab-pane" id="basictab2">
                           <form method="POST" id="doctor_specialization_form" name="doctor_specialization_form">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="id" value="{{isset($doctor->id)?$doctor->id:''}}">
@@ -136,8 +139,118 @@
                                 </div>
                             </form>
                                 
-                          </div>
+                        </div>
 
+                    
+                         <div class="tab-pane" id="basictab3">
+                            <form method="POST" id="doctor_location_form" name="doctor_location_form">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="id" value="{{isset($doctor->id)?$doctor->id:''}}">
+
+                                <h5 class="mb-3">Location Details</h5>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Practice Name</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="practice_name" value="{{isset($doctor->practice_name)?$doctor->practice_name:''}}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Address</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" name="address">{{isset($doctor->address)?$doctor->address:''}}</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">City</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="city" value="{{isset($doctor->city)?$doctor->city:''}}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">State</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="state" value="{{isset($doctor->state)?$doctor->state:''}}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Zip Code</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="zip_code" value="{{isset($doctor->zip_code)?$doctor->zip_code:''}}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Phone</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="location_phone" value="{{isset($doctor->location_phone)?$doctor->location_phone:''}}">
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <h5 class="mb-3">Education</h5>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Degree Type</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="degree_type" value="{{isset($doctor->degree_type)?$doctor->degree_type:''}}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Institution Name</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="institution_name" value="{{isset($doctor->institution_name)?$doctor->institution_name:''}}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Graduation Year</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="graduation_year" value="{{isset($doctor->graduation_year)?$doctor->graduation_year:''}}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Details</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" name="education_details">{{isset($doctor->education_details)?$doctor->education_details:''}}</textarea>
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <h5 class="mb-3">Languages</h5>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Languages</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control select" multiple name="languages[]">
+                                            @foreach($languages as $lang)
+                                                <option value="{{ $lang->id }}"
+                                                    {{ (isset($doctor->language_data) && in_array($lang->id, $doctor->language_data)) ? 'selected' : '' }}>
+                                                    {{ $lang->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group row">
+                                    <div class="col-md-4 text-right">
+                                        <button type="submit" id="save_doctor_location" class="btn btn-primary">Submit</button>
+                                        <a href="{{ route('admin.doctor') }}" class="btn btn-primary">Back</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+
+                    
                     </div>
                     
                 </div>

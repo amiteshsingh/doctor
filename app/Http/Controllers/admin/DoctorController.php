@@ -113,9 +113,39 @@ class DoctorController extends Controller
                 ->pluck('specialization_id')
                 ->toArray();
                 $doctor->specialization_data = $selected_specializations;
+
+                $selected_languages = DB::table('doctor_languages')
+                ->where('doctor_id', $doctor->id ?? 0)
+                ->pluck('language_id')
+                ->toArray();
+                $doctor->language_data = $selected_languages;
+
+                // 🔹 Get location data
+                $location = DB::table('doctor_locations')->where('doctor_id', $data['id'])->first();
+                if ($location) {
+                    $doctor->practice_name = $location->practice_name;
+                    $doctor->address = $location->address;
+                    $doctor->city = $location->city;
+                    $doctor->state = $location->state;
+                    $doctor->zip_code = $location->zip_code;
+                    $doctor->location_phone = $location->phone;
+                    $doctor->website = $location->website ?? '';
+                }
+
+                // 🔹 Get education data
+                $education = DB::table('doctor_educations')->where('doctor_id', $data['id'])->first();
+                if ($education) {
+                    $doctor->degree_type = $education->degree_type;
+                    $doctor->institution_name = $education->institution_name;
+                    $doctor->graduation_year = $education->graduation_year;
+                    $doctor->education_details = $education->details;
+                }
+                
             }
             $specializations = DB::table('specializations')->where('status', 1)->get()->toArray();
-            return view('admin.doctor.add', compact('doctor', 'specializations'));
+            $languages = DB::table('languages')->get()->toArray();
+
+            return view('admin.doctor.add', compact('doctor', 'specializations', 'languages'));
         }
     }
 
@@ -150,6 +180,93 @@ class DoctorController extends Controller
             }  
         }
     }
+
+    public function doctorLocation(Request $request){
+
+        if (empty(Session::get('user_id'))) {
+            return redirect('/');
+        }
+
+        $data = $request->all();
+
+        if ($request->isMethod('post') && $request->ajax()) {
+            try {
+                $request->validate([
+                    'practice_name'      => 'required',
+                    'address'            => 'required',
+                    'city'               => 'required',
+                    'state'              => 'required',
+                    'zip_code'           => 'required',
+                    'location_phone'     => 'required',
+                    'degree_type'        => 'required',
+                    'institution_name'   => 'required',
+                    'graduation_year'    => 'required',
+                    'education_details'  => 'required',
+                    'languages'          => 'required|array|min:1',
+                ]);
+
+                if (!isset($data['id']) || empty($data['id'])) {
+                    return response()->json(["status" => 403, "msg" => "Invalid doctor ID."]);
+                }
+
+                $doctor_id = $data['id'];
+
+                // 🔁 doctor_locations table
+                $location_data = [
+                    'practice_name' => $data['practice_name'],
+                    'address'       => $data['address'],
+                    'city'          => $data['city'],
+                    'state'         => $data['state'],
+                    'zip_code'      => $data['zip_code'],
+                    'phone'         => $data['location_phone'],
+                    'updated_at'    => now(),
+                ];
+
+                // Check if record exists
+                $existingLocation = DB::table('doctor_locations')->where('doctor_id', $doctor_id)->first();
+                if ($existingLocation) {
+                    DB::table('doctor_locations')->where('doctor_id', $doctor_id)->update($location_data);
+                } else {
+                    $location_data['doctor_id'] = $doctor_id;
+                    $location_data['created_at'] = now();
+                    DB::table('doctor_locations')->insert($location_data);
+                }
+
+                // doctor_educations table (replace with latest)
+                DB::table('doctor_educations')->where('doctor_id', $doctor_id)->delete();
+                DB::table('doctor_educations')->insert([
+                    'doctor_id'         => $doctor_id,
+                    'degree_type'       => $data['degree_type'],
+                    'institution_name'  => $data['institution_name'],
+                    'graduation_year'   => $data['graduation_year'],
+                    'details'           => $data['education_details'],
+                ]);
+
+                //  doctor_languages table (multi-select)
+                DB::table('doctor_languages')->where('doctor_id', $doctor_id)->delete();
+                foreach ($data['languages'] as $lang_id) {
+                    DB::table('doctor_languages')->insert([
+                        'doctor_id'   => $doctor_id,
+                        'language_id' => $lang_id,
+                    ]);
+                }
+
+                return response()->json([
+                    "status"     => 200,
+                    "msg"        => "Doctor location, education & languages updated successfully.",
+                    "doctor_id"  => $doctor_id
+                ]);
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    "status" => 500,
+                    "msg"    => "Server Error: " . $e->getMessage()
+                ]);
+            }
+        }
+    }
+
+
 
 
     public function delete(Request $request, $id){
