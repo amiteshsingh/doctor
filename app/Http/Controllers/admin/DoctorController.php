@@ -72,8 +72,7 @@ class DoctorController extends Controller
                     $update['approval_status'] = $data['approval_status'];
                     $update['latitude'] = $data['latitude'];
                     $update['longitude'] = $data['longitude'];
-                    $update['updated_on'] = date('Y-m-d H:i:s');
-                    
+                    $update['updated_on'] = date('Y-m-d H:i:s');                    
                    
                     if(DB::table('doctors')->where('id', $data['id'])->update($update)){
                         return response()->json(["status"=>200,"msg"=>"Doctor updated successfully."]);
@@ -86,11 +85,11 @@ class DoctorController extends Controller
                     $doctor->name = isset($data['name'])?$data['name']:'';
                     $doctor->phone_no = isset($data['phone_no'])?$data['phone_no']:'';
                     $doctor->email = isset($data['email'])?$data['email']:'';
-                    // $doctor->latitude = isset($data['latitude'])?$data['latitude']:'';
-                    // $doctor->longitude = isset($data['longitude'])?$data['longitude']:'';
                     $doctor->status = isset($data['status'])?$data['status']:'';
                     $doctor->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
                     $doctor->added_on = date('Y-m-d H:i:s');
+                    $doctor->added_by = Session::get('user_id');
+
                     if($doctor->save()){
                         return response()->json(["status"=>200,"msg"=>"Doctors saved successfully."]);
                     }else{
@@ -141,11 +140,23 @@ class DoctorController extends Controller
                     $doctor->education_details = $education->details;
                 }
                 
+                $doctor_availability = DB::table('doctor_availability')->where('doctor_id', $data['id'])->get();
+                $availability = [];
+                foreach ($doctor_availability as $entry) {
+                    $availability[$entry->day] = [
+                        'start_time' => $entry->start_time,
+                        'end_time' => $entry->end_time,
+                    ];
+                }
+
+                // Attach to doctor object (or array)
+                $doctor->availability = $availability;
             }
             $specializations = DB::table('specializations')->where('status', 1)->get()->toArray();
             $languages = DB::table('languages')->get()->toArray();
+            $states = DB::table('states')->get()->toArray();
 
-            return view('admin.doctor.add', compact('doctor', 'specializations', 'languages'));
+            return view('admin.doctor.add', compact('doctor', 'specializations', 'languages', 'states'));
         }
     }
 
@@ -181,22 +192,22 @@ class DoctorController extends Controller
         }
     }
 
-    public function doctorLocation(Request $request){
+    public function doctorLocation(Request $request)
+    {
+        try {
+            if (empty(Session::get('user_id'))) {
+                return redirect('/');
+            }
 
-        if (empty(Session::get('user_id'))) {
-            return redirect('/');
-        }
+            $data = $request->all();
 
-        $data = $request->all();
-
-        if ($request->isMethod('post') && $request->ajax()) {
-            try {
+            if ($request->isMethod('post') && $request->ajax()) {
                 $request->validate([
                     'practice_name'      => 'required',
                     'address'            => 'required',
                     'city'               => 'required',
                     'state'              => 'required',
-                    'zip_code'           => 'required',
+                    'pin_code'           => 'required|numeric',
                     'location_phone'     => 'required',
                     'degree_type'        => 'required',
                     'institution_name'   => 'required',
@@ -205,34 +216,33 @@ class DoctorController extends Controller
                     'languages'          => 'required|array|min:1',
                 ]);
 
-                if (!isset($data['id']) || empty($data['id'])) {
+                if (empty($data['id'])) {
                     return response()->json(["status" => 403, "msg" => "Invalid doctor ID."]);
                 }
 
                 $doctor_id = $data['id'];
 
-                // 🔁 doctor_locations table
+                // Insert or update doctor location
                 $location_data = [
                     'practice_name' => $data['practice_name'],
                     'address'       => $data['address'],
                     'city'          => $data['city'],
                     'state'         => $data['state'],
-                    'zip_code'      => $data['zip_code'],
+                    'zip_code'      => $data['pin_code'],
                     'phone'         => $data['location_phone'],
                     'updated_at'    => now(),
                 ];
 
-                // Check if record exists
-                $existingLocation = DB::table('doctor_locations')->where('doctor_id', $doctor_id)->first();
-                if ($existingLocation) {
+                $existing = DB::table('doctor_locations')->where('doctor_id', $doctor_id)->first();
+                if ($existing) {
                     DB::table('doctor_locations')->where('doctor_id', $doctor_id)->update($location_data);
                 } else {
-                    $location_data['doctor_id'] = $doctor_id;
+                    $location_data['doctor_id']  = $doctor_id;
                     $location_data['created_at'] = now();
                     DB::table('doctor_locations')->insert($location_data);
                 }
 
-                // doctor_educations table (replace with latest)
+                // Insert doctor education (one record)
                 DB::table('doctor_educations')->where('doctor_id', $doctor_id)->delete();
                 DB::table('doctor_educations')->insert([
                     'doctor_id'         => $doctor_id,
@@ -242,7 +252,7 @@ class DoctorController extends Controller
                     'details'           => $data['education_details'],
                 ]);
 
-                //  doctor_languages table (multi-select)
+                // Insert doctor languages (multiple)
                 DB::table('doctor_languages')->where('doctor_id', $doctor_id)->delete();
                 foreach ($data['languages'] as $lang_id) {
                     DB::table('doctor_languages')->insert([
@@ -253,20 +263,85 @@ class DoctorController extends Controller
 
                 return response()->json([
                     "status"     => 200,
-                    "msg"        => "Doctor location, education & languages updated successfully.",
+                    "msg"        => "Doctor location, education, and languages updated successfully.",
                     "doctor_id"  => $doctor_id
                 ]);
-
-            } catch (\Exception $e) {
-                return response()->json([
-                    "status" => 500,
-                    "msg"    => "Server Error: " . $e->getMessage()
-                ]);
             }
+
+            return response()->json(["status" => 405, "msg" => "Invalid request."]);
+
+        } catch (\Exception $e) {
+            // Optional: Log the error to Laravel log
+            \Log::error('Doctor Location Update Error: ' . $e->getMessage());
+
+            return response()->json([
+                "status" => 500,
+                "msg"    => "Server Error: " . $e->getMessage()
+            ]);
         }
     }
 
 
+    public function doctorAvailability(Request $request)
+    {
+        try {
+            $request->validate([
+                'id'           => 'required|integer|exists:doctors,id',
+                'availability' => 'required|array',
+            ]);
+
+            $doctorId    = $request->input('id');
+            $availability = $request->input('availability');
+            // Delete existing availability
+            DB::table('doctor_availability')->where('doctor_id', $doctorId)->delete();
+
+            $inserts = [];
+            foreach ($availability as $day => $time) {
+                if (!empty($time['start_time']) && !empty($time['end_time'])) {
+                    $inserts[] = [
+                        'doctor_id'  => $doctorId,
+                        'day'        => $day,
+                        'start_time' => $time['start_time'],
+                        'end_time'   => $time['end_time'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }else{
+                    $inserts[] = [
+                        'doctor_id'  => $doctorId,
+                        'day'        => $day,
+                        'start_time' => 'Closed',
+                        'end_time'   => 'Closed',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+
+            if (!empty($inserts)) {
+                DB::table('doctor_availability')->insert($inserts);
+            }
+
+            return response()->json([
+                'status'     => 200,
+                'msg'    => 'Availability saved successfully!',
+                'doctor_id'  => $doctorId,
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            return response()->json([
+                'status'  => 422,
+                'msg' => 'Validation failed.',
+                'errors'  => $ve->errors()
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Doctor Availability Error: ' . $e->getMessage());
+            return response()->json([
+                'status'  => 500,
+                'msg' => 'Server Error: ' . $e->getMessage()
+            ]);
+        }
+    }
 
 
     public function delete(Request $request, $id){

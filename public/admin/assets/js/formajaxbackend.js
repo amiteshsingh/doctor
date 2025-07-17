@@ -330,6 +330,56 @@ $(function() {
         });
     });
 
+    // Validate doctor_availability_form add, edit
+    $(document).on("click", "#save_doctor_availability", function () {
+        $("#doctor_availability_form").validate({
+            rules: {
+                // Add dynamic rules if needed
+                // 'availability[Monday][start_time]': { required: true },
+                // 'availability[Monday][end_time]': { required: true },
+                // etc...
+            },
+            messages: {
+                // Dynamic messages can be added if required
+            },
+            submitHandler: function () {
+                var formData = new FormData($("#doctor_availability_form")[0]);
+                let url = base_url + "doctor/doctor_availability";
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                        $(".loaderDiv").removeClass("hidden");
+                    },
+                    success: function (response) {
+                        $(".loaderDiv").addClass("hidden");
+
+                        if (response.status === 200) {
+                            $.jGrowl(response.msg, { header: "Availability Saved", theme: 'success-theme' });
+
+                            // Redirect or jump to another tab
+                            setTimeout(function () {
+                                window.location.href = base_url + `doctor/add?id=${response.doctor_id}#basictab4`;
+                            }, 2000);
+                        } else {
+                            $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
+                        }
+                    },
+                    error: function (xhr) {
+                        $(".loaderDiv").addClass("hidden");
+                        $.jGrowl("Something went wrong!", { header: "Error", theme: 'error-theme' });
+                    }
+                });
+            }
+        });
+    });
+
+
 
 
 

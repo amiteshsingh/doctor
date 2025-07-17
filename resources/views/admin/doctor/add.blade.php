@@ -30,9 +30,8 @@
                         <li class="nav-item"><a class="nav-link active" href="#basictab1" data-toggle="tab">Doctor's Details</a></li>
                         <?php if(isset($doctor->id) && $doctor->id != ''){ ?>
                         <li class="nav-item"><a class="nav-link" href="#basictab2" data-toggle="tab">Doctor's Specialization</a></li>
-                        <?php } ?>
-                         <?php if(isset($doctor->id) && $doctor->id != ''){ ?>
                         <li class="nav-item"><a class="nav-link" href="#basictab3" data-toggle="tab">Personal Information</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#basictab4" data-toggle="tab">Availability</a></li>
                         <?php } ?>
                     </ul>
 
@@ -173,14 +172,23 @@
                                 <div class="form-group row">
                                     <label class="col-form-label col-md-2">State</label>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" name="state" value="{{isset($doctor->state)?$doctor->state:''}}">
+
+                                        <select name="state" class="form-control select">
+                                            <option value="">-- Select State --</option>
+                                            @foreach($states as $state)
+                                                <option value="{{ $state->state_name }}"
+                                                    {{ (isset($doctor->state) && $doctor->state == $state->state_name) ? 'selected' : '' }}>
+                                                    {{ $state->state_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>                                   
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-form-label col-md-2">Zip Code</label>
+                                    <label class="col-form-label col-md-2">Pin Code</label>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" name="zip_code" value="{{isset($doctor->zip_code)?$doctor->zip_code:''}}">
+                                        <input type="number" class="form-control" name="pin_code" value="{{isset($doctor->zip_code)?$doctor->zip_code:''}}"  min="100000" max="999999" maxlength="6" >
                                     </div>
                                 </div>
 
@@ -248,6 +256,57 @@
                                 </div>
                             </form>
                         </div>
+
+                        <div class="tab-pane" id="basictab4">
+                            <form method="POST" id="doctor_availability_form" name="doctor_availability_form">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="id" value="{{ isset($doctor->id) ? $doctor->id : '' }}">
+
+                                @php
+                                    $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                                @endphp
+
+                                @foreach($days as $day)
+                                <div class="row">
+                                    <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="col-form-label col-md-2">{{ $day }}</label>
+                                    </div>
+                                    </div>
+                              
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Start Time</label>
+                                            <div class="time-icon">
+                                                <input type="text" name="availability[{{ $day }}][start_time]" class="form-control datetimepicker3"
+                                                        value="{{ $doctor->availability[$day]['start_time'] ?? '' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>End Time</label>
+                                            <div class="time-icon">
+                                                <input type="text" name="availability[{{ $day }}][end_time]" class="form-control datetimepicker3" 
+                                                        value="{{ $doctor->availability[$day]['end_time'] ?? '' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                @endforeach
+
+                                <div class="form-group row">
+                                    <div class="col-md-4 text-right">
+                                        <button type="submit" id="save_doctor_availability" class="btn btn-primary">Save Availability</button>
+                                        <a href="{{ route('admin.doctor') }}" class="btn btn-primary">Back</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
 
 
                     

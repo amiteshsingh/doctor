@@ -21,6 +21,13 @@
     <script src="{{ asset('admin/assets/js/ajaxbackend.js') }}"></script>
     <script src="{{ asset('admin/assets/js/formajaxbackend.js') }}"></script>
 
+    <script>
+    $(function () {
+        $('.datetimepicker3').datetimepicker({
+            format: 'LT'
+        });
+    });
+    </script>
 
 
     <!-- jGrowl CSS -->
