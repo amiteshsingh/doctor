@@ -65,6 +65,14 @@ class DoctorController extends Controller
                 
                 if(isset($data['id']) && $data['id'] !=""){
                     //Update doctor
+
+                    if ($request->hasFile('profile_pic')) {
+                        $image = $request->file('profile_pic');
+                        $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
+                        $image->move(public_path('uploads/doctor'), $imageName);
+                        $update['profile_pic'] = $imageName;
+                    }
+
                     $update['name'] = $data['name'];
                     $update['phone_no'] = $data['phone_no'];
                     $update['email'] = $data['email'];
@@ -72,7 +80,9 @@ class DoctorController extends Controller
                     $update['approval_status'] = $data['approval_status'];
                     $update['latitude'] = $data['latitude'];
                     $update['longitude'] = $data['longitude'];
-                    $update['updated_on'] = date('Y-m-d H:i:s');                    
+                    $update['updated_on'] = date('Y-m-d H:i:s');  
+                    $update['updated_by'] = Session::get('user_id');                  
+                    $update['hospital_id'] = $data['hospital_id'];                  
                    
                     if(DB::table('doctors')->where('id', $data['id'])->update($update)){
                         return response()->json(["status"=>200,"msg"=>"Doctor updated successfully."]);
@@ -82,6 +92,13 @@ class DoctorController extends Controller
                 }else{
                     //Save doctor 
                     $doctor = new Doctor;
+
+                    if ($request->hasFile('profile_pic')) {
+                        $image = $request->file('profile_pic');
+                        $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
+                        $image->move(public_path('uploads/doctor'), $imageName);
+                        $doctor->profile_pic = $imageName;
+                    }
                     $doctor->name = isset($data['name'])?$data['name']:'';
                     $doctor->phone_no = isset($data['phone_no'])?$data['phone_no']:'';
                     $doctor->email = isset($data['email'])?$data['email']:'';
@@ -89,7 +106,8 @@ class DoctorController extends Controller
                     $doctor->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
                     $doctor->added_on = date('Y-m-d H:i:s');
                     $doctor->added_by = Session::get('user_id');
-
+                    $doctor->updated_by = Session::get('user_id');
+                    
                     if($doctor->save()){
                         return response()->json(["status"=>200,"msg"=>"Doctors saved successfully."]);
                     }else{
@@ -154,9 +172,10 @@ class DoctorController extends Controller
             }
             $specializations = DB::table('specializations')->where('status', 1)->get()->toArray();
             $languages = DB::table('languages')->get()->toArray();
+            $hospitals = DB::table('hospitals')->where('updated_by', Session::get('user_id'))->get()->toArray();
             $states = DB::table('states')->get()->toArray();
 
-            return view('admin.doctor.add', compact('doctor', 'specializations', 'languages', 'states'));
+            return view('admin.doctor.add', compact('doctor', 'specializations', 'languages', 'states', 'hospitals'));
         }
     }
 

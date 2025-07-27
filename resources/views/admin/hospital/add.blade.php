@@ -45,6 +45,22 @@
                                         <input type="text" class="form-control" name="name" id="name" value="{{isset($hospital->name)?$hospital->name:''}}">
                                     </div>
                                 </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Profile Picture</label>
+                                    <div class="col-md-9">
+                                        <input type="file" class="form-control" name="image" id="image" accept="image/*">
+
+                                        @php
+                                            $Image = isset($hospital->image) && file_exists(public_path('uploads/hopital/'.$hospital->profile_pic))
+                                                            ? asset('uploads/hopital/'.$hospital->image)
+                                                            : asset('uploads/hopital/default.png'); // default image path
+                                        @endphp
+
+                                        <img class="doctor-img avatar" src="{{ $Image }}" style="margin-top: 10px;">
+                                    </div>
+                                </div>
+
                                 <div class="form-group row">
                                     <label class="col-form-label col-md-2">Phone Number</label>
                                     <div class="col-md-9">

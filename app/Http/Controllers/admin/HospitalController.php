@@ -70,7 +70,14 @@ class HospitalController extends Controller
                 ]);
                 
                 if(isset($data['id']) && $data['id'] !=""){
-                    //Update hospital
+                     //Update hospital
+                    if ($request->hasFile('image')) {
+                        $image = $request->file('image');
+                        $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
+                        $image->move(public_path('uploads/hopital'), $imageName);
+                        $update['image'] = $imageName;
+                    }
+                   
                     $update['name'] = $data['name'];
                     $update['phone_no'] = $data['phone_no'];
                     $update['email'] = $data['email'];
@@ -83,6 +90,7 @@ class HospitalController extends Controller
                     $update['latitude'] = $data['latitude'];
                     $update['longitude'] = $data['longitude'];
                     $update['updated_on'] = date('Y-m-d H:i:s');
+                    $update['updated_by'] = Session::get('user_id');
                     
                    
                     if(DB::table('hospitals')->where('id', $data['id'])->update($update)){
@@ -93,6 +101,13 @@ class HospitalController extends Controller
                 }else{
                     //Save hospital 
                     $hospital = new Hospital;
+
+                    if ($request->hasFile('image')) {
+                        $image = $request->file('image');
+                        $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
+                        $image->move(public_path('uploads/hopital'), $imageName);
+                        $doctor->image = $imageName;
+                    }
                     $hospital->name = isset($data['name'])?$data['name']:'';
                     $hospital->phone_no = isset($data['phone_no'])?$data['phone_no']:'';
                     $hospital->address = isset($data['address'])?$data['address']:'';
@@ -105,6 +120,10 @@ class HospitalController extends Controller
                     $hospital->status = isset($data['status'])?$data['status']:'';
                     $hospital->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
                     $hospital->added_on = date('Y-m-d H:i:s');
+                    $hospital->added_by = Session::get('user_id');
+                    $hospital->updated_by = Session::get('user_id');
+
+                    
                     if($hospital->save()){
                         return response()->json(["status"=>200,"msg"=>"Hospitals saved successfully."]);
                     }else{

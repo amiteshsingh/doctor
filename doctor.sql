@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 17, 2025 at 11:59 AM
+-- Generation Time: Jul 27, 2025 at 10:40 AM
 -- Server version: 9.1.0
 -- PHP Version: 8.2.12
 
@@ -56,6 +56,7 @@ CREATE TABLE `doctors` (
   `name` varchar(255) NOT NULL,
   `phone_no` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `email` varchar(255) DEFAULT NULL,
+  `profile_pic` varchar(225) DEFAULT NULL,
   `latitude` decimal(9,6) DEFAULT NULL,
   `longitude` decimal(9,6) DEFAULT NULL,
   `hospital_id` int DEFAULT NULL,
@@ -63,15 +64,16 @@ CREATE TABLE `doctors` (
   `approval_status` int NOT NULL DEFAULT '0',
   `added_on` datetime DEFAULT NULL,
   `added_by` int NOT NULL,
-  `updated_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `updated_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_by` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `doctors`
 --
 
-INSERT INTO `doctors` (`id`, `name`, `phone_no`, `email`, `latitude`, `longitude`, `hospital_id`, `status`, `approval_status`, `added_on`, `added_by`, `updated_on`) VALUES
-(1, 'demo', '9898989898', 'demo@gmail.com', 0.000000, 0.000000, NULL, 1, 1, '2025-07-13 08:31:48', 1, '2025-07-17 09:39:36');
+INSERT INTO `doctors` (`id`, `name`, `phone_no`, `email`, `profile_pic`, `latitude`, `longitude`, `hospital_id`, `status`, `approval_status`, `added_on`, `added_by`, `updated_on`, `updated_by`) VALUES
+(1, 'demo Doctor', '9898989898', 'demo@gmail.com', '1753602818_6885db02dbd87.jpg', 0.000000, 0.000000, NULL, 1, 1, '2025-07-13 08:31:48', 1, '2025-07-27 08:07:18', 1);
 
 -- --------------------------------------------------------
 
@@ -94,13 +96,13 @@ CREATE TABLE `doctor_availability` (
 --
 
 INSERT INTO `doctor_availability` (`id`, `doctor_id`, `day`, `start_time`, `end_time`, `created_at`, `updated_at`) VALUES
-(49, 1, 'Monday', '2:56 PM', '2:57 PM', '2025-07-17 04:25:20', '2025-07-17 04:25:20'),
-(50, 1, 'Tuesday', '3:04 PM', '3:05 PM', '2025-07-17 04:25:20', '2025-07-17 04:25:20'),
-(51, 1, 'Wednesday', '3:05 PM', '3:05 PM', '2025-07-17 04:25:20', '2025-07-17 04:25:20'),
-(52, 1, 'Thursday', '3:05 PM', '3:05 PM', '2025-07-17 04:25:20', '2025-07-17 04:25:20'),
-(53, 1, 'Friday', '3:05 PM', '3:05 PM', '2025-07-17 04:25:20', '2025-07-17 04:25:20'),
-(54, 1, 'Saturday', 'Closed', 'Closed', '2025-07-17 04:25:20', '2025-07-17 04:25:20'),
-(55, 1, 'Sunday', 'Closed', 'Closed', '2025-07-17 04:25:20', '2025-07-17 04:25:20');
+(56, 1, 'Monday', '2:56 PM', '2:57 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
+(57, 1, 'Tuesday', '3:04 PM', '3:05 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
+(58, 1, 'Wednesday', '3:05 PM', '3:05 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
+(59, 1, 'Thursday', '3:05 PM', '3:05 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
+(60, 1, 'Friday', '3:05 PM', '3:05 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
+(61, 1, 'Saturday', 'Closed', 'Closed', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
+(62, 1, 'Sunday', 'Closed', 'Closed', '2025-07-26 10:26:08', '2025-07-26 10:26:08');
 
 -- --------------------------------------------------------
 
@@ -216,6 +218,7 @@ CREATE TABLE `failed_jobs` (
 CREATE TABLE `hospitals` (
   `id` int NOT NULL,
   `name` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
   `phone_no` varchar(20) DEFAULT NULL,
   `address` text NOT NULL,
   `email` varchar(255) DEFAULT NULL,
@@ -227,35 +230,37 @@ CREATE TABLE `hospitals` (
   `status` int NOT NULL DEFAULT '0',
   `approval_status` int NOT NULL DEFAULT '0',
   `added_on` datetime DEFAULT NULL,
-  `updated_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `updated_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `added_by` int DEFAULT NULL,
+  `updated_by` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `hospitals`
 --
 
-INSERT INTO `hospitals` (`id`, `name`, `phone_no`, `address`, `email`, `city`, `state`, `zip_code`, `latitude`, `longitude`, `status`, `approval_status`, `added_on`, `updated_on`) VALUES
-(1, 'AIIMS Delhi', '011-26588500', 'Ansari Nagar, New Delhi', NULL, 'New Delhi', 'Delhi', '110029', 28.567200, 77.210000, 1, 1, NULL, '2025-06-20 17:58:13'),
-(2, 'Fortis Hospital', '011-47135000', 'Sector B, Pocket 1, Aruna Asaf Ali Marg', NULL, 'New Delhi', 'Delhi', '110070', 28.513500, 77.167400, 1, 0, NULL, '2025-04-24 18:05:36'),
-(3, 'Apollo Hospital Chennai', '044-28293333', '21, Greams Lane, Off Greams Road', NULL, 'Chennai', 'Tamil Nadu', '600006', 13.060400, 80.254900, 0, 0, NULL, '2025-04-24 18:05:36'),
-(4, 'Narayana Health Bangalore', '080-71222222', '258/A, Bommasandra Industrial Area', NULL, 'Bangalore', 'Karnataka', '560099', 12.834200, 77.677000, 0, 0, NULL, '2025-04-24 18:05:36'),
-(5, 'Kokilaben Dhirubhai Ambani Hospital', '022-30999999', 'Four Bungalows, Andheri West', NULL, 'Mumbai', 'Maharashtra', '400053', 19.134300, 72.827500, 0, 0, NULL, '2025-04-24 18:05:36'),
-(6, 'Tata Memorial Hospital', '022-24177000', 'Dr. E Borges Road, Parel', NULL, 'Mumbai', 'Maharashtra', '400012', 18.998600, 72.841600, 0, 0, NULL, '2025-04-24 18:05:36'),
-(7, 'Medanta The Medicity', '0124-4141414', 'CH Baktawar Singh Road, Sector 38', NULL, 'Gurugram', 'Haryana', '122001', 28.459500, 77.026600, 0, 0, NULL, '2025-04-24 18:05:36'),
-(8, 'Max Super Speciality Hospital', '011-26515050', 'Press Enclave Road, Saket', NULL, 'New Delhi', 'Delhi', '110017', 28.524000, 77.206100, 0, 0, NULL, '2025-04-24 18:05:36'),
-(9, 'CMC Vellore', '0416-2281000', 'IDA Scudder Road', NULL, 'Vellore', 'Tamil Nadu', '632004', 12.916500, 79.132500, 0, 0, NULL, '2025-04-24 18:05:36'),
-(10, 'Sankara Nethralaya', '044-28271616', 'College Road, Nungambakkam', NULL, 'Chennai', 'Tamil Nadu', '600006', 13.064500, 80.248400, 0, 0, NULL, '2025-04-24 18:05:36'),
-(11, 'Artemis Hospital', '0124-4511111', 'Sector 51, Gurgaon', NULL, 'Gurugram', 'Haryana', '122001', 28.430400, 77.048700, 0, 0, NULL, '2025-04-24 18:05:36'),
-(12, 'Columbia Asia Hospital', '080-61656666', 'Kirloskar Business Park, Bellary Road', NULL, 'Bangalore', 'Karnataka', '560024', 13.037600, 77.592600, 0, 0, NULL, '2025-04-24 18:05:36'),
-(13, 'Rainbow Children’s Hospital', '040-44442424', 'Banjara Hills, Hyderabad', NULL, 'Hyderabad', 'Telangana', '500034', 17.420800, 78.438300, 0, 0, NULL, '2025-04-24 18:05:36'),
-(14, 'Sir Ganga Ram Hospital', '011-25750000', 'Rajinder Nagar, New Delhi', NULL, 'New Delhi', 'Delhi', '110060', 28.639800, 77.189600, 0, 0, NULL, '2025-04-24 18:05:36'),
-(15, 'Yashoda Hospital', '040-45674567', 'Alexander Road, Secunderabad', NULL, 'Hyderabad', 'Telangana', '500003', 17.436100, 78.503500, 0, 0, NULL, '2025-04-24 18:05:36'),
-(16, 'Amrita Institute of Medical Sciences', '0484-2851234', 'Ponekkara, Kochi', NULL, 'Kochi', 'Kerala', '682041', 10.031800, 76.308700, 0, 0, NULL, '2025-04-24 18:05:36'),
-(17, 'Ruby Hall Clinic', '020-26163391', '40, Sassoon Road', NULL, 'Pune', 'Maharashtra', '411001', 18.530000, 73.876500, 0, 0, NULL, '2025-04-24 18:05:36'),
-(18, 'Jehangir Hospital', '020-66819999', '32, Sassoon Road', NULL, 'Pune', 'Maharashtra', '411001', 18.529800, 73.874400, 0, 0, NULL, '2025-05-23 17:56:05'),
-(19, 'BM Birla Heart Research Centre', '033-30403040', '1/1 National Library Ave, Alipore', NULL, 'Kolkata', 'West Bengal', '700027', 22.537000, 88.329400, 1, 1, NULL, '2025-05-23 17:58:11'),
-(20, 'Woodlands Hospital', '033-40330000', '8/5, Alipore Road', NULL, 'Kolkata', 'West Bengal', '700027', 22.533300, 88.326500, 1, 1, NULL, '2025-06-20 18:25:56'),
-(25, 'fdgdfgsfgs', '43534532', 'dfgdfshsdf', 'adfgs@gdf.com', 'fgdfgsf', 'gsfgdf', '32433', NULL, NULL, 0, 0, '2025-07-03 00:59:18', '2025-07-04 01:09:57');
+INSERT INTO `hospitals` (`id`, `name`, `image`, `phone_no`, `address`, `email`, `city`, `state`, `zip_code`, `latitude`, `longitude`, `status`, `approval_status`, `added_on`, `updated_on`, `added_by`, `updated_by`) VALUES
+(1, 'AIIMS Delhi', NULL, '011-26588500', 'Ansari Nagar, New Delhi', NULL, 'New Delhi', 'Delhi', '110029', 28.567200, 77.210000, 1, 1, NULL, '2025-06-20 17:58:13', NULL, NULL),
+(2, 'Fortis Hospital', NULL, '011-47135000', 'Sector B, Pocket 1, Aruna Asaf Ali Marg', NULL, 'New Delhi', 'Delhi', '110070', 28.513500, 77.167400, 1, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(3, 'Apollo Hospital Chennai', NULL, '044-28293333', '21, Greams Lane, Off Greams Road', NULL, 'Chennai', 'Tamil Nadu', '600006', 13.060400, 80.254900, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(4, 'Narayana Health Bangalore', NULL, '080-71222222', '258/A, Bommasandra Industrial Area', NULL, 'Bangalore', 'Karnataka', '560099', 12.834200, 77.677000, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(5, 'Kokilaben Dhirubhai Ambani Hospital', NULL, '022-30999999', 'Four Bungalows, Andheri West', NULL, 'Mumbai', 'Maharashtra', '400053', 19.134300, 72.827500, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(6, 'Tata Memorial Hospital', NULL, '022-24177000', 'Dr. E Borges Road, Parel', NULL, 'Mumbai', 'Maharashtra', '400012', 18.998600, 72.841600, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(7, 'Medanta The Medicity', NULL, '0124-4141414', 'CH Baktawar Singh Road, Sector 38', NULL, 'Gurugram', 'Haryana', '122001', 28.459500, 77.026600, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(8, 'Max Super Speciality Hospital', NULL, '011-26515050', 'Press Enclave Road, Saket', NULL, 'New Delhi', 'Delhi', '110017', 28.524000, 77.206100, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(9, 'CMC Vellore', NULL, '0416-2281000', 'IDA Scudder Road', NULL, 'Vellore', 'Tamil Nadu', '632004', 12.916500, 79.132500, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(10, 'Sankara Nethralaya', NULL, '044-28271616', 'College Road, Nungambakkam', NULL, 'Chennai', 'Tamil Nadu', '600006', 13.064500, 80.248400, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(11, 'Artemis Hospital', NULL, '0124-4511111', 'Sector 51, Gurgaon', NULL, 'Gurugram', 'Haryana', '122001', 28.430400, 77.048700, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(12, 'Columbia Asia Hospital', NULL, '080-61656666', 'Kirloskar Business Park, Bellary Road', NULL, 'Bangalore', 'Karnataka', '560024', 13.037600, 77.592600, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(13, 'Rainbow Children’s Hospital', NULL, '040-44442424', 'Banjara Hills, Hyderabad', NULL, 'Hyderabad', 'Telangana', '500034', 17.420800, 78.438300, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(14, 'Sir Ganga Ram Hospital', NULL, '011-25750000', 'Rajinder Nagar, New Delhi', NULL, 'New Delhi', 'Delhi', '110060', 28.639800, 77.189600, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(15, 'Yashoda Hospital', NULL, '040-45674567', 'Alexander Road, Secunderabad', NULL, 'Hyderabad', 'Telangana', '500003', 17.436100, 78.503500, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(16, 'Amrita Institute of Medical Sciences', NULL, '0484-2851234', 'Ponekkara, Kochi', NULL, 'Kochi', 'Kerala', '682041', 10.031800, 76.308700, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(17, 'Ruby Hall Clinic', NULL, '020-26163391', '40, Sassoon Road', NULL, 'Pune', 'Maharashtra', '411001', 18.530000, 73.876500, 0, 0, NULL, '2025-04-24 18:05:36', NULL, NULL),
+(18, 'Jehangir Hospital', NULL, '020-66819999', '32, Sassoon Road', NULL, 'Pune', 'Maharashtra', '411001', 18.529800, 73.874400, 0, 0, NULL, '2025-05-23 17:56:05', NULL, NULL),
+(19, 'BM Birla Heart Research Centre', NULL, '033-30403040', '1/1 National Library Ave, Alipore', NULL, 'Kolkata', 'West Bengal', '700027', 22.537000, 88.329400, 1, 1, NULL, '2025-05-23 17:58:11', NULL, NULL),
+(20, 'Woodlands Hospital', NULL, '033-40330000', '8/5, Alipore Road', NULL, 'Kolkata', 'West Bengal', '700027', 22.533300, 88.326500, 1, 1, NULL, '2025-06-20 18:25:56', NULL, NULL),
+(25, 'demo hospital', '1753605602_6885e5e2d0cec.webp', '43534532', 'demo address', 'adfgs@gdf.com', 'fgdfgsf', 'gsfgdf', '32433', NULL, NULL, 0, 0, '2025-07-03 00:59:18', '2025-07-27 08:40:02', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -428,7 +433,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('8594CQzgQC7NP88K2YcsB7my6IybPoLsI85eytBg', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiSFBaMUxDMFRhWXlJWFVtSUNGV3VuOG03azVXRndCamtqa2NBU3czayI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9kb2N0b3IvYWRkP2lkPTEiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6NzoidXNlcl9pZCI7aToxO3M6MTA6InVzZXJfZW1haWwiO3M6MjY6ImFtaXRlc2hzaW5naDk0QG91dGxvb2suY29tIjtzOjk6InVzZXJfcm9sZSI7czo1OiJhZG1pbiI7fQ==', 1752746120);
+('FKr2RZD5r007vfNESKzn8SaCZsNmcW9Czf0NX1Ga', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiZDFPTE5jUlVtb0E2Q2JkWGFjN0xaNVZmQ1JUSDcwemhRQ01yMzhwVyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjc6InVzZXJfaWQiO2k6MTtzOjEwOiJ1c2VyX2VtYWlsIjtzOjI2OiJhbWl0ZXNoc2luZ2g5NEBvdXRsb29rLmNvbSI7czo5OiJ1c2VyX3JvbGUiO3M6NToiYWRtaW4iO3M6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjM0OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vZG9jdG9yIjt9fQ==', 1753548307),
+('wOOE6V6e4KHgA5Ihp4oiFCRMo0ZeO5HRZdnqgR87', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiSEZWUG1GM2tWeXJhRlUwanYyZ2V3WXJrczBhUUlDcmVFNmxmenh0USI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9ob3NwaXRhbC9hZGQ/aWQ9MjUiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6NzoidXNlcl9pZCI7aToxO3M6MTA6InVzZXJfZW1haWwiO3M6MjY6ImFtaXRlc2hzaW5naDk0QG91dGxvb2suY29tIjtzOjk6InVzZXJfcm9sZSI7czo1OiJhZG1pbiI7fQ==', 1753605608);
 
 -- --------------------------------------------------------
 
@@ -747,7 +753,7 @@ ALTER TABLE `doctors`
 -- AUTO_INCREMENT for table `doctor_availability`
 --
 ALTER TABLE `doctor_availability`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `doctor_educations`

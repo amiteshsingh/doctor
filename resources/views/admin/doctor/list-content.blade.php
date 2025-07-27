@@ -17,7 +17,6 @@ foreach($res as $doctor){
     <td>{{$doctor->name}}</td>
     <td>{{ $doctor->phone_no }}</td>
     <td>{{ $doctor->email }}</td>
->
     <td>
     @if ($doctor->status == 1)
         <a class="custom-badge status-green " href="#" data-toggle="dropdown" aria-expanded="false">

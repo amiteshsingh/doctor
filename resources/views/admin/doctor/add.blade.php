@@ -38,7 +38,7 @@
 
                     <div class="tab-content">
                         <div class="tab-pane show active" id="basictab1">
-                            <form  method="POST" id="doctor_form" name="doctor_form">
+                            <form method="POST" id="doctor_form" name="doctor_form" enctype="multipart/form-data">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="id" value="{{isset($doctor->id)?$doctor->id:''}}">
                                 <div class="form-group row">
@@ -47,6 +47,23 @@
                                         <input type="text" class="form-control" name="name" id="name" value="{{isset($doctor->name)?$doctor->name:''}}">
                                     </div>
                                 </div>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Profile Picture</label>
+                                    <div class="col-md-9">
+                                        <input type="file" class="form-control" name="profile_pic" id="profile_pic" accept="image/*">
+
+                                        @php
+                                            $profileImage = isset($doctor->profile_pic) && file_exists(public_path('uploads/doctor/'.$doctor->profile_pic))
+                                                            ? asset('uploads/doctor/'.$doctor->profile_pic)
+                                                            : asset('uploads/doctor/user.jpg'); // default image path
+                                        @endphp
+
+                                        <img class="doctor-img avatar" src="{{ $profileImage }}"  style="margin-top: 10px;">
+                                    </div>
+                                </div>
+
+
                                 <div class="form-group row">
                                     <label class="col-form-label col-md-2">Phone Number</label>
                                     <div class="col-md-9">
@@ -74,6 +91,24 @@
                                         <input type="text" class="form-control" name="longitude" id="longitude" value="{{isset($doctor->longitude)?$doctor->longitude:''}}">
                                     </div>
                                 </div>
+                                <?php if(isset($doctor->id) && $doctor->id != ''){ ?>
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Hospital</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control select" name="hospital_id">
+                                            <option value="">Select Hospital</option>
+                                            @foreach($hospitals as $hospital)
+                                                <option value="{{ $hospital->id }}"
+                                                    {{ (isset($doctor->language_data) && $hospital->id == $doctor->hospital_id) ? 'selected' : '' }}>
+                                                    {{ $hospital->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <?php } ?>
                             
                                 <div class="form-group row">
                                     <label class="col-form-label col-md-2">Status</label>
