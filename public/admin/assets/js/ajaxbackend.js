@@ -199,6 +199,8 @@ function FilterReset(page, type, url){
 
     $('.filterHospital').val('').trigger('change');
     $('.filterSpecialization').val('').trigger('change');
+    $('.filterDoctor').val('').trigger('change');
+
 
     $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
 
