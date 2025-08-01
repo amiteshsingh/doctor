@@ -18,8 +18,8 @@
     <script src="{{ asset('admin/assets/js/moment.min.js') }}"></script>
     <script src="{{ asset('admin/assets/js/bootstrap-datetimepicker.min.js') }}"></script>
     
-    <script src="{{ asset('admin/assets/js/ajaxbackend.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/formajaxbackend.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/doctor_ajaxbackend.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/doctor_formajaxbackend.js') }}"></script>
 
     <script>
     $(function () {

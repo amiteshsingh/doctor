@@ -4,18 +4,14 @@
                     <ul>
                         <li class="menu-title">Main</li>
                         <li class="active">
-                            <a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                            <a href="{{ route('doctor.dashboard') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
                          <li>
-                            <a href="{{ route('admin.hospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
+                            <a href="#"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.doctor') }}"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
+                            <a href="{{ route('doctor.mydoctor') }}"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
                         </li>
-                        <li>
-                            <a href="{{ route('admin.specialization') }}"><i class="fa fa-hospital-o"></i> <span>Specialization</span></a>
-                        </li>
-                       
                         <li>
                             <a href="patients.html"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>

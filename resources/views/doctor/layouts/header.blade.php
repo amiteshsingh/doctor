@@ -65,11 +65,6 @@
         font-weight: bold;
     }
 
-  
-.page-wrapper {
-    margin-left: 0px;
-}
-
     </style>
 
 
@@ -89,7 +84,7 @@
 
 <div class="header">
     <div class="header-left">
-        <a href="{{ route('admin.dashboard') }}" class="logo">
+        <a href="{{ route('doctor.dashboard') }}" class="logo">
             <img src="{{ asset('admin/assets/img/logo.png') }}" width="35" height="35" alt=""> <span>Preclinic</span>
         </a>
     </div>

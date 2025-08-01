@@ -66,15 +66,24 @@ Route::middleware(['admin'])->group(function () {
     Route::any('/admin/doctor/delete/{id}', [DoctorController::class, 'delete'])->name('admin.doctor.delete');
     Route::any('/admin/doctor/doctor_specialization', [DoctorController::class, 'doctorSpecializations'])->name('admin.doctor.hospital_specialization');
     Route::any('/admin/doctor/doctor_location', [DoctorController::class, 'doctorLocation'])->name('admin.doctor.doctor_location');
-    Route::post('/admin/doctor/doctor_availability', [DoctorController::class, 'doctorAvailability'])->name('doctor.doctor_availability');
+    Route::post('/admin/doctor/doctor_availability', [DoctorController::class, 'doctorAvailability'])->name('admin.doctor_availability');
 
 
 
 });
-
+// ------------------------------------------------------------------------------------
 // Doctor Routes
 Route::middleware(['doctor'])->group(function () {
+    
     Route::get('/doctor/dashboard', [DoctorPanelController::class, 'dashboard'])->name('doctor.dashboard');
+
+    Route::any('/doctor/mydoctor', [DoctorPanelController::class, 'index'])->name('doctor.mydoctor');
+    Route::any('/doctor/mydoctor/add', [DoctorPanelController::class, 'add'])->name('doctor.mydoctor.add');
+    Route::any('/doctor/mydoctor/delete/{id}', [DoctorPanelController::class, 'delete'])->name('doctor.mydoctor.delete');
+    Route::any('/doctor/mydoctor/doctor_specialization', [DoctorPanelController::class, 'doctorSpecializations'])->name('doctor.mydoctor.hospital_specialization');
+    Route::any('/doctor/mydoctor/doctor_location', [DoctorPanelController::class, 'doctorLocation'])->name('doctor.doctor.doctor_location');
+    Route::post('/doctor/mydoctor/doctor_availability', [DoctorPanelController::class, 'doctorAvailability'])->name('doctor.mydoctor.doctor_availability');
+
 });
 
 // Auth Routes

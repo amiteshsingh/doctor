@@ -1,8 +1,9 @@
 
 @include('doctor.layouts.header')
-<!-- @include('admin.layout.sidebar') -->
+
+@include('doctor.layouts.sidebar')
 
 @yield('content')
 
-    
 @include('doctor.layouts.footer')
+
