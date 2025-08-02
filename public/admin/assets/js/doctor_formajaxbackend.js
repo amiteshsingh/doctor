@@ -58,61 +58,7 @@ $(function() {
 
 
 
-    /**
-     * Validate Hospital Form add, edit.
-     */
-     $(document).on("click", "#save_specialization", function(){
-        $("#specialization_form").validate({
-            rules: {
-                name: {
-                    required: true
-                },
-               
-                status: {
-                    required: true
-                },
-        
-            },
-            messages: {
-                name: {
-                    required: "This field required."
-                },
-               
-                status: {
-                    required: "This field required."
-                }
-
-            },
-            submitHandler: function () {
-                var formData = new FormData($("#specialization_form")[0]);
-                let url = base_url + "specialization/add";
-                $.ajax({
-                    url: url,
-                    data: formData,
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    type: 'POST',
-                    beforeSend: function () {
-                        $(".loaderDiv").removeClass("hidden");
-                    },
-                    success: function (response) {
-                        $(".loaderDiv").addClass("hidden");
-                        if (response.status === 200) {
-                            // alert(response.status);
-                            $.jGrowl(response.msg, { header: "Specialization", theme: 'success-theme' });
-
-                            window.setTimeout(function () {
-                                window.location.href = base_url + "specialization";
-                            }, 2000);
-                        } else {
-                            $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
-                        }
-                    }
-                });
-            }
-        });
-    });
+   
 
     /**
      * Validate Hospital Form add, edit.
@@ -189,7 +135,7 @@ $(function() {
             },
             submitHandler: function () {
                 var formData = new FormData($("#doctor_form")[0]);
-                let url = base_url + "doctor/add";
+                let url = base_url + "mydoctor/add";
                 $.ajax({
                     url: url,
                     data: formData,
@@ -207,7 +153,7 @@ $(function() {
                             $.jGrowl(response.msg, { header: "Doctor", theme: 'success-theme' });
 
                             window.setTimeout(function () {
-                                window.location.href = base_url + "doctor";
+                                window.location.href = base_url + "mydoctor";
                             }, 2000);
                         } else {
                             $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });

@@ -6,89 +6,28 @@
 <div class="page-wrapper">
     <div class="content">
         <div class="row">
-            <div class="col-sm-8 col-5">
+            <div class="col-sm-4 col-3">
                 <h4 class="page-title">{{$title}}</h4>
             </div>
-            <div class="col-sm-4 col-7 text-right m-b-30">
+            <div class="col-sm-8 col-9 text-right m-b-20">
                 <a href="{{ route('doctor.mydoctor.add') }}" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Doctor</a>
             </div>
         </div>
-        <div class="row filter-row">
-            
-            <div class="col-md-5">
-                <div class="form-group form-focus">
-                    <label class="focus-label">Name, Phone, Email</label>
-                    <input type="text" class="form-control floating filterDoctor" id="search" >
-                    <input type="hidden" name="sortBy" id="sortBy" value="">
-                    <input type="hidden" name="orderBy" id="orderBy" value="">
+      
+
+            <div class="row doctor-grid" id="data_listing">
+                    @if(isset($result['content_html']))
+                    <?= $result['content_html'] ?>
+                    @endif
+            </div>
+    
+            <div class="box-footer clearfix">                  
+                <div id="pagination_data">
+                    @if(isset($result['pagination_html']))
+                        <?= $result['pagination_html'] ?>
+                    @endif
                 </div>
             </div>
-
-            <div class="col-md-2">
-                <div class="form-group form-focus select-focus">
-                    <label class="focus-label">Status</label>
-                    <select class="filterDoctor select floating" id="status">
-                        <option value=""> -- Select -- </option>
-                        <option value="1">Active</option>
-                        <option  value="0">Inactive</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="form-group form-focus select-focus">
-                    <label class="focus-label">Approve Status</label>
-                    <select class="filterDoctor select floating"  id="approval_status">
-                        <option value=""> -- Select -- </option>
-                        <option value="1">Active</option>
-                        <option  value="0">Inactive</option>
-                        <option  value="2">Block</option>
-                    </select>
-                </div>
-            </div>
-          
-        
-           
-            <div class="col-md-3">
-                <!-- <a href="#" class=""> Reset </a> -->
-                <a href="javascript:void(0)" class="btn btn-success btn-block" onclick="FilterReset(1,'doctor','doctor','filterDoctor')">Clear All Filters</a>
-
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name <i class="fas ajaxSorting fa-sort " data-type="doctor" data-sort_by="name" data-sort_order="asc"></i> </th>
-                                <th>Phone <i class="fas ajaxSorting fa-sort" data-type="doctor" data-sort_by="phone_no" data-sort_order="asc"></i></th>
-                                <th>Email <i class="fas ajaxSorting fa-sort" data-type="doctor" data-sort_by="email" data-sort_order="asc"></i></th>
-                                <th >Status <i class="fas ajaxSorting fa-sort" data-type="doctor" data-sort_by="status" data-sort_order="asc"></i></th>
-                                <th>Approve <i class="fas ajaxSorting fa-sort" data-type="doctor" data-sort_by="approval_status" data-sort_order="asc"></i></th>
-                                <th class="text-right">Actions</th>
-
-                            </tr>
-                        </thead>
-                        <tbody id="data_listing">
-                                @if(isset($result['content_html']))
-                                <?= $result['content_html'] ?>
-                                @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        
-                <div class="box-footer clearfix">                  
-                    <div id="pagination_data">
-                        @if(isset($result['pagination_html']))
-                            <?= $result['pagination_html'] ?>
-                        @endif
-                    </div>
-                </div>
 
     </div>
     <div class="notification-box">

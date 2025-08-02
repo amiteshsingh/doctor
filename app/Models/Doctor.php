@@ -4,6 +4,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
+use Illuminate\Support\Facades\Auth;
+use App\Models\UserRole;
 
 
 class Doctor extends Model
@@ -21,6 +23,14 @@ class Doctor extends Model
         $query = DB::table('doctors')
                 ->offset($offset)
                 ->limit($page_size);
+
+                // Middleware 'doctor' restriction
+                $user = Auth::user();
+                $userRole = UserRole::where('user_id', $user->id)->first();
+                if (isset($userRole->role) && $userRole->role == 'doctor') {
+                    $query->where('added_by', $userRole->user_id);
+                }
+
                 if(isset($filter['sortBy']) && $filter['sortBy'] !="" && isset($filter['orderBy']) && $filter['orderBy'] != ""){
                     $sortBy = $filter['sortBy'];
                     $orderBy = $filter['orderBy']; 
@@ -43,6 +53,7 @@ class Doctor extends Model
                     });   
                 }
         $data = $query->get()->toArray();
+        // echo $query->toSql();
         return $data;
     }
 
@@ -52,8 +63,15 @@ class Doctor extends Model
     * return Result fetching data
     */
     public static function getTotalResult($filter=[]){
-        $query = DB::table('doctors')
-                ->orderBy('doctors.id','desc');
+        $query = DB::table('doctors') ->orderBy('doctors.id','desc');
+
+                // Middleware 'doctor' restriction
+                $user = Auth::user();
+                $userRole = UserRole::where('user_id', $user->id)->first();
+                if (isset($userRole->role) && $userRole->role == 'doctor') {
+                    $query->where('added_by', $userRole->user_id);
+                }
+
                 if(isset($filter['status']) && $filter['status'] != ""){
                     $query->where('doctors.status','=', $filter['status']);
                 }

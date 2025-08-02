@@ -3,7 +3,7 @@
  * Author: Clavax Technologies Pvt. Ltd.
  * Varsion: 1.0
  */
-APP_URL = "http://127.0.0.1:8000/admin/";
+APP_URL = "http://127.0.0.1:8000/doctor/";
  if(APP_URL.endsWith('/')===false){
     var base_url = APP_URL+'/';
 }else{
@@ -23,7 +23,7 @@ $(document).ready(function(){
     })
     $(document).on("change keyup",".filterDoctor", function(){
         $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-        ajaxSearching(1, 'doctor', 'doctor');
+        ajaxSearching(1, 'doctor', 'mydoctor');
     })
 
     

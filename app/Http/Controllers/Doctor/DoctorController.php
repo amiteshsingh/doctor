@@ -41,8 +41,8 @@ class DoctorController extends Controller
                 $page =  isset($filter['page'])?$filter['page']:$page;
                 $records = Doctor::getResult($page, $page_size, $filter);
                 $total = Doctor::getTotalResult($filter);
-                $content_html =  view('admin.doctor.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
-                $pagination_html = view('pagination.pagination')->with(['url'=> 'doctor', 'recTotal' => $total, 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'doctor'])->render();
+                $content_html =  view('doctor.mydoctor.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
+                $pagination_html = view('pagination.pagination')->with(['url'=> 'mydoctor', 'recTotal' => $total, 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'doctor'])->render();
                 $result['pagination_html'] = $pagination_html;
                 $result['content_html'] = $content_html;
                 $result['error'] = 0;
@@ -54,16 +54,16 @@ class DoctorController extends Controller
                 $result['total_count'] = Doctor::getTotalResult($filter);
                 $result['page'] = $page;
                 $result['page_size'] = $page_size;
-                $pagination_html = view('pagination.pagination')->with(['url'=> 'doctor', 'recTotal' => $result['total_count'], 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'doctor'])->render();
+                $pagination_html = view('pagination.pagination')->with(['url'=> 'mydoctor', 'recTotal' => $result['total_count'], 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'doctor'])->render();
                 $result['pagination_html'] = $pagination_html;
-                $content_html =  view('admin.doctor.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
+                $content_html =  view('doctor.mydoctor.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
                 $result['content_html'] = $content_html;
             }
         }catch(\Exception $e){
             var_dump($e->getMessage()); die;
             return redirect()->back()->withError('Something went wrong');
         }
-        $title = "Doctor List";
+        $title = "Doctors";
         return view('doctor.mydoctor.index', compact('result', 'title')); 
 
     }
@@ -193,7 +193,7 @@ class DoctorController extends Controller
             $hospitals = DB::table('hospitals')->where('updated_by', Session::get('user_id'))->get()->toArray();
             $states = DB::table('states')->get()->toArray();
 
-            return view('doctor.doctor.add', compact('doctor', 'specializations', 'languages', 'states', 'hospitals'));
+            return view('doctor.mydoctor.add', compact('doctor', 'specializations', 'languages', 'states', 'hospitals'));
         }
     }
 
