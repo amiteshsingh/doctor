@@ -149,15 +149,20 @@ $(function() {
                     success: function (response) {
                         $(".loaderDiv").addClass("hidden");
                         if (response.status === 200) {
-                            // alert(response.status);
                             $.jGrowl(response.msg, { header: "Doctor", theme: 'success-theme' });
 
-                            window.setTimeout(function () {
-                                window.location.href = base_url + "mydoctor";
-                            }, 2000);
-                        } else {
-                            $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
+                            // redirect to edit mode if redirect_url is available
+                            if (response.redirect_url) {
+                                window.setTimeout(function () {
+                                    window.location.href = response.redirect_url;
+                                }, 2000);
+                            } else {
+                                window.setTimeout(function () {
+                                    window.location.href = base_url + "mydoctor";
+                                }, 2000);
+                            }
                         }
+
                     }
                 });
             }
@@ -183,7 +188,7 @@ $(function() {
             },
             submitHandler: function () {
                 var formData = new FormData($("#doctor_specialization_form")[0]);
-                let url = base_url + "doctor/doctor_specialization";
+                let url = base_url + "mydoctor/doctor_specialization";
                 $.ajax({
                     url: url,
                     data: formData,
@@ -202,7 +207,7 @@ $(function() {
                             $.jGrowl(response.msg, { header: "Doctor Specialization", theme: 'success-theme' });
 
                             window.setTimeout(function () {
-                                window.location.href = base_url + `doctor/add?id=${response.doctor_id}#basictab2`;
+                                window.location.href = base_url + `mydoctor/add?id=${response.doctor_id}#basictab2`;
                             }, 2000);
                         } else {
                             $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
@@ -248,7 +253,7 @@ $(function() {
             },
             submitHandler: function () {
                 var formData = new FormData($("#doctor_location_form")[0]);
-                let url = base_url + "doctor/doctor_location";
+                let url = base_url + "mydoctor/doctor_location";
 
                 $.ajax({
                     url: url,
@@ -265,7 +270,7 @@ $(function() {
                         if (response.status === 200) {
                             $.jGrowl(response.msg, { header: "Doctor Info", theme: 'success-theme' });
                             window.setTimeout(function () {
-                                window.location.href = base_url + `doctor/add?id=${response.doctor_id}#basictab3`;
+                                window.location.href = base_url + `mydoctor/add?id=${response.doctor_id}#basictab3`;
                             }, 2000);
                         } else {
                             $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
@@ -290,7 +295,7 @@ $(function() {
             },
             submitHandler: function () {
                 var formData = new FormData($("#doctor_availability_form")[0]);
-                let url = base_url + "doctor/doctor_availability";
+                let url = base_url + "mydoctor/doctor_availability";
 
                 $.ajax({
                     url: url,
@@ -310,7 +315,7 @@ $(function() {
 
                             // Redirect or jump to another tab
                             setTimeout(function () {
-                                window.location.href = base_url + `doctor/add?id=${response.doctor_id}#basictab4`;
+                                window.location.href = base_url + `mydoctor/add?id=${response.doctor_id}#basictab4`;
                             }, 2000);
                         } else {
                             $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
