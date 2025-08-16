@@ -129,7 +129,7 @@
 
                                     <div class="col-md-4 text-right">
                                     <button type="submit" id="save_doctor" class="btn btn-primary">Submit</button>
-                                    <a href="{{ route('admin.doctor') }}" type="submit" class="btn btn-primary">Back</a>
+                                    <a href="{{ route('doctor.mydoctor') }}" type="submit" class="btn btn-primary">Back</a>
                                         
                                 </div>
                             
@@ -162,7 +162,7 @@
                                 <div class="form-group row">
                                     <div class="col-md-4 text-right">
                                         <button type="submit" id="save_doctor_specialization" class="btn btn-primary">Submit</button>
-                                        <a href="{{ route('admin.doctor') }}" class="btn btn-primary">Back</a>
+                                        <a href="{{ route('doctor.mydoctor') }}" class="btn btn-primary">Back</a>
                                     </div>
                                 </div>
                             </form>
@@ -187,7 +187,7 @@
                                 <div class="form-group row">
                                     <label class="col-form-label col-md-2">Address</label>
                                     <div class="col-md-9">
-                                        <textarea class="form-control" name="address">{{isset($doctor->address)?$doctor->address:''}}</textarea>
+                                        <input type="text" class="form-control" name="address" value="{{isset($doctor->address)?$doctor->address:''}}">
                                     </div>
                                 </div>
 
@@ -227,6 +227,21 @@
                                         <input type="text" class="form-control" name="location_phone" value="{{isset($doctor->location_phone)?$doctor->location_phone:''}}">
                                     </div>
                                 </div>
+
+                                <div class="form-group row">
+                                <label class="col-form-label col-md-2">Doctor's Experience <small>(from year)</small></label>
+                                    <div class="col-md-9">
+                                        <select name="experience" class="form-control" required>
+                                            <option value="">-- Select Year --</option>
+                                            @for($year = date('Y'); $year >= 1980; $year--)
+                                                <option value="{{ $year }}" {{ (isset($doctor->experience) && $doctor->experience == $year) ? 'selected' : '' }}>
+                                                    {{ $year }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
+
 
                                 <hr>
                                 <h5 class="mb-3">Education</h5>
@@ -280,7 +295,7 @@
                                 <div class="form-group row">
                                     <div class="col-md-4 text-right">
                                         <button type="submit" id="save_doctor_location" class="btn btn-primary">Submit</button>
-                                        <a href="{{ route('admin.doctor') }}" class="btn btn-primary">Back</a>
+                                        <a href="{{ route('doctor.mydoctor') }}" class="btn btn-primary">Back</a>
                                     </div>
                                 </div>
                             </form>
@@ -330,7 +345,7 @@
                                 <div class="form-group row">
                                     <div class="col-md-4 text-right">
                                         <button type="submit" id="save_doctor_availability" class="btn btn-primary">Save Availability</button>
-                                        <a href="{{ route('admin.doctor') }}" class="btn btn-primary">Back</a>
+                                        <a href="{{ route('doctor.mydoctor') }}" class="btn btn-primary">Back</a>
                                     </div>
                                 </div>
                             </form>
@@ -346,6 +361,40 @@
         </div>
     </div>
 </div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places"></script>
+
+<script>
+    function initializeAutocomplete() {
+        const input = document.getElementById('address');
+        const options = {
+            types: ['geocode'], // restrict results to address types
+            componentRestrictions: { country: 'in' } // restrict to India (change if needed)
+        };
+        const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+        // Optional: If you want to fill city, state, etc. automatically
+        autocomplete.addListener('place_changed', function () {
+            const place = autocomplete.getPlace();
+
+            // Example of extracting data:
+            place.address_components.forEach(component => {
+                const types = component.types;
+                if (types.includes('locality')) {
+                    document.querySelector('input[name="city"]').value = component.long_name;
+                }
+                if (types.includes('administrative_area_level_1')) {
+                    document.querySelector('select[name="state"]').value = component.long_name;
+                }
+                if (types.includes('postal_code')) {
+                    document.querySelector('input[name="pin_code"]').value = component.long_name;
+                }
+            });
+        });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initializeAutocomplete);
+</script>
 
 
 @endsection

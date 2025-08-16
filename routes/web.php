@@ -81,8 +81,10 @@ Route::middleware(['doctor'])->group(function () {
     Route::any('/doctor/mydoctor/add', [DoctorPanelController::class, 'add'])->name('doctor.mydoctor.add');
     Route::any('/doctor/mydoctor/delete/{id}', [DoctorPanelController::class, 'delete'])->name('doctor.mydoctor.delete');
     Route::any('/doctor/mydoctor/doctor_specialization', [DoctorPanelController::class, 'doctorSpecializations'])->name('doctor.mydoctor.hospital_specialization');
-    Route::any('/doctor/mydoctor/doctor_location', [DoctorPanelController::class, 'doctorLocation'])->name('doctor.doctor.doctor_location');
+    Route::any('/doctor/mydoctor/doctor_location', [DoctorPanelController::class, 'doctorLocation'])->name('doctor.mydoctor.doctor_location');
     Route::post('/doctor/mydoctor/doctor_availability', [DoctorPanelController::class, 'doctorAvailability'])->name('doctor.mydoctor.doctor_availability');
+    Route::get('/doctor/mydoctor/profile/{id}', [DoctorPanelController::class, 'profile'])->name('doctor.mydoctor.profile');
+
 
 });
 

@@ -21,6 +21,15 @@ class Doctor extends Model
     public static function getResult($page = 1, $page_size = 10, $filter = []){
         $offset = ($page - 1) * $page_size;
         $query = DB::table('doctors')
+                ->leftjoin('doctor_locations', 'doctors.id', '=', 'doctor_locations.doctor_id')
+                ->select(
+                    'doctors.*',
+                    'doctor_locations.practice_name',
+                    'doctor_locations.address',
+                    'doctor_locations.city',
+                    'doctor_locations.state',
+                    'doctor_locations.zip_code'
+                )
                 ->offset($offset)
                 ->limit($page_size);
 
@@ -63,31 +72,35 @@ class Doctor extends Model
     * return Result fetching data
     */
     public static function getTotalResult($filter=[]){
-        $query = DB::table('doctors') ->orderBy('doctors.id','desc');
+        $query = DB::table('doctors')
+        ->leftjoin('doctor_locations', 'doctors.id', '=', 'doctor_locations.doctor_id')
+        ->select('doctors.id') // Only selecting ID to optimize count
+        ->orderBy('doctors.id', 'desc');
 
-                // Middleware 'doctor' restriction
-                $user = Auth::user();
-                $userRole = UserRole::where('user_id', $user->id)->first();
-                if (isset($userRole->role) && $userRole->role == 'doctor') {
-                    $query->where('added_by', $userRole->user_id);
-                }
 
-                if(isset($filter['status']) && $filter['status'] != ""){
-                    $query->where('doctors.status','=', $filter['status']);
-                }
-                if(isset($filter['approval_status']) && $filter['approval_status'] != ""){
-                    $query->where('doctors.approval_status','=', $filter['approval_status']);
-                }
-                if(isset($filter['search']) && $filter['search'] !=""){
-                    $search = $filter['search'];
-                    $query->where(function($query) use ($search){
-                        $query->Where('name', 'LIKE','%' . $search . '%')
-                        ->orWhere('phone_no', 'LIKE','%' . $search . '%')
-                        ->orWhere('email', 'LIKE','%' . $search . '%');
-                    });   
-                }
-                // echo $data = $query->toSQL(); die;
-                $data = $query->get()->toArray();
-                return count($data);
+        // Middleware 'doctor' restriction
+        $user = Auth::user();
+        $userRole = UserRole::where('user_id', $user->id)->first();
+        if (isset($userRole->role) && $userRole->role == 'doctor') {
+            $query->where('added_by', $userRole->user_id);
+        }
+
+        if(isset($filter['status']) && $filter['status'] != ""){
+            $query->where('doctors.status','=', $filter['status']);
+        }
+        if(isset($filter['approval_status']) && $filter['approval_status'] != ""){
+            $query->where('doctors.approval_status','=', $filter['approval_status']);
+        }
+        if(isset($filter['search']) && $filter['search'] !=""){
+            $search = $filter['search'];
+            $query->where(function($query) use ($search){
+                $query->Where('name', 'LIKE','%' . $search . '%')
+                ->orWhere('phone_no', 'LIKE','%' . $search . '%')
+                ->orWhere('email', 'LIKE','%' . $search . '%');
+            });   
+        }
+        // echo $data = $query->toSQL(); die;
+        $data = $query->get()->toArray();
+        return count($data);
     }
 }

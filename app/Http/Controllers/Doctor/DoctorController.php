@@ -294,6 +294,11 @@ class DoctorController extends Controller
                     'graduation_year'   => $data['graduation_year'],
                     'details'           => $data['education_details'],
                 ]);
+                if(isset($data['experience']) && !empty($data['experience'])){
+                    // Update doctor experience if provided
+                   DB::table('doctors')->where('id', $doctor_id)->update(['experience' => $data['experience']]);     
+                }
+                
 
                 // Insert doctor languages (multiple)
                 DB::table('doctor_languages')->where('doctor_id', $doctor_id)->delete();
@@ -393,6 +398,56 @@ class DoctorController extends Controller
 		}
         $data = DB::table('doctors')->where('id','=',$id)->delete();
         $request->session()->flash('msg','doctor delete successfully.');
-        return redirect('doctor/doctor');  
+        return redirect('doctor/mydoctor');  
     }
+
+
+    public function profile(Request $request, $id)
+    {
+        if (empty(Session::get('user_id'))) {
+            return redirect('/');
+        }
+
+        // Get doctor basic info
+        $doctor = Doctor::find($id);
+        if (!$doctor) {
+            return redirect()->back()->withError('Doctor not found');
+        }
+
+        // Fetch related data
+        $availability = DB::table('doctor_availability')
+            ->where('doctor_id', $id)
+            ->get();
+
+        $educations = DB::table('doctor_educations')
+            ->where('doctor_id', $id)
+            ->get();
+
+        $languages = DB::table('doctor_languages')
+            ->join('languages', 'doctor_languages.language_id', '=', 'languages.id')
+            ->where('doctor_languages.doctor_id', $id)
+            ->select('languages.name as language_name')
+            ->get();
+
+        $locations = DB::table('doctor_locations')
+            ->where('doctor_id', $id)
+            ->get();
+
+        $specializations = DB::table('doctor_specializations')
+            ->join('specializations', 'doctor_specializations.specialization_id', '=', 'specializations.id')
+            ->where('doctor_specializations.doctor_id', $id)
+            ->select('specializations.name as specialization_name')
+            ->get();
+        $experiences = [];
+       
+        return view('doctor.mydoctor.profile', compact(
+            'doctor',
+            'availability',
+            'educations',
+            'languages',
+            'locations',
+            'specializations', 'experiences'
+        ));
+    }
+
 }
