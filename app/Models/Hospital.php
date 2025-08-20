@@ -4,6 +4,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
+use Illuminate\Support\Facades\Auth;
+use App\Models\UserRole;
 
 class Hospital extends Model
 {
@@ -21,6 +23,13 @@ class Hospital extends Model
         $query = DB::table('hospitals')
                 ->offset($offset)
                 ->limit($page_size);
+
+                $user = Auth::user();
+                $userRole = UserRole::where('user_id', $user->id)->first();
+                if (isset($userRole->role) && $userRole->role == 'doctor') {
+                    $query->where('added_by', $userRole->user_id);
+                }
+
                 if(isset($filter['sortBy']) && $filter['sortBy'] !="" && isset($filter['orderBy']) && $filter['orderBy'] != ""){
                     $sortBy = $filter['sortBy'];
                     $orderBy = $filter['orderBy']; 
@@ -56,6 +65,13 @@ class Hospital extends Model
     public static function getTotalResult($filter=[]){
         $query = DB::table('hospitals')
                 ->orderBy('hospitals.id','desc');
+
+                $user = Auth::user();
+                $userRole = UserRole::where('user_id', $user->id)->first();
+                if (isset($userRole->role) && $userRole->role == 'doctor') {
+                    $query->where('added_by', $userRole->user_id);
+                }
+
                 if(isset($filter['status']) && $filter['status'] != ""){
                     $query->where('hospitals.status','=', $filter['status']);
                 }

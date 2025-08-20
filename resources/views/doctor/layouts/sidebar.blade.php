@@ -7,7 +7,7 @@
                             <a href="{{ route('doctor.dashboard') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
                          <li>
-                            <a href="#"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
+                            <a href="{{ route('doctor.myhospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
                         </li>
                         <li>
                             <a href="{{ route('doctor.mydoctor') }}"><i class="fa fa-user-md"></i> <span>Doctors</span></a>

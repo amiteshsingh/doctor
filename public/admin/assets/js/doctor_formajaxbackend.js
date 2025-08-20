@@ -27,7 +27,7 @@ $(function() {
             },
             submitHandler: function () {
                 var formData = new FormData($("#hospital_form")[0]);
-                let url = base_url + "hospital/add";
+                let url = base_url + "myhospital/add";
                 $.ajax({
                     url: url,
                     data: formData,
@@ -45,7 +45,7 @@ $(function() {
                             $.jGrowl(response.msg, { header: "Hospital", theme: 'success-theme' });
 
                             window.setTimeout(function () {
-                                window.location.href = base_url + "hospital";
+                                window.location.href = base_url + "myhospital";
                             }, 2000);
                         } else {
                             $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
@@ -79,7 +79,7 @@ $(function() {
             },
             submitHandler: function () {
                 var formData = new FormData($("#hospital_specialization_form")[0]);
-                let url = base_url + "hospital/hospital_specialization";
+                let url = base_url + "myhospital/hospital_specialization";
                 $.ajax({
                     url: url,
                     data: formData,
@@ -98,7 +98,7 @@ $(function() {
                             $.jGrowl(response.msg, { header: "Hospital Specialization", theme: 'success-theme' });
 
                             window.setTimeout(function () {
-                                window.location.href = base_url + `hospital/add?id=${response.hospital_id}#basictab2`;
+                                window.location.href = base_url + `myhospital/add?id=${response.hospital_id}#basictab2`;
                             }, 2000);
                         } else {
                             $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });

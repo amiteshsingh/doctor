@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 27, 2025 at 10:40 AM
+-- Generation Time: Aug 20, 2025 at 04:07 AM
 -- Server version: 9.1.0
 -- PHP Version: 8.2.12
 
@@ -60,6 +60,7 @@ CREATE TABLE `doctors` (
   `latitude` decimal(9,6) DEFAULT NULL,
   `longitude` decimal(9,6) DEFAULT NULL,
   `hospital_id` int DEFAULT NULL,
+  `experience` int DEFAULT NULL,
   `status` int NOT NULL DEFAULT '0',
   `approval_status` int NOT NULL DEFAULT '0',
   `added_on` datetime DEFAULT NULL,
@@ -72,8 +73,12 @@ CREATE TABLE `doctors` (
 -- Dumping data for table `doctors`
 --
 
-INSERT INTO `doctors` (`id`, `name`, `phone_no`, `email`, `profile_pic`, `latitude`, `longitude`, `hospital_id`, `status`, `approval_status`, `added_on`, `added_by`, `updated_on`, `updated_by`) VALUES
-(1, 'demo Doctor', '9898989898', 'demo@gmail.com', '1753602818_6885db02dbd87.jpg', 0.000000, 0.000000, NULL, 1, 1, '2025-07-13 08:31:48', 1, '2025-07-27 08:07:18', 1);
+INSERT INTO `doctors` (`id`, `name`, `phone_no`, `email`, `profile_pic`, `latitude`, `longitude`, `hospital_id`, `experience`, `status`, `approval_status`, `added_on`, `added_by`, `updated_on`, `updated_by`) VALUES
+(1, 'demo Doctor', '9898989898', 'demo@gmail.com', '1753602818_6885db02dbd87.jpg', 0.000000, 0.000000, NULL, NULL, 1, 1, '2025-07-13 08:31:48', 1, '2025-07-27 08:07:18', 1),
+(4, 'Dr. Amitesh  Kumar Singh', 'fsdfad', 'testdoctor@gmail.com', '1754158558_688e55de360ff.jpg', NULL, NULL, NULL, 2015, 1, 0, '2025-08-02 18:15:58', 3, '2025-08-08 01:38:06', 3),
+(5, 'Cristina Groves', '35353453453', 'CristinaGroves@gmail.com', '1754162082_688e63a286b67.jpg', NULL, NULL, NULL, 1995, 1, 1, '2025-08-02 19:14:42', 3, '2025-08-03 00:44:42', 3),
+(6, 'doctor1', '234567890', 'fd@ghv.cii', '1754230353_688f6e5111ed5.jpg', NULL, NULL, NULL, NULL, 1, 0, '2025-08-03 14:12:33', 3, '2025-08-03 19:42:33', 3),
+(7, 'doctor 2', '34253232', 'sdads@gakl.com', '1754232857_688f7819ec1a3.jpg', NULL, NULL, NULL, NULL, 1, 1, '2025-08-03 14:54:17', 3, '2025-08-03 17:24:51', 1);
 
 -- --------------------------------------------------------
 
@@ -96,13 +101,27 @@ CREATE TABLE `doctor_availability` (
 --
 
 INSERT INTO `doctor_availability` (`id`, `doctor_id`, `day`, `start_time`, `end_time`, `created_at`, `updated_at`) VALUES
-(56, 1, 'Monday', '2:56 PM', '2:57 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
-(57, 1, 'Tuesday', '3:04 PM', '3:05 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
-(58, 1, 'Wednesday', '3:05 PM', '3:05 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
-(59, 1, 'Thursday', '3:05 PM', '3:05 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
-(60, 1, 'Friday', '3:05 PM', '3:05 PM', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
-(61, 1, 'Saturday', 'Closed', 'Closed', '2025-07-26 10:26:08', '2025-07-26 10:26:08'),
-(62, 1, 'Sunday', 'Closed', 'Closed', '2025-07-26 10:26:08', '2025-07-26 10:26:08');
+(63, 1, 'Monday', '2:56 PM', '2:57 PM', '2025-07-31 11:57:25', '2025-07-31 11:57:25'),
+(64, 1, 'Tuesday', '3:04 PM', '3:05 PM', '2025-07-31 11:57:25', '2025-07-31 11:57:25'),
+(65, 1, 'Wednesday', '3:05 PM', '3:05 PM', '2025-07-31 11:57:25', '2025-07-31 11:57:25'),
+(66, 1, 'Thursday', '3:05 PM', '3:05 PM', '2025-07-31 11:57:25', '2025-07-31 11:57:25'),
+(67, 1, 'Friday', '3:05 PM', '3:05 PM', '2025-07-31 11:57:25', '2025-07-31 11:57:25'),
+(68, 1, 'Saturday', 'Closed', 'Closed', '2025-07-31 11:57:25', '2025-07-31 11:57:25'),
+(69, 1, 'Sunday', 'Closed', 'Closed', '2025-07-31 11:57:25', '2025-07-31 11:57:25'),
+(84, 4, 'Monday', '8:23 PM', '8:23 PM', '2025-08-03 11:59:00', '2025-08-03 11:59:00'),
+(85, 4, 'Tuesday', '8:23 PM', '8:23 PM', '2025-08-03 11:59:00', '2025-08-03 11:59:00'),
+(86, 4, 'Wednesday', '8:23 PM', '8:23 PM', '2025-08-03 11:59:00', '2025-08-03 11:59:00'),
+(87, 4, 'Thursday', 'Closed', 'Closed', '2025-08-03 11:59:00', '2025-08-03 11:59:00'),
+(88, 4, 'Friday', 'Closed', 'Closed', '2025-08-03 11:59:00', '2025-08-03 11:59:00'),
+(89, 4, 'Saturday', 'Closed', 'Closed', '2025-08-03 11:59:00', '2025-08-03 11:59:00'),
+(90, 4, 'Sunday', 'Closed', 'Closed', '2025-08-03 11:59:00', '2025-08-03 11:59:00'),
+(91, 5, 'Monday', '3:48 PM', '3:48 PM', '2025-08-16 04:48:16', '2025-08-16 04:48:16'),
+(92, 5, 'Tuesday', '3:48 PM', '3:48 PM', '2025-08-16 04:48:16', '2025-08-16 04:48:16'),
+(93, 5, 'Wednesday', 'Closed', 'Closed', '2025-08-16 04:48:16', '2025-08-16 04:48:16'),
+(94, 5, 'Thursday', 'Closed', 'Closed', '2025-08-16 04:48:16', '2025-08-16 04:48:16'),
+(95, 5, 'Friday', 'Closed', 'Closed', '2025-08-16 04:48:16', '2025-08-16 04:48:16'),
+(96, 5, 'Saturday', 'Closed', 'Closed', '2025-08-16 04:48:16', '2025-08-16 04:48:16'),
+(97, 5, 'Sunday', 'Closed', 'Closed', '2025-08-16 04:48:16', '2025-08-16 04:48:16');
 
 -- --------------------------------------------------------
 
@@ -124,7 +143,10 @@ CREATE TABLE `doctor_educations` (
 --
 
 INSERT INTO `doctor_educations` (`id`, `doctor_id`, `degree_type`, `institution_name`, `graduation_year`, `details`) VALUES
-(10, 1, 'hjkjlk', 'gfhjhkl', 3332, 'fghjdsafadsfadssdf');
+(10, 1, 'hjkjlk', 'gfhjhkl', 3332, 'fghjdsafadsfadssdf'),
+(16, 7, 'dsgdsfds', 'dsfds', 3333, 'dgdfg'),
+(20, 4, 'MBA', 'AIIMS', 2022, 'about doctor details'),
+(21, 5, 'MCA', 'AIIMS', 1990, 'fasdfasd');
 
 -- --------------------------------------------------------
 
@@ -144,7 +166,17 @@ CREATE TABLE `doctor_languages` (
 
 INSERT INTO `doctor_languages` (`id`, `doctor_id`, `language_id`) VALUES
 (16, 1, 24),
-(17, 1, 8);
+(17, 1, 8),
+(30, 7, 3),
+(31, 7, 24),
+(32, 7, 1),
+(33, 7, 2),
+(38, 4, 24),
+(39, 4, 2),
+(40, 5, 3),
+(41, 5, 24),
+(42, 5, 1),
+(43, 5, 2);
 
 -- --------------------------------------------------------
 
@@ -171,7 +203,10 @@ CREATE TABLE `doctor_locations` (
 --
 
 INSERT INTO `doctor_locations` (`id`, `doctor_id`, `practice_name`, `address`, `city`, `state`, `zip_code`, `phone`, `website`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Dr. ABC', 'gisdjgkl', 'gfadklgjakl', 'Bihar', '123456', 'gsgderewrw', NULL, '2025-07-16 02:26:02', '2025-07-17 09:35:33');
+(1, 1, 'Dr. ABC', 'gisdjgkl', 'gfadklgjakl', 'Bihar', '123456', 'gsgderewrw', NULL, '2025-07-16 02:26:02', '2025-07-17 09:35:33'),
+(2, 4, 'Dr. Amitesh Singh', 'Barauli', 'Gopalganj', 'Bihar', '841405', '9999999999', NULL, '2025-08-03 14:51:43', '2025-08-16 09:40:43'),
+(3, 7, 'Dr. Gdkjgfas', 'ashok Vihar', 'Gurgram', 'Haryana', '545456', '454', NULL, '2025-08-03 14:55:49', '2025-08-08 01:36:41'),
+(4, 5, 'Dr. Cristina Groves', 'New Ashok Nagar', 'Delhi', 'Delhi', '110091', '986987698', NULL, '2025-08-16 10:18:03', '2025-08-16 10:18:03');
 
 -- --------------------------------------------------------
 
@@ -191,7 +226,13 @@ CREATE TABLE `doctor_specializations` (
 --
 
 INSERT INTO `doctor_specializations` (`id`, `doctor_id`, `specialization_id`, `created_at`) VALUES
-(6, 1, 8, '2025-07-13 04:07:24');
+(6, 1, 8, '2025-07-13 04:07:24'),
+(16, 6, 17, '2025-08-09 15:10:22'),
+(17, 7, 4, '2025-08-09 15:10:35'),
+(19, 4, 2, '2025-08-10 05:14:52'),
+(20, 4, 3, '2025-08-10 05:14:52'),
+(21, 5, 5, '2025-08-16 10:19:05'),
+(22, 5, 6, '2025-08-16 10:19:05');
 
 -- --------------------------------------------------------
 
@@ -260,7 +301,8 @@ INSERT INTO `hospitals` (`id`, `name`, `image`, `phone_no`, `address`, `email`, 
 (18, 'Jehangir Hospital', NULL, '020-66819999', '32, Sassoon Road', NULL, 'Pune', 'Maharashtra', '411001', 18.529800, 73.874400, 0, 0, NULL, '2025-05-23 17:56:05', NULL, NULL),
 (19, 'BM Birla Heart Research Centre', NULL, '033-30403040', '1/1 National Library Ave, Alipore', NULL, 'Kolkata', 'West Bengal', '700027', 22.537000, 88.329400, 1, 1, NULL, '2025-05-23 17:58:11', NULL, NULL),
 (20, 'Woodlands Hospital', NULL, '033-40330000', '8/5, Alipore Road', NULL, 'Kolkata', 'West Bengal', '700027', 22.533300, 88.326500, 1, 1, NULL, '2025-06-20 18:25:56', NULL, NULL),
-(25, 'demo hospital', '1753605602_6885e5e2d0cec.webp', '43534532', 'demo address', 'adfgs@gdf.com', 'fgdfgsf', 'gsfgdf', '32433', NULL, NULL, 0, 0, '2025-07-03 00:59:18', '2025-07-27 08:40:02', NULL, 1);
+(25, 'demo hospital', '1753605602_6885e5e2d0cec.webp', '43534532', 'demo address', 'adfgs@gdf.com', 'fgdfgsf', 'gsfgdf', '32433', NULL, NULL, 0, 0, '2025-07-03 00:59:18', '2025-07-27 08:40:02', NULL, 1),
+(26, 'asdfasdf', '1755482438_68a28946daaad.webp', '3456734583', 'sadfasdf', 'sdfas@gmail.com', 'sdfa', 'safasf', '345354', NULL, NULL, 0, 1, '2025-08-18 02:00:38', '2025-08-18 16:43:34', 3, 3);
 
 -- --------------------------------------------------------
 
@@ -301,7 +343,10 @@ INSERT INTO `hospital_specializations` (`id`, `hospital_id`, `specialization_id`
 (114, 1, 3, '2025-07-17 04:49:20'),
 (115, 1, 4, '2025-07-17 04:49:20'),
 (116, 1, 5, '2025-07-17 04:49:20'),
-(117, 1, 17, '2025-07-17 04:49:20');
+(117, 1, 17, '2025-07-17 04:49:20'),
+(123, 26, 2, '2025-08-18 16:43:11'),
+(124, 26, 3, '2025-08-18 16:43:11'),
+(125, 26, 4, '2025-08-18 16:43:11');
 
 -- --------------------------------------------------------
 
@@ -433,8 +478,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('FKr2RZD5r007vfNESKzn8SaCZsNmcW9Czf0NX1Ga', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiZDFPTE5jUlVtb0E2Q2JkWGFjN0xaNVZmQ1JUSDcwemhRQ01yMzhwVyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjc6InVzZXJfaWQiO2k6MTtzOjEwOiJ1c2VyX2VtYWlsIjtzOjI2OiJhbWl0ZXNoc2luZ2g5NEBvdXRsb29rLmNvbSI7czo5OiJ1c2VyX3JvbGUiO3M6NToiYWRtaW4iO3M6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjM0OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vZG9jdG9yIjt9fQ==', 1753548307),
-('wOOE6V6e4KHgA5Ihp4oiFCRMo0ZeO5HRZdnqgR87', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiSEZWUG1GM2tWeXJhRlUwanYyZ2V3WXJrczBhUUlDcmVFNmxmenh0USI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9ob3NwaXRhbC9hZGQ/aWQ9MjUiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6NzoidXNlcl9pZCI7aToxO3M6MTA6InVzZXJfZW1haWwiO3M6MjY6ImFtaXRlc2hzaW5naDk0QG91dGxvb2suY29tIjtzOjk6InVzZXJfcm9sZSI7czo1OiJhZG1pbiI7fQ==', 1753605608);
+('qK2C8MeCIaHCgvJXnpGQcZHz5AEaipoQske4iusI', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWmk0ZU9YcGpoSDlKdndLY3gyYmhXYXNiN1pFN1RpU0w1ZnJXb2xrTyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kb2N0b3JzIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1755654554),
+('u0hjRkjNOHJvauhukcU6ESSv2zaeWWyltHxYa0eG', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiS0Y3YldGTGJMTHRYMnlweXdkS0xwY3BGZmRZc1J2MWRMcjUwWE9BSSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6OTU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kb2N0b3JzP2FkZHJlc3M9Jm1pbl9leHBlcmllbmNlPTAmbmFtZT1Eci4lMjBBbWl0JTIwU2luZ2gmc3BlY2lhbGl6YXRpb249Ijt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MztzOjc6InVzZXJfaWQiO2k6MztzOjEwOiJ1c2VyX2VtYWlsIjtzOjE2OiJkb2N0b3JAZ21haWwuY29tIjtzOjk6InVzZXJfcm9sZSI7czo2OiJkb2N0b3IiO30=', 1755655575);
 
 -- --------------------------------------------------------
 
@@ -562,7 +607,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'Amitesh Singh', 'amiteshsingh94@outlook.com', NULL, '$2y$12$ohQ1JDBCoQUBef5sLboZA.muGrTSFilE83Xx3NmQHK02nXQLSKlJm', NULL, '2025-03-27 06:32:28', '2025-03-27 06:32:28'),
-(3, 'test', 'test@gmail.com', NULL, '$2y$12$ohQ1JDBCoQUBef5sLboZA.muGrTSFilE83Xx3NmQHK02nXQLSKlJm', NULL, '2025-03-27 06:47:49', '2025-03-27 06:47:49'),
+(3, 'test', 'doctor@gmail.com', NULL, '$2y$12$ohQ1JDBCoQUBef5sLboZA.muGrTSFilE83Xx3NmQHK02nXQLSKlJm', NULL, '2025-03-27 06:47:49', '2025-03-27 06:47:49'),
 (4, 'test1', 'test1@gmail.com', NULL, '$2y$12$ohQ1JDBCoQUBef5sLboZA.muGrTSFilE83Xx3NmQHK02nXQLSKlJm', NULL, '2025-03-29 08:21:05', '2025-03-29 08:21:05');
 
 -- --------------------------------------------------------
@@ -747,37 +792,37 @@ ALTER TABLE `user_roles`
 -- AUTO_INCREMENT for table `doctors`
 --
 ALTER TABLE `doctors`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `doctor_availability`
 --
 ALTER TABLE `doctor_availability`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
 
 --
 -- AUTO_INCREMENT for table `doctor_educations`
 --
 ALTER TABLE `doctor_educations`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `doctor_languages`
 --
 ALTER TABLE `doctor_languages`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `doctor_locations`
 --
 ALTER TABLE `doctor_locations`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `doctor_specializations`
 --
 ALTER TABLE `doctor_specializations`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -789,13 +834,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `hospitals`
 --
 ALTER TABLE `hospitals`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `hospital_specializations`
 --
 ALTER TABLE `hospital_specializations`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
 
 --
 -- AUTO_INCREMENT for table `jobs`

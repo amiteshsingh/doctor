@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\UserRole;
 
 
+
 class Doctor extends Model
 {
     use HasFactory;
@@ -102,5 +103,42 @@ class Doctor extends Model
         // echo $data = $query->toSQL(); die;
         $data = $query->get()->toArray();
         return count($data);
+    }
+
+
+
+    public static function allDoctor()
+    {
+        return collect([
+            [
+                "id" => 1,
+                "name" => "Dr. Amit Singh",
+                "specialization" => "Cardiologist",
+                "phone" => "9876543210",
+                "address" => "Delhi",
+                "experience" => 12,
+                "image" => "img/blog-1.jpg",
+                "social_links" => [
+                    "facebook" => "https://facebook.com/amit",
+                    "twitter" => "https://twitter.com/amit",
+                    "linkedin" => "https://linkedin.com/in/amit",
+                    "instagram" => "https://instagram.com/amit",
+                    "whatsapp" => "https://wa.me/9876543210",
+                ]
+            ],
+            [
+                "id" => 2,
+                "name" => "Dr. Neha Sharma",
+                "specialization" => "Dermatologist",
+                "phone" => "9123456789",
+                "address" => "Gurgaon",
+                "experience" => 7,
+                "image" => "img/blog-2.jpg",
+                "social_links" => [
+                    "facebook" => "https://facebook.com/neha",
+                    "linkedin" => "https://linkedin.com/in/neha",
+                ]
+            ],
+        ]);
     }
 }

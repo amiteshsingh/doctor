@@ -15,7 +15,7 @@ $(document).ready(function(){
   
     $(document).on("change keyup",".filterHospital", function(){
         $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-        ajaxSearching(1, 'hospital', 'hospital');
+        ajaxSearching(1, 'myhospital', 'myhospital');
     })
     $(document).on("change keyup",".filterSpecialization", function(){
         $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
@@ -94,7 +94,7 @@ function ajaxSearching(current_page, filtertype, url) {
             user_membership,user_membership,
         }
         //console.log(data);
-    }else if(type === 'hospital'){ 
+    }else if(type === 'myhospital'){ 
         var url = base_url + url;
         var search = $("#search").val();
 		var sortBy = $("#sortBy").val();

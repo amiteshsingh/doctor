@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SpecializationController;
 use App\Http\Controllers\Admin\DoctorController;
 
 use App\Http\Controllers\Doctor\DoctorController as DoctorPanelController;
+use App\Http\Controllers\Doctor\MyHospitalController;
 use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
@@ -84,6 +85,12 @@ Route::middleware(['doctor'])->group(function () {
     Route::any('/doctor/mydoctor/doctor_location', [DoctorPanelController::class, 'doctorLocation'])->name('doctor.mydoctor.doctor_location');
     Route::post('/doctor/mydoctor/doctor_availability', [DoctorPanelController::class, 'doctorAvailability'])->name('doctor.mydoctor.doctor_availability');
     Route::get('/doctor/mydoctor/profile/{id}', [DoctorPanelController::class, 'profile'])->name('doctor.mydoctor.profile');
+
+    Route::any('/doctor/myhospital', [MyHospitalController::class, 'index'])->name('doctor.myhospital');
+    Route::any('/doctor/myhospital/add', [MyHospitalController::class, 'add'])->name('doctor.myhospital.add');
+    Route::any('/doctor/myhospital/delete/{id}', [MyHospitalController::class, 'delete'])->name('doctor.myhospital.delete');
+    Route::any('/doctor/myhospital/hospital_specialization', [MyHospitalController::class, 'hospitalSpecializations'])->name('doctor.myhospital.hospital_specialization');
+
 
 
 });

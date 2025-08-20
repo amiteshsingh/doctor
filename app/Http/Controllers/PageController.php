@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
+use App\Models\Doctor;
 
 class PageController extends Controller
 {
@@ -20,9 +21,29 @@ class PageController extends Controller
         return view('page.about');
     }
 
-    public function doctor()
+    public function doctor(Request $request)
     {
-        return view('page.doctors');
+        $doctors = Doctor::allDoctor();
+
+        // 🔍 Search Filter
+        if ($request->filled('search')) {
+            $search = strtolower($request->search);
+            $doctors = $doctors->filter(function ($doctor) use ($search) {
+                return str_contains(strtolower($doctor['name']), $search) ||
+                       str_contains(strtolower($doctor['specialization']), $search) ||
+                       str_contains(strtolower($doctor['address']), $search);
+            });
+        }
+
+        // 🎓 Min Experience Filter
+        if ($request->filled('min_experience')) {
+            $minExp = (int) $request->min_experience;
+            $doctors = $doctors->filter(function ($doctor) use ($minExp) {
+                return $doctor['experience'] >= $minExp;
+            });
+        }
+
+        return view('page.doctors', ['doctors' => $doctors]);
     }
 
     public function hospital()
