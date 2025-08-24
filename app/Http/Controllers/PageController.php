@@ -56,8 +56,12 @@ class PageController extends Controller
         }
 
         $doctors = $query->where('status', 1)
-                        ->where('approval_status', 1)
-                        ->get();
+                     ->where('approval_status', 1)
+                     ->paginate(2);
+                     
+        if ($request->ajax()) {
+            return view('page.ajax.doctor_list', compact('doctors'))->render(); 
+        }                     
 
         return view('page.doctors', ['doctors' => $doctors]);
     }
@@ -90,8 +94,11 @@ class PageController extends Controller
 
         $hospitals = $query->where('status', 1)
                         ->where('approval_status', 1)
-                        ->get();
+                        ->paginate(10);
 
+        if ($request->ajax()) {
+            return view('page.ajax.hospital_list', compact('hospitals'))->render();
+        }
         return view('page.hospitals', ['hospitals' => $hospitals]);
     }
 

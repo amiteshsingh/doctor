@@ -3,167 +3,107 @@
 
 @section('content')
 
-    <!-- Doctor Listing Start -->
-    <div class="container-fluid py-5">
-        <div class="container">
-            <div class="text-center mx-auto mb-3" style="max-width: 600px;">
-                <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Doctors</h5>
-                <h1 class="display-6">Doctor Listing</h1>
-            </div>
-
-            <!-- Advanced Search -->
-            <div class="col-12 mb-4">
-                <form method="GET" action="{{ url('doctors') }}" class="row g-3">
-                    
-                    <!-- Doctor Name -->
-                    <div class="col-md-3">
-                        <input type="text" 
-                               name="name" 
-                               class="form-control" 
-                               placeholder="Search by Name" 
-                               value="{{ request('name') }}">
-                    </div>
-
-                    <!-- Specialization -->
-                    <div class="col-md-3">
-                        <input type="text" 
-                               name="specialization" 
-                               class="form-control" 
-                               placeholder="Specialization" 
-                               value="{{ request('specialization') }}">
-                    </div>
-
-                    <!-- Location -->
-                    <div class="col-md-3">
-                        <input type="text" 
-                               name="address" 
-                               class="form-control" 
-                               placeholder="Location / Address" 
-                               value="{{ request('address') }}">
-                    </div>
-
-                    <!-- Experience -->
-                     <div class="col-md-2">
-                        <select name="min_experience" class="form-control">
-                            <option value="">Select Min Experience</option>
-                            @for($i = 0; $i <= 40; $i += 5)
-                                <option value="{{ $i }}" {{ request('min_experience') == $i ? 'selected' : '' }}>
-                                    {{ $i }} Years
-                                </option>
-                            @endfor
-                        </select>
-                    </div>
-
-                    <!-- Search Button -->
-                    <div class="col-md-1 d-grid">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="row g-4">
-                {{-- Doctor Item --}}
-                @foreach($doctors as $doctor)
-                <div class="col-12">
-                    <div class="bg-light rounded overflow-hidden p-2 row align-items-center">
-                        
-                        @php
-                            $practiceName = optional($doctor->locations->first())->practice_name ?? $doctor->name;
-                        @endphp
-
-                        <!-- Doctor Image -->
-                        <div class="col-md-3 mb-3 mb-md-0">
-                            <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}">
-                                <img class="img-fluid rounded w-100" 
-                                    src="{{ asset('uploads/doctor/' . ($doctor->profile_pic ?? 'default.png')) }}" 
-                                    style="object-fit:cover;" 
-                                    alt="{{ $doctor->name }}">
-                            </a>
-                        </div>
-
-                        <!-- Doctor Details -->
-                        <div class="col-md-9">
-
-                            <h3 class="mb-3">
-                                <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}" 
-                                   class="text-decoration-none text-dark">
-                                    {{ $practiceName }}
-                                </a>
-                            </h3>
-
-                            <p class="mb-1">
-                                <strong>Specialization:</strong> 
-                                @if($doctor->specializations->isNotEmpty())
-                                    {{ $doctor->specializations->pluck('specialization.name')->implode(', ') }}
-                                @else
-                                    N/A
-                                @endif
-                            </p>
-
-                            @if(optional($doctor->locations->first())->phone)
-                                <p class="mb-1">
-                                    <strong>Phone:</strong> {{ $doctor->locations->first()->phone }}
-                                </p>
-                            @endif
-
-                            <p class="mb-1">
-                                <strong>Address:</strong> 
-                                @if($doctor->locations->isNotEmpty())
-                                    {{ $doctor->locations->first()->address }},
-                                    {{ $doctor->locations->first()->city }},
-                                    {{ $doctor->locations->first()->state }},
-                                    {{ $doctor->locations->first()->zip_code }}
-                                @else
-                                    N/A
-                                @endif
-                            </p>
-
-                            @if(!empty($doctor->experience))
-                                <p class="mb-3"><strong>Experience:</strong> {{ $doctor->experience ? now()->year - $doctor->experience : 'N/A' }}+ Years</p>
-                            @endif
-
-                            <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}" 
-                               class="btn btn-primary btn-sm mt-2 me-3">
-                                View Profile
-                            </a>
-
-                            <!-- Dynamic Social Icons -->
-                            <div class="d-inline-block mt-3">
-                                @php
-                                    $icons = [
-                                        "facebook" => "fab fa-facebook-f btn-outline-primary",
-                                        "twitter" => "fab fa-twitter btn-outline-info",
-                                        "linkedin" => "fab fa-linkedin-in btn-outline-primary",
-                                        "instagram" => "fab fa-instagram btn-outline-danger",
-                                        "whatsapp" => "fab fa-whatsapp btn-outline-success"
-                                    ];
-                                @endphp
-
-                                @if(!empty($doctor->social_links))
-                                    @foreach($doctor->social_links as $platform => $link)
-                                        @if(isset($icons[$platform]))
-                                            <a class="btn {{ $icons[$platform] }} btn-sm rounded-circle me-2" 
-                                            href="{{ $link }}" target="_blank">
-                                                <i class="{{ explode(' ', $icons[$platform])[0] }}"></i>
-                                            </a>
-                                        @endif
-                                    @endforeach
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-
-                {{-- Load More --}}
-                <div class="col-12 text-center mt-4">
-                    <button class="btn btn-primary py-3 px-5">Load More</button>
-                </div>
-            </div>
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-3" style="max-width: 600px;">
+            <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Doctors</h5>
+            <h1 class="display-6">Doctor Listing</h1>
         </div>
-    </div>
-    <!-- Doctor Listing End -->
+        
 
+        <!-- Search Form -->
+        <div class="col-12 mb-4">
+            <form id="doctorSearchForm" method="GET" action="{{ url('doctors') }}" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="name" class="form-control"
+                           placeholder="Search by Name" value="{{ request('name') }}">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="specialization" class="form-control"
+                           placeholder="Specialization" value="{{ request('specialization') }}">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="address" class="form-control"
+                           placeholder="Location / Address" value="{{ request('address') }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="min_experience" class="form-control">
+                        <option value="">Min Experience</option>
+                        @for($i = 0; $i <= 40; $i += 5)
+                            <option value="{{ $i }}" {{ request('min_experience') == $i ? 'selected' : '' }}>
+                                {{ $i }} Years
+                            </option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-1 d-grid">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Doctors List -->
+        <div class="row g-4" id="doctorList">
+            @include('page.ajax.doctor_list', ['doctors' => $doctors])
+        </div>
+
+        <!-- Load More Button -->
+        @if($doctors->hasMorePages())
+        <div class="col-12 text-center mt-4">
+            <button id="loadMoreBtn" class="btn btn-primary py-3 px-5"
+                    data-next-page="{{ $doctors->currentPage() + 1 }}">
+                Load More
+            </button>
+        </div>
+        @endif
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    // Load More Click
+    $(document).on('click', '#loadMoreBtn', function () {
+        let page = $(this).data('next-page');
+        let formData = $('#doctorSearchForm').serialize(); // get search filters
+
+        $.ajax({
+            url: "{{ url('doctors') }}?page=" + page + "&" + formData,
+            type: 'GET',
+            success: function (data) {
+                $('#doctorList').append(data); // append new doctors
+                $('#loadMoreBtn').data('next-page', page + 1);
+
+                // अगर aur pages nahi hain तो button hata do
+                if (!data.includes('doctor-item-marker')) {
+                    $('#loadMoreBtn').remove();
+                }
+            }
+        });
+    });
+
+    // Search Submit - reset doctor list
+    $('#doctorSearchForm').on('submit', function (e) {
+        e.preventDefault();
+        let formData = $(this).serialize();
+
+        $.ajax({
+            url: "{{ url('doctors') }}?" + formData,
+            type: 'GET',
+            success: function (data) {
+                $('#doctorList').html(data);
+
+                // reset Load More button
+                if ($('#doctorList').find('#hasMore').length) {
+                    $('#loadMoreBtn').show().data('next-page', 2);
+                } else {
+                    $('#loadMoreBtn').hide();
+                }
+            }
+        });
+    });
+});
+</script>
 @endsection
