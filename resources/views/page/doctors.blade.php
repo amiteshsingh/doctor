@@ -6,7 +6,7 @@
     <!-- Doctor Listing Start -->
     <div class="container-fluid py-5">
         <div class="container">
-            <div class="text-center mx-auto mb-5" style="max-width: 600px;">
+            <div class="text-center mx-auto mb-3" style="max-width: 600px;">
                 <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Doctors</h5>
                 <h1 class="display-6">Doctor Listing</h1>
             </div>
@@ -69,24 +69,62 @@
                 <div class="col-12">
                     <div class="bg-light rounded overflow-hidden p-2 row align-items-center">
                         
+                        @php
+                            $practiceName = optional($doctor->locations->first())->practice_name ?? $doctor->name;
+                        @endphp
+
                         <!-- Doctor Image -->
                         <div class="col-md-3 mb-3 mb-md-0">
-                            <img class="img-fluid rounded w-100" 
-                                 src="{{ asset($doctor['image']) }}" 
-                                 style="height:157px; object-fit:cover;" 
-                                 alt="{{ $doctor['name'] }}">
+                            <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}">
+                                <img class="img-fluid rounded w-100" 
+                                    src="{{ asset('uploads/doctor/' . ($doctor->profile_pic ?? 'default.png')) }}" 
+                                    style="object-fit:cover;" 
+                                    alt="{{ $doctor->name }}">
+                            </a>
                         </div>
 
                         <!-- Doctor Details -->
                         <div class="col-md-9">
-                            <h3 class="mb-3">{{ $doctor['name'] }}</h3>
-                            <p class="mb-1"><strong>Specialization:</strong> {{ $doctor['specialization'] }}</p>
-                            <p class="mb-1"><strong>Phone:</strong> {{ $doctor['phone'] }}</p>
-                            <p class="mb-1"><strong>Address:</strong> {{ $doctor['address'] }}</p>
-                            <p class="mb-3"><strong>Experience:</strong> {{ $doctor['experience'] }} Years</p>
 
-                            <!-- View Profile Button -->
-                            <a href="{{ url('doctor-profile/'.$doctor['id']) }}" 
+                            <h3 class="mb-3">
+                                <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}" 
+                                   class="text-decoration-none text-dark">
+                                    {{ $practiceName }}
+                                </a>
+                            </h3>
+
+                            <p class="mb-1">
+                                <strong>Specialization:</strong> 
+                                @if($doctor->specializations->isNotEmpty())
+                                    {{ $doctor->specializations->pluck('specialization.name')->implode(', ') }}
+                                @else
+                                    N/A
+                                @endif
+                            </p>
+
+                            @if(optional($doctor->locations->first())->phone)
+                                <p class="mb-1">
+                                    <strong>Phone:</strong> {{ $doctor->locations->first()->phone }}
+                                </p>
+                            @endif
+
+                            <p class="mb-1">
+                                <strong>Address:</strong> 
+                                @if($doctor->locations->isNotEmpty())
+                                    {{ $doctor->locations->first()->address }},
+                                    {{ $doctor->locations->first()->city }},
+                                    {{ $doctor->locations->first()->state }},
+                                    {{ $doctor->locations->first()->zip_code }}
+                                @else
+                                    N/A
+                                @endif
+                            </p>
+
+                            @if(!empty($doctor->experience))
+                                <p class="mb-3"><strong>Experience:</strong> {{ $doctor->experience ? now()->year - $doctor->experience : 'N/A' }}+ Years</p>
+                            @endif
+
+                            <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}" 
                                class="btn btn-primary btn-sm mt-2 me-3">
                                 View Profile
                             </a>
@@ -103,11 +141,11 @@
                                     ];
                                 @endphp
 
-                                @if(!empty($doctor['social_links']))
-                                    @foreach($doctor['social_links'] as $platform => $link)
+                                @if(!empty($doctor->social_links))
+                                    @foreach($doctor->social_links as $platform => $link)
                                         @if(isset($icons[$platform]))
                                             <a class="btn {{ $icons[$platform] }} btn-sm rounded-circle me-2" 
-                                               href="{{ $link }}" target="_blank">
+                                            href="{{ $link }}" target="_blank">
                                                 <i class="{{ explode(' ', $icons[$platform])[0] }}"></i>
                                             </a>
                                         @endif

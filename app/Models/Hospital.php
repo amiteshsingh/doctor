@@ -92,4 +92,10 @@ class Hospital extends Model
                 $data = $query->get()->toArray();
                 return count($data);
     }
+
+
+    public function specializations()
+    {
+        return $this->hasMany(HospitalSpecialization::class, 'hospital_id')->with('specialization');
+    }
 }

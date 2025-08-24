@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use App\Models\Doctor;
+use App\Models\Hospital;
 
 class PageController extends Controller
 {
@@ -23,33 +24,77 @@ class PageController extends Controller
 
     public function doctor(Request $request)
     {
-        $doctors = Doctor::allDoctor();
+        $query = Doctor::with(['availability','educations','languages','specializations.specialization',
+            'locations'
+        ]);
 
-        // 🔍 Search Filter
-        if ($request->filled('search')) {
-            $search = strtolower($request->search);
-            $doctors = $doctors->filter(function ($doctor) use ($search) {
-                return str_contains(strtolower($doctor['name']), $search) ||
-                       str_contains(strtolower($doctor['specialization']), $search) ||
-                       str_contains(strtolower($doctor['address']), $search);
+        // Filter: Name
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        // Filter: Specialization
+        if ($request->filled('specialization')) {
+            $query->whereHas('specializations', function($q) use ($request) {
+                // agar specialization name se search karna hai
+                $q->whereHas('specialization', function($sp) use ($request) {
+                    $sp->where('name', 'like', '%' . $request->specialization . '%');
+                });
             });
         }
 
-        // 🎓 Min Experience Filter
+        // Filter: Address
+        if ($request->filled('address')) {
+            $query->whereHas('locations', function($q) use ($request) {
+                $q->where('address', 'like', '%' . $request->address . '%');
+            });
+        }
+
+        // Filter: Experience
         if ($request->filled('min_experience')) {
-            $minExp = (int) $request->min_experience;
-            $doctors = $doctors->filter(function ($doctor) use ($minExp) {
-                return $doctor['experience'] >= $minExp;
-            });
+            $query->where('experience', '>=', $request->min_experience);
         }
+
+        $doctors = $query->where('status', 1)
+                        ->where('approval_status', 1)
+                        ->get();
 
         return view('page.doctors', ['doctors' => $doctors]);
     }
 
-    public function hospital()
+
+    public function hospital(Request $request)
     {
-        return view('page.hospitals');
+        $query = Hospital::with(['specializations.specialization']);
+
+        // Filter: Name + Address
+        if ($request->filled('name') || $request->filled('address')) {
+            $query->where(function($q) use ($request) {
+                if ($request->filled('name')) {
+                    $q->where('name', 'like', '%' . $request->name . '%');
+                }
+                if ($request->filled('address')) {
+                    $q->where('address', 'like', '%' . $request->address . '%');
+                }
+            });
+        }
+
+        // Filter: Specialization
+        if ($request->filled('specialization')) {
+            $query->whereHas('specializations', function($q) use ($request) {
+                $q->whereHas('specialization', function($sp) use ($request) {
+                    $sp->where('name', 'like', '%' . $request->specialization . '%');
+                });
+            });
+        }
+
+        $hospitals = $query->where('status', 1)
+                        ->where('approval_status', 1)
+                        ->get();
+
+        return view('page.hospitals', ['hospitals' => $hospitals]);
     }
+
 
     public function blog()
     {
@@ -85,4 +130,23 @@ class PageController extends Controller
     {
         return view('page.contact');
     }
+
+     public function doctor_profile(Request $request, $id = null, $name=null)
+    {
+        $doctor = Doctor::with(['availability','educations','languages','specializations','locations'
+                    ])->where('id', $id)->first();
+
+        
+        return view('page.doctor-profile', ['doctor' => $doctor]);
+    }
+
+    public function hospital_details(Request $request, $id = null, $name=null)
+{
+    $hospital = Hospital::with(['specializations.specialization'])
+                ->where('id', $id)
+                ->first();
+
+    return view('page.hospital-details', ['hospital' => $hospital]);
+}
+
 }

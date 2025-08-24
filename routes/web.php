@@ -30,6 +30,9 @@ Route::get('testimonial', [PageController::class, 'testimonial'])->name('testimo
 Route::get('appointment', [PageController::class, 'appointment'])->name('appointment');
 Route::get('search', [PageController::class, 'search'])->name('search');
 Route::get('contact', [PageController::class, 'contact'])->name('contact');
+Route::get('doctor-profile/{id}/{name}', [PageController::class, 'doctor_profile'])->name('doctors-profile');
+Route::get('hospital-details/{id}/{name}', [PageController::class, 'hospital_details'])->name('hospital-details');
+
 
 
 // Login Routes

@@ -65,4 +65,16 @@ class Specialization extends Model
                 $data = $query->get()->toArray();
                 return count($data);
     }
+
+
+
+    public function doctorSpecializations()
+    {
+        return $this->hasMany(DoctorSpecialization::class, 'specialization_id');
+    }
+
+    public function hopitalSpecializations()
+    {
+        return $this->hasMany(hopitalSpecializations::class, 'specialization_id');
+    }
 }

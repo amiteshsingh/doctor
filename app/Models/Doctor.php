@@ -13,7 +13,7 @@ class Doctor extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name', 'phone', 'email', 'latitude', 'longitude','hospital_id', 'status', 'approval_status'
+        'name', 'phone', 'email', 'latitude', 'longitude','hospital_id', 'status', 'approval_status', 'profile_pic'
      ];
     protected  $table = 'doctors';
     public $timestamps = false;  
@@ -107,38 +107,33 @@ class Doctor extends Model
 
 
 
-    public static function allDoctor()
+
+    public function availability()
     {
-        return collect([
-            [
-                "id" => 1,
-                "name" => "Dr. Amit Singh",
-                "specialization" => "Cardiologist",
-                "phone" => "9876543210",
-                "address" => "Delhi",
-                "experience" => 12,
-                "image" => "img/blog-1.jpg",
-                "social_links" => [
-                    "facebook" => "https://facebook.com/amit",
-                    "twitter" => "https://twitter.com/amit",
-                    "linkedin" => "https://linkedin.com/in/amit",
-                    "instagram" => "https://instagram.com/amit",
-                    "whatsapp" => "https://wa.me/9876543210",
-                ]
-            ],
-            [
-                "id" => 2,
-                "name" => "Dr. Neha Sharma",
-                "specialization" => "Dermatologist",
-                "phone" => "9123456789",
-                "address" => "Gurgaon",
-                "experience" => 7,
-                "image" => "img/blog-2.jpg",
-                "social_links" => [
-                    "facebook" => "https://facebook.com/neha",
-                    "linkedin" => "https://linkedin.com/in/neha",
-                ]
-            ],
-        ]);
+        return $this->hasMany(DoctorAvailability::class, 'doctor_id');
     }
+
+    public function educations()
+    {
+        return $this->hasMany(DoctorEducation::class, 'doctor_id');
+    }
+
+    public function languages()
+    {
+        return $this->hasMany(DoctorLanguage::class, 'doctor_id')->with('language');
+    }
+
+    public function specializations()
+    {
+        return $this->hasMany(DoctorSpecialization::class, 'doctor_id')->with('specialization');
+    }
+
+    public function locations()
+    {
+        return $this->hasMany(DoctorLocation::class, 'doctor_id');
+    }
+
+
+
+
 }

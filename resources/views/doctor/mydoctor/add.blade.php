@@ -180,7 +180,7 @@
                                 <div class="form-group row">
                                     <label class="col-form-label col-md-2">Practice Name</label>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" name="practice_name" value="{{isset($doctor->practice_name)?$doctor->practice_name:''}}">
+                                        <input type="text" class="form-control" name="practice_name" placeholder="Dr. .........." value="{{isset($doctor->practice_name)?$doctor->practice_name:''}}">
                                     </div>
                                 </div>
 

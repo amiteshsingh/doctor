@@ -271,6 +271,11 @@ class DoctorController extends Controller
                     'details'           => $data['education_details'],
                 ]);
 
+                if(isset($data['experience']) && !empty($data['experience'])){
+                    // Update doctor experience if provided
+                   DB::table('doctors')->where('id', $doctor_id)->update(['experience' => $data['experience']]);     
+                }
+
                 // Insert doctor languages (multiple)
                 DB::table('doctor_languages')->where('doctor_id', $doctor_id)->delete();
                 foreach ($data['languages'] as $lang_id) {
