@@ -48,6 +48,12 @@
                     {{ now()->year - $doctor->experience }}+ Years
                 </p>
             @endif
+
+            <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($doctor->name)) }}"
+               class="btn btn-primary btn-sm mt-2">
+               View Doctor
+            </a>
+
         </div>
     </div>
 </div>

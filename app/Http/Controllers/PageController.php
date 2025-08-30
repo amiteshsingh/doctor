@@ -18,13 +18,76 @@ class PageController extends Controller
 
     public function about()
     {
-        //echo "amiteshsingh";
         return view('page.about');
     }
 
+    // public function doctor123(Request $request)
+    // {
+    //     $query = Doctor::with(['availability','educations','languages','specializations.specialization',
+    //         'locations'
+    //     ]);
+
+    //     // Filter: Name
+    //     if ($request->filled('name')) {
+    //         $query->where('name', 'like', '%' . $request->name . '%');
+    //     }
+
+    //     // Filter: Specialization
+    //     if ($request->filled('specialization')) {
+    //         $query->whereHas('specializations', function($q) use ($request) {
+    //             // agar specialization name se search karna hai
+    //             $q->whereHas('specialization', function($sp) use ($request) {
+    //                 $sp->where('name', 'like', '%' . $request->specialization . '%');
+    //             });
+    //         });
+    //     }
+
+    //     // Filter: Address
+    //     if ($request->filled('address')) {
+    //         $query->whereHas('locations', function($q) use ($request) {
+    //             $q->where('address', 'like', '%' . $request->address . '%');
+    //         });
+    //     }
+
+    //     // Filter: Experience
+    //     if ($request->filled('min_experience')) {
+    //         $query->where('experience', '>=', $request->min_experience);
+    //     }
+
+    //     $doctors = $query->where('status', 1)
+    //                  ->where('approval_status', 1)
+    //                  ->paginate(2);
+                     
+    //     if ($request->ajax()) {
+    //         return view('page.ajax.doctor_list', compact('doctors'))->render(); 
+    //     }                     
+
+    //     return view('page.doctors', ['doctors' => $doctors]);
+    // }
+
+
     public function doctor(Request $request)
     {
-        $query = Doctor::with(['availability','educations','languages','specializations.specialization',
+        // -------------------
+        // Step 1: Get user state from IP
+        // -------------------
+        $ip = $request->ip();
+        // if ($ip == "127.0.0.1") { 
+        //     $ip = "103.44.119.10"; // localhost test ke liye ek dummy public IP
+        // }
+
+        $response = @file_get_contents("http://ip-api.com/json/{$ip}");
+        $data = $response ? json_decode($response, true) : null;
+        $userState = $data['regionName'] ?? null;
+
+        // -------------------
+        // Step 2: Build Query
+        // -------------------
+        $query = Doctor::with([
+            'availability',
+            'educations',
+            'languages',
+            'specializations.specialization',
             'locations'
         ]);
 
@@ -36,7 +99,6 @@ class PageController extends Controller
         // Filter: Specialization
         if ($request->filled('specialization')) {
             $query->whereHas('specializations', function($q) use ($request) {
-                // agar specialization name se search karna hai
                 $q->whereHas('specialization', function($sp) use ($request) {
                     $sp->where('name', 'like', '%' . $request->specialization . '%');
                 });
@@ -55,17 +117,29 @@ class PageController extends Controller
             $query->where('experience', '>=', $request->min_experience);
         }
 
-        $doctors = $query->where('status', 1)
-                     ->where('approval_status', 1)
-                     ->paginate(2);
-                     
+        if ($userState) {
+            $query->select('doctors.*')
+                ->leftJoin('doctor_locations', 'doctors.id', '=', 'doctor_locations.doctor_id')
+                ->where('status', 1)
+                ->where('approval_status', 1)
+                ->orderByRaw("CASE WHEN doctor_locations.state = ? THEN 0 ELSE 1 END", [$userState]);
+        } else {
+            $query->where('status', 1)->where('approval_status', 1);
+        }
+
+
+        $doctors = $query->paginate(5);
+
+
         if ($request->ajax()) {
             return view('page.ajax.doctor_list', compact('doctors'))->render(); 
-        }                     
+        }
 
-        return view('page.doctors', ['doctors' => $doctors]);
+        return view('page.doctors', [
+            'doctors' => $doctors,
+            'userState' => $userState
+        ]);
     }
-
 
     public function hospital(Request $request)
     {
