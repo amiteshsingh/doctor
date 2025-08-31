@@ -80,6 +80,8 @@ Route::middleware(['admin'])->group(function () {
 Route::middleware(['doctor'])->group(function () {
     
     Route::get('/doctor/dashboard', [DoctorPanelController::class, 'dashboard'])->name('doctor.dashboard');
+    Route::get('/doctor/edit-profile', [DoctorPanelController::class, 'editProfile'])->name('doctor.edit-profile');
+    Route::post('/doctor/update-profile', [DoctorPanelController::class, 'update'])->name('doctor.update-profile');
 
     Route::any('/doctor/mydoctor', [DoctorPanelController::class, 'index'])->name('doctor.mydoctor');
     Route::any('/doctor/mydoctor/add', [DoctorPanelController::class, 'add'])->name('doctor.mydoctor.add');

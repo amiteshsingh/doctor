@@ -450,4 +450,51 @@ class DoctorController extends Controller
         ));
     }
 
+
+    public function editProfile(Request $request)
+    {
+        if (empty(Session::get('user_id'))) {
+            return redirect('/');
+        }
+        $user = Auth::user();
+
+        return view('doctor.edit-profile', compact('user'));
+    }
+
+
+    // Profile update
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'dob' => 'nullable|date',
+            'gender' => 'nullable|string',
+            'address' => 'nullable|string',
+            'state' => 'nullable|string',
+            'country' => 'nullable|string',
+            'pin_code' => 'nullable|string|max:10',
+            'phone_no' => 'nullable|string|max:15',
+            'password' => 'nullable|min:6|confirmed'
+        ]);
+
+        $user->name = $request->name;
+        $user->dob = $request->dob;
+        $user->gender = $request->gender;
+        $user->address = $request->address;
+        $user->state = $request->state;
+        $user->country = $request->country;
+        $user->pin_code = $request->pin_code;
+        $user->phone_no = $request->phone_no;
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('doctor.edit-profile')->with('success', 'Profile updated successfully.');
+    }
+
 }

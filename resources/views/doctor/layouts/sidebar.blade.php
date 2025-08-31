@@ -3,16 +3,19 @@
                 <div id="sidebar-menu" class="sidebar-menu">
                     <ul>
                         <li class="menu-title">Main</li>
-                        <li class="active">
+                        <li class="{{ request()->routeIs('doctor.dashboard') ? 'active' : '' }}">
                             <a href="{{ route('doctor.dashboard') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
-                         <li>
+
+                        <li class="{{ request()->routeIs('doctor.myhospital') ? 'active' : '' }}">
                             <a href="{{ route('doctor.myhospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
                         </li>
-                        <li>
+
+                        <li class="{{ request()->routeIs('doctor.mydoctor') ? 'active' : '' }}">
                             <a href="{{ route('doctor.mydoctor') }}"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
                         </li>
-                        <li>
+
+                        <!-- <li>
                             <a href="patients.html"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
                         <li>
@@ -20,9 +23,9 @@
                         </li>
                         <li>
                             <a href="schedule.html"><i class="fa fa-calendar-check-o"></i> <span>Doctor Schedule</span></a>
-                        </li>
+                        </li> -->
                         
-						<li class="submenu">
+						<!-- <li class="submenu">
 							<a href="#"><i class="fa fa-user"></i> <span> Employees </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
 								<li><a href="employees.html">Employees List</a></li>
@@ -157,7 +160,7 @@
                                     <a href="javascript:void(0);"><span>Level 1</span></a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
             </div>

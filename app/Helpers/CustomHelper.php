@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\DB;
 
+use App\Models\Doctor;
+use App\Models\Hospital;
+use Illuminate\Support\Facades\Session;
+
 if (!function_exists('get_location')) {
     function get_location($user_id)
     {
@@ -33,5 +37,24 @@ if (!function_exists('get_specialization')) {
         }
 
         return 'Specialization not found';
+    }
+}
+
+
+if (! function_exists('getTotalDoctorsBySession')) {
+
+    function getTotalDoctorsBySession()
+    {
+        $sessionId = Auth::id(); // ya Auth::id() if using auth()
+        return Doctor::where('added_by', $sessionId)->count();
+    }
+}
+
+if (! function_exists('getTotalHospitalsBySession')) {
+
+    function getTotalHospitalsBySession()
+    {
+        $sessionId = Auth::id(); // ya Auth::id() if using auth()
+        return Hospital::where('added_by', $sessionId)->count();
     }
 }
