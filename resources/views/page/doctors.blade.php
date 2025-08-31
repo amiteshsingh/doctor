@@ -13,7 +13,7 @@
 
         <!-- Search Form -->
         <div class="col-12 mb-4">
-            <form id="doctorSearchForm" method="GET" action="{{ url('doctors') }}" class="row g-3">
+            <form method="GET" action="{{ url('doctors') }}" class="row g-3">
                 <div class="col-md-3">
                     <input type="text" name="name" class="form-control"
                            placeholder="Search by Name" value="{{ request('name') }}">

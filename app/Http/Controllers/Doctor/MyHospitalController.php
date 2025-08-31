@@ -93,8 +93,8 @@ class MyHospitalController extends Controller
                     $update['zip_code'] = $data['zip_code'];
                     $update['status'] = $data['status'];
                     $update['approval_status'] = $data['approval_status'];
-                    $update['latitude'] = $data['latitude'];
-                    $update['longitude'] = $data['longitude'];
+                    // $update['latitude'] = $data['latitude'];
+                    // $update['longitude'] = $data['longitude'];
                     $update['updated_on'] = date('Y-m-d H:i:s');
                     $update['updated_by'] = Session::get('user_id');
                     
