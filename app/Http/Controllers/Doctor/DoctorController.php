@@ -476,7 +476,8 @@ class DoctorController extends Controller
             'country' => 'nullable|string',
             'pin_code' => 'nullable|string|max:10',
             'phone_no' => 'nullable|string|max:15',
-            'password' => 'nullable|min:6|confirmed'
+            'password' => 'nullable|min:6|confirmed',
+            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $user->name = $request->name;
@@ -488,13 +489,29 @@ class DoctorController extends Controller
         $user->pin_code = $request->pin_code;
         $user->phone_no = $request->phone_no;
 
+        // Password Update
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
+        }
+
+        // Profile Image Upload
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/profile_images'), $filename);
+
+            // पुरानी image delete कर सकते हैं अगर stored है
+            if ($user->profile_image && file_exists(public_path('uploads/profile_images/' . $user->profile_image))) {
+                unlink(public_path('uploads/profile_images/' . $user->profile_image));
+            }
+
+            $user->profile_image = $filename;
         }
 
         $user->save();
 
         return redirect()->route('doctor.edit-profile')->with('success', 'Profile updated successfully.');
     }
+
 
 }

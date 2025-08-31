@@ -72,7 +72,7 @@ class MyHospitalController extends Controller
                     'state' => 'required',
                     'zip_code' => 'required|numeric',
                     'status' => 'required',
-                    'approval_status' => 'required',
+                    // 'approval_status' => 'required',
                 ]);
                 
                 if(isset($data['id']) && $data['id'] !=""){
@@ -92,7 +92,7 @@ class MyHospitalController extends Controller
                     $update['state'] = $data['state'];
                     $update['zip_code'] = $data['zip_code'];
                     $update['status'] = $data['status'];
-                    $update['approval_status'] = $data['approval_status'];
+                    // $update['approval_status'] = $data['approval_status'];
                     // $update['latitude'] = $data['latitude'];
                     // $update['longitude'] = $data['longitude'];
                     $update['updated_on'] = date('Y-m-d H:i:s');
@@ -124,7 +124,7 @@ class MyHospitalController extends Controller
                     // $hospital->latitude = isset($data['latitude'])?$data['latitude']:'';
                     // $hospital->longitude = isset($data['longitude'])?$data['longitude']:'';
                     $hospital->status = isset($data['status'])?$data['status']:'';
-                    $hospital->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
+                    // $hospital->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
                     $hospital->added_on = date('Y-m-d H:i:s');
                     $hospital->added_by = Session::get('user_id');
                     $hospital->updated_by = Session::get('user_id');

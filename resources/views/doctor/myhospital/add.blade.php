@@ -128,7 +128,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group row">
+                                <!-- <div class="form-group row">
                                     <label class="col-form-label col-md-2">	Approval Status</label>
                                     <div class="col-md-9">
                                         <select class="select" name="approval_status" id="approval_status" >
@@ -138,7 +138,7 @@
                                             <option value="2" {{ (isset($hospital->approval_status) && $hospital->approval_status == 2) ? 'selected':''}}>Block</option>
                                         </select>
                                     </div>
-                                </div>
+                                </div> -->
 
                                     <div class="col-md-4 text-right">
                                     <button type="submit" id="save_hospital" class="btn btn-primary">Submit</button>
