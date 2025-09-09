@@ -77,6 +77,18 @@
                                         <input type="email" class="form-control" name="email" id="email" value="{{isset($doctor->email)?$doctor->email:''}}">
                                     </div>
                                 </div>
+
+                                <!-- Gender Field -->
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Gender</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control select" name="gender" id="gender" required>
+                                            <option value="">Select Gender</option>
+                                            <option value="Male" {{ (isset($doctor->gender) && $doctor->gender == 'Male') ? 'selected' : '' }}>Male</option>
+                                            <option value="Female" {{ (isset($doctor->gender) && $doctor->gender == 'Female') ? 'selected' : '' }}>Female</option>
+                                        </select>
+                                    </div>
+                                </div>
                             
                                 <div class="form-group row">
                                     <label class="col-form-label col-md-2">Latitude</label>

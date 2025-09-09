@@ -112,9 +112,8 @@ class PageController extends Controller
             });
         }
 
-        // Filter: Experience
-        if ($request->filled('min_experience')) {
-            $query->where('experience', '>=', $request->min_experience);
+       if ($request->filled('gender')) {
+            $query->where('gender', $request->gender);
         }
 
         if ($userState) {

@@ -26,16 +26,15 @@
                     <input type="text" name="address" class="form-control"
                            placeholder="Location / Address" value="{{ request('address') }}">
                 </div>
+
                 <div class="col-md-2">
-                    <select name="min_experience" class="form-control">
-                        <option value="">Min Experience</option>
-                        @for($i = 0; $i <= 40; $i += 5)
-                            <option value="{{ $i }}" {{ request('min_experience') == $i ? 'selected' : '' }}>
-                                {{ $i }} Years
-                            </option>
-                        @endfor
+                    <select name="gender" class="form-control">
+                        <option value="">Select Gender</option>
+                        <option value="Male" {{ request('gender') == 'Male' ? 'selected' : '' }}>Male</option>
+                        <option value="Female" {{ request('gender') == 'Female' ? 'selected' : '' }}>Female</option>
                     </select>
                 </div>
+                
                 <div class="col-md-1 d-grid">
                     <button class="btn btn-primary" type="submit">
                         <i class="fas fa-search"></i>

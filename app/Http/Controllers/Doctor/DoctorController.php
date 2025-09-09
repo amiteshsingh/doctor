@@ -100,6 +100,7 @@ class DoctorController extends Controller
                     $update['updated_on'] = date('Y-m-d H:i:s');  
                     $update['updated_by'] = Session::get('user_id');                  
                     $update['hospital_id'] = $data['hospital_id'];                  
+                    $update['gender'] = $data['gender'];                  
                    
                     if(DB::table('doctors')->where('id', $data['id'])->update($update)){
                         return response()->json([
@@ -123,6 +124,7 @@ class DoctorController extends Controller
                     $doctor->phone_no = isset($data['phone_no'])?$data['phone_no']:'';
                     $doctor->email = isset($data['email'])?$data['email']:'';
                     $doctor->status = isset($data['status'])?$data['status']:'';
+                    $doctor->gender = isset($data['gender'])?$data['gender']:'';
                     // $doctor->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
                     $doctor->added_on = date('Y-m-d H:i:s');
                     $doctor->added_by = Session::get('user_id');
