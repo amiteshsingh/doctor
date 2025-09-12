@@ -73,7 +73,7 @@
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
 }
 .doctor-img {
-    height: 250px;
+    height: 300px;
     object-fit: cover;
     transition: transform 0.4s ease;
 }

@@ -247,7 +247,7 @@ class PageController extends Controller
             ->where('is_professional', 1)
             ->where('status', 1)
             ->where('approval_status', 1)
-            ->paginate(10); // 10 doctors per page
+            ->paginate(30); // 10 doctors per page
 
         return view('page.professional-doctors', compact('doctors'));
     }

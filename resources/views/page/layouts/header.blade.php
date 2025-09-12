@@ -70,14 +70,10 @@
                         <a href="{{ route('hospitals') }}" class="nav-item nav-link {{ Request::is('hospital') ? 'active' : '' }}">Hostpital</a>
 
                         <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle {{ Request::is('blog', 'detail', 'team', 'testimonial', 'appointment', 'search') ? 'active' : '' }}" data-bs-toggle="dropdown">Pages</a>
+                            <a href="#" class="nav-link dropdown-toggle {{ Request::is('professional.doctors') ? 'active' : '' }}" data-bs-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu m-0">
-                                <a href="{{ route('blog') }}" class="dropdown-item {{ Request::is('blog') ? 'active' : '' }}">Blog Grid</a>
-                                <a href="{{ route('detail') }}" class="dropdown-item {{ Request::is('detail') ? 'active' : '' }}">Blog Detail</a>
-                                <a href="{{ route('team') }}" class="dropdown-item {{ Request::is('team') ? 'active' : '' }}">The Team</a>
-                                <a href="{{ route('testimonial') }}" class="dropdown-item {{ Request::is('testimonial') ? 'active' : '' }}">Testimonial</a>
-                                <a href="{{ route('appointment') }}" class="dropdown-item {{ Request::is('appointment') ? 'active' : '' }}">Appointment</a>
-                                <a href="{{ route('search') }}" class="dropdown-item {{ Request::is('search') ? 'active' : '' }}">Search</a>
+                                <a href="{{ route('professional.doctors') }}" class="dropdown-item {{ Request::is('professional.doctors') ? 'active' : '' }}">Professional Doctors</a>
+                                
                             </div>
                         </div>
                         <a href="{{ route('contact') }}" class="nav-item nav-link">Contact</a>
