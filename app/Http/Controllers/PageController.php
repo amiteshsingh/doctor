@@ -12,8 +12,20 @@ class PageController extends Controller
 {
     public function index(){
 
-
-        return View::make('page.index');
+        $doctors = Doctor::with([
+            'availability',
+            'educations',
+            'languages',
+            'specializations.specialization',
+            'locations'
+        ])
+        ->where('is_professional', 1)
+        ->where('status', 1)
+        ->where('approval_status', 1)
+        ->limit(20)
+        ->get();
+    
+        return View::make('page.index', compact('doctors'));
     }
 
     public function about()
@@ -221,12 +233,24 @@ class PageController extends Controller
     }
 
     public function hospital_details(Request $request, $id = null, $name=null)
-{
-    $hospital = Hospital::with(['specializations.specialization'])
-                ->where('id', $id)
-                ->first();
+    {
+        $hospital = Hospital::with(['specializations.specialization'])
+                    ->where('id', $id)
+                    ->first();
 
-    return view('page.hospital-details', ['hospital' => $hospital]);
-}
+        return view('page.hospital-details', ['hospital' => $hospital]);
+    }
+
+    public function professionalDoctors()
+    {
+        $doctors = Doctor::with(['educations', 'specializations.specialization', 'locations'])
+            ->where('is_professional', 1)
+            ->where('status', 1)
+            ->where('approval_status', 1)
+            ->paginate(10); // 10 doctors per page
+
+        return view('page.professional-doctors', compact('doctors'));
+    }
+
 
 }

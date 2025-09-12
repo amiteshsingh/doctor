@@ -29,7 +29,8 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    // protected $redirectTo = '/home';
+    protected $redirectTo = '/doctor/dashboard';
 
     /**
      * Create a new controller instance.
@@ -76,6 +77,12 @@ class RegisterController extends Controller
             'user_id' => $user->id,
             //'role' => $data['role'],
             'role' => 'doctor',
+        ]);
+
+        session([
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'user_role' =>  'doctor',
         ]);
 
         return $user;

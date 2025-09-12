@@ -123,6 +123,17 @@
                                 <?php } ?>
                             
                                 <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Is Professional</label>
+                                    <div class="col-md-9">
+                                        <select class="select" name="is_professional" id="is_professional" >
+                                            <option value="">Select Professional</option>
+                                            <option value="1" {{ (isset($doctor->is_professional) && $doctor->is_professional == 1) ? 'selected':''}}>Yes</option>
+                                            <option value="0"  {{ (isset($doctor->is_professional) && $doctor->is_professional == 0) ? 'selected':''}}>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
                                     <label class="col-form-label col-md-2">Status</label>
                                     <div class="col-md-9">
                                         <select class="select" name="status" id="status" >

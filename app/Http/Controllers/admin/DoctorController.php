@@ -84,6 +84,7 @@ class DoctorController extends Controller
                     $update['updated_by'] = Session::get('user_id');                  
                     $update['hospital_id'] = $data['hospital_id'];
                     $update['gender'] = $data['gender'];                     
+                    $update['is_professional'] = $data['is_professional'];                     
                    
                     if(DB::table('doctors')->where('id', $data['id'])->update($update)){
                         return response()->json(["status"=>200,"msg"=>"Doctor updated successfully."]);
@@ -109,6 +110,7 @@ class DoctorController extends Controller
                     $doctor->added_on = date('Y-m-d H:i:s');
                     $doctor->added_by = Session::get('user_id');
                     $doctor->updated_by = Session::get('user_id');
+                    $doctor->is_professional =  isset($data['is_professional'])?$data['is_professional']:'';
                     
                     if($doctor->save()){
                         return response()->json(["status"=>200,"msg"=>"Doctors saved successfully."]);
