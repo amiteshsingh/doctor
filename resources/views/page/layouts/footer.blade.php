@@ -58,7 +58,7 @@
                     <p class="mb-md-0">&copy; <a class="text-primary" href="#">Your Site Name</a>. All Rights Reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <p class="mb-0">Designed by <a class="text-primary" href="https://htmlcodex.com">HTML Codex</a></p>
+                    <!-- <p class="mb-0">Designed by XXXXXXXXX</p> -->
                 </div>
             </div>
         </div>

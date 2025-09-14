@@ -124,6 +124,12 @@ class PageController extends Controller
             });
         }
 
+        if ($request->filled('zip_code')) {
+            $query->whereHas('locations', function($q) use ($request) {
+                $q->where('zip_code', 'like', '%' . $request->zip_code . '%');
+            });
+        }
+
        if ($request->filled('gender')) {
             $query->where('gender', $request->gender);
         }
@@ -156,14 +162,18 @@ class PageController extends Controller
     {
         $query = Hospital::with(['specializations.specialization']);
 
-        // Filter: Name + Address
-        if ($request->filled('name') || $request->filled('address')) {
+        // Filter: Name + Address +` PIN Code
+        if ($request->filled('name') || $request->filled('address') || $request->filled('zip_code')) {
             $query->where(function($q) use ($request) {
                 if ($request->filled('name')) {
                     $q->where('name', 'like', '%' . $request->name . '%');
                 }
                 if ($request->filled('address')) {
                     $q->where('address', 'like', '%' . $request->address . '%');
+                }
+
+                if ($request->filled('zip_code')) {
+                    $q->where('zip_code', 'like', '%' . $request->zip_code . '%');
                 }
             });
         }
@@ -203,19 +213,10 @@ class PageController extends Controller
         return view('page.team');
     }
 
-    public function testimonial()
-    {
-        return view('page.testimonial');
-    }
 
     public function appointment()
     {
         return view('page.appointment');
-    }
-
-    public function search()
-    {
-        return view('page.search');
     }
 
     public function contact()

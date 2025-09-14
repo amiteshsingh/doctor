@@ -38,6 +38,7 @@
                     {{ $doctor->locations->first()->address }},
                     {{ $doctor->locations->first()->city }},
                     {{ $doctor->locations->first()->state }}
+                    {{ $doctor->locations->first()->zip_code }}
                 @else
                     N/A
                 @endif

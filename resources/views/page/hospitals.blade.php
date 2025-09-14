@@ -1,5 +1,5 @@
 @extends('page.layouts.app')
-@section('title', 'MEDINOVA - Hospital List')
+@section('title', 'RogiSewa - Hospital List')
 
 @section('content')
 <div class="container-fluid py-5">
@@ -10,11 +10,11 @@
         </div>
 
         <!-- Advanced Search -->
-        <div class="col-12 mb-4">
+        <div class="col-12 mb-3">
             <form method="GET" action="{{ url('hospitals') }}" class="row g-3" id="search-form">
 
                 <!-- Hospital Name -->
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input type="text" 
                            name="name" 
                            class="form-control" 
@@ -23,7 +23,7 @@
                 </div>
 
                 <!-- Specialization -->
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input type="text" 
                            name="specialization" 
                            class="form-control" 
@@ -38,6 +38,15 @@
                            class="form-control" 
                            placeholder="Location / Address" 
                            value="{{ request('address') }}">
+                </div>
+
+                <!-- PIN Code -->
+                <div class="col-md-2">
+                    <input type="text" 
+                        name="zip_code" 
+                        class="form-control" 
+                        placeholder="PIN Code" 
+                        value="{{ request('zip_code') }}">
                 </div>
 
                 <!-- Search Button -->

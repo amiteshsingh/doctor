@@ -1,5 +1,5 @@
 @extends('page.layouts.app')
-@section('title', 'MEDINOVA - Doctor List')
+@section('title', 'RogiSewa - Doctor List')
 
 @section('content')
 
@@ -25,6 +25,10 @@
                 <div class="col-md-3">
                     <input type="text" name="address" class="form-control"
                            placeholder="Location / Address" value="{{ request('address') }}">
+                </div>
+
+                <div class="col-md-2">
+                    <input type="text" name="zip_code" class="form-control" placeholder="PIN Code" value="{{ request('zip_code') }}">
                 </div>
 
                 <div class="col-md-2">

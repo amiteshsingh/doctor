@@ -66,8 +66,8 @@
                     <div class="navbar-nav ms-auto py-0">
                         <a href="{{ route('/') }}" class="nav-item nav-link {{ Request::is('/') ? 'active' : '' }}">Home</a>
                         <a href="{{ route('about') }}" class="nav-item nav-link {{ Request::is('about') ? 'active' : '' }}">About</a>
-                        <a href="{{ route('doctors') }}" class="nav-item nav-link {{ Request::is('doctor') ? 'active' : '' }}">Doctor</a>
-                        <a href="{{ route('hospitals') }}" class="nav-item nav-link {{ Request::is('hospital') ? 'active' : '' }}">Hostpital</a>
+                        <a href="{{ route('doctors') }}" class="nav-item nav-link {{ Request::is('doctors') ? 'active' : '' }}">Doctor</a>
+                        <a href="{{ route('hospitals') }}" class="nav-item nav-link {{ Request::is('hospitals') ? 'active' : '' }}">Hostpital</a>
 
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle {{ Request::is('professional.doctors') ? 'active' : '' }}" data-bs-toggle="dropdown">Pages</a>
@@ -76,7 +76,7 @@
                                 
                             </div>
                         </div>
-                        <a href="{{ route('contact') }}" class="nav-item nav-link">Contact</a>
+                        <a href="{{ route('contact') }}" class="nav-item nav-link {{ Request::is('contact') ? 'active' : '' }}">Contact</a>
                     </div>
                 </div>
             </nav>
