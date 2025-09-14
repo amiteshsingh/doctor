@@ -33,6 +33,8 @@ Route::get('contact', [PageController::class, 'contact'])->name('contact');
 Route::get('doctor-profile/{id}/{name}', [PageController::class, 'doctor_profile'])->name('doctors-profile');
 Route::get('hospital-details/{id}/{name}', [PageController::class, 'hospital_details'])->name('hospital-details');
 Route::get('/professional-doctors', [PageController::class, 'professionalDoctors'])->name('professional.doctors');
+Route::get('/specializations/suggest', [PageController::class, 'specializationSuggest'])->name('specializations.suggest');
+
 
 
 

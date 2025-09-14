@@ -10,16 +10,16 @@
             <h1 class="display-6">Doctor Listing</h1>
         </div>
         
-
         <!-- Search Form -->
         <div class="col-12 mb-4">
-            <form method="GET" action="{{ url('doctors') }}" class="row g-3">
+            <!-- Added id="doctorSearchForm" -->
+            <form method="GET" action="{{ url('doctors') }}" class="row g-3" id="doctorSearchForm">
                 <div class="col-md-3">
                     <input type="text" name="name" class="form-control"
                            placeholder="Search by Name" value="{{ request('name') }}">
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="specialization" class="form-control"
+                    <input type="text" name="specialization" id="specialization" class="form-control"
                            placeholder="Specialization" value="{{ request('specialization') }}">
                 </div>
                 <div class="col-md-3">
@@ -65,8 +65,26 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
 <script>
-$(document).ready(function () {
+    
+$(function () {
+
+    $("#specialization").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "{{ route('specializations.suggest') }}",
+                data: { term: request.term },
+                success: function(data) {
+                    response(data); // backend से आए results को autocomplete को भेजो
+                }
+            });
+        },
+        minLength: 1
+    });
+
+
     // Load More Click
     $(document).on('click', '#loadMoreBtn', function () {
         let page = $(this).data('next-page');
@@ -88,25 +106,25 @@ $(document).ready(function () {
     });
 
     // Search Submit - reset doctor list
-    $('#doctorSearchForm').on('submit', function (e) {
-        e.preventDefault();
-        let formData = $(this).serialize();
+    // $('#doctorSearchForm').on('submit', function (e) {
+    //     e.preventDefault();
+    //     let formData = $(this).serialize();
 
-        $.ajax({
-            url: "{{ url('doctors') }}?" + formData,
-            type: 'GET',
-            success: function (data) {
-                $('#doctorList').html(data);
+    //     $.ajax({
+    //         url: "{{ url('doctors') }}?" + formData,
+    //         type: 'GET',
+    //         success: function (data) {
+    //             $('#doctorList').html(data);
 
-                // reset Load More button
-                if ($('#doctorList').find('#hasMore').length) {
-                    $('#loadMoreBtn').show().data('next-page', 2);
-                } else {
-                    $('#loadMoreBtn').hide();
-                }
-            }
-        });
-    });
+    //             // reset Load More button
+    //             if ($('#doctorList').find('#hasMore').length) {
+    //                 $('#loadMoreBtn').show().data('next-page', 2);
+    //             } else {
+    //                 $('#loadMoreBtn').hide();
+    //             }
+    //         }
+    //     });
+    // });
 });
 </script>
 @endsection

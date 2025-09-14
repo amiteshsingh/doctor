@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use App\Models\Doctor;
 use App\Models\Hospital;
+use App\Models\Specialization;
+
 
 class PageController extends Controller
 {
@@ -33,51 +35,7 @@ class PageController extends Controller
         return view('page.about');
     }
 
-    // public function doctor123(Request $request)
-    // {
-    //     $query = Doctor::with(['availability','educations','languages','specializations.specialization',
-    //         'locations'
-    //     ]);
-
-    //     // Filter: Name
-    //     if ($request->filled('name')) {
-    //         $query->where('name', 'like', '%' . $request->name . '%');
-    //     }
-
-    //     // Filter: Specialization
-    //     if ($request->filled('specialization')) {
-    //         $query->whereHas('specializations', function($q) use ($request) {
-    //             // agar specialization name se search karna hai
-    //             $q->whereHas('specialization', function($sp) use ($request) {
-    //                 $sp->where('name', 'like', '%' . $request->specialization . '%');
-    //             });
-    //         });
-    //     }
-
-    //     // Filter: Address
-    //     if ($request->filled('address')) {
-    //         $query->whereHas('locations', function($q) use ($request) {
-    //             $q->where('address', 'like', '%' . $request->address . '%');
-    //         });
-    //     }
-
-    //     // Filter: Experience
-    //     if ($request->filled('min_experience')) {
-    //         $query->where('experience', '>=', $request->min_experience);
-    //     }
-
-    //     $doctors = $query->where('status', 1)
-    //                  ->where('approval_status', 1)
-    //                  ->paginate(2);
-                     
-    //     if ($request->ajax()) {
-    //         return view('page.ajax.doctor_list', compact('doctors'))->render(); 
-    //     }                     
-
-    //     return view('page.doctors', ['doctors' => $doctors]);
-    // }
-
-
+    
     public function doctor(Request $request)
     {
         // -------------------
@@ -145,7 +103,7 @@ class PageController extends Controller
         }
 
 
-        $doctors = $query->paginate(5);
+        $doctors = $query->paginate(10);
 
 
         if ($request->ajax()) {
@@ -251,6 +209,19 @@ class PageController extends Controller
             ->paginate(30); // 10 doctors per page
 
         return view('page.professional-doctors', compact('doctors'));
+    }
+
+    public function specializationSuggest(Request $request)
+    {
+        $search = $request->get('term');
+
+        $specializations = Specialization::where('status', 1)
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'LIKE', "%{$search}%");
+            })
+            ->pluck('name');
+
+        return response()->json($specializations);
     }
 
 

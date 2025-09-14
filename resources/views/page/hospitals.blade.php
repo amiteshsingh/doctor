@@ -26,6 +26,7 @@
                 <div class="col-md-3">
                     <input type="text" 
                            name="specialization" 
+                            id="specialization"
                            class="form-control" 
                            placeholder="Specialization" 
                            value="{{ request('specialization') }}">
@@ -76,7 +77,23 @@
 
 <!-- jQuery for AJAX -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script>
+$(function () {
+    $("#specialization").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "{{ route('specializations.suggest') }}",
+                data: { term: request.term },
+                success: function(data) {
+                    response(data); // backend से आए results को autocomplete को भेजो
+                }
+            });
+        },
+        minLength: 1
+    });
+});
+
 $(document).on('click', '#load-more-btn', function() {
     let page = $(this).data('next-page');
     let url = "{{ url('hospitals') }}?page=" + page + "&" + $('#search-form').serialize();
@@ -101,4 +118,5 @@ $(document).on('click', '#load-more-btn', function() {
     });
 });
 </script>
+
 @endsection
