@@ -1,7 +1,7 @@
 
 @extends('page.layouts.app')
 
-@section('title', 'ROGISEWA - About')
+@section('title', 'RogiSewa - About')
 
 @section('content')
     <!-- About Start -->

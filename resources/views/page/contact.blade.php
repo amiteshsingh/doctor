@@ -1,5 +1,5 @@
 @extends('page.layouts.app')
-@section('title', 'MEDINOVA - ContactUs')
+@section('title', 'RogiSewa - ContactUs')
 @section('content')
 
     <!-- Contact Start -->

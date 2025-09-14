@@ -1,5 +1,6 @@
 @extends('page.layouts.app')
 
+@section('title', 'RogiSewa - Home')
 
 @section('content')
     <!-- Hero Start -->

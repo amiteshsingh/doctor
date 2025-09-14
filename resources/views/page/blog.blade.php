@@ -1,5 +1,5 @@
 @extends('page.layouts.app')
-@section('title', 'MEDINOVA - Blog')
+@section('title', 'RogiSewa - Blog')
 
 @section('content')
 

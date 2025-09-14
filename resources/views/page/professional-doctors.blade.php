@@ -1,5 +1,5 @@
 @extends('page.layouts.app')
-
+@section('title', 'RogiSewa - Professional Doctors')
 @section('content')
 <div class="container py-5">
     <div class="text-center mb-5">

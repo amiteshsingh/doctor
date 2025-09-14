@@ -1,6 +1,6 @@
 @extends('page.layouts.app')
 
-@section('title', 'MEDINOVA - Appointment')
+@section('title', 'RogiSewa - Appointment')
 @section('content')
 
     <!-- Appointment Start -->

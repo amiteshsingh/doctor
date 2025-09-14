@@ -1,6 +1,6 @@
 @extends('page.layouts.app')
 
-@section('title', $doctor->name ?? 'Doctor Profile')
+@section('title', 'RogiSewa - ' . $doctor->name ?? 'Doctor Profile')
 
 @section('content')
 <div class="container py-5">
