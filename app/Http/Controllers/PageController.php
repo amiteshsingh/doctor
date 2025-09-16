@@ -103,7 +103,7 @@ class PageController extends Controller
         }
 
 
-        $doctors = $query->paginate(10);
+        $doctors = $query->paginate(15); // 15 doctors per page
 
 
         if ($request->ajax()) {
