@@ -1,4 +1,4 @@
-@foreach($doctors as $doctor)
+@forelse($doctors as $doctor)
 <div class="col-12 doctor-item-marker"> {{-- marker AJAX check ke liye --}}
     <div class="bg-light rounded overflow-hidden p-2 row align-items-center">
         @php
@@ -54,11 +54,16 @@
                class="btn btn-primary btn-sm mt-2">
                View Doctor
             </a>
-
         </div>
     </div>
 </div>
-@endforeach
+@empty
+    <div class="col-12">
+        <div class="alert alert-warning text-center">
+            No Doctors Availables
+        </div>
+    </div>
+@endforelse
 
 {{-- marker for "has more" check --}}
 @if($doctors->hasMorePages())
