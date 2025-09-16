@@ -170,7 +170,7 @@
                     <img class="rounded-circle" src="{{ asset('admin/assets/img/user.jpg') }}" width="24" alt="Admin">
                     <span class="status online"></span>
                 </span>
-                <span>{{ Auth::user()->name }} - {{Session::get('user_id')}}</span>
+                <span>{{ Auth::user()->name }}</span>
             </a>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ url('doctor/edit-profile') }}">Edit Profile</a>
