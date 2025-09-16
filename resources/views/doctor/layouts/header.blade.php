@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('admin/assets/img/favicon.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/logo.png') }}">
     <title>Preclinic - Medical & Hospital - Bootstrap 4 Admin Template</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -85,7 +85,7 @@
 <div class="header">
     <div class="header-left">
         <a href="{{ route('doctor.dashboard') }}" class="logo">
-            <img src="{{ asset('admin/assets/img/logo.png') }}" width="35" height="35" alt=""> <span>Preclinic</span>
+            <img src="{{ asset('admin/assets/img/logo.png') }}" width="35" height="35" alt=""> <span>RogiSewa</span>
         </a>
     </div>
     <ul class="nav user-menu float-right">

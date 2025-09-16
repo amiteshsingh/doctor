@@ -26,7 +26,7 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 						<div class="account-logo">
-                            <a href="index-2.html"><img src="{{ asset('admin/assets/img/logo-dark.png') }}" alt=""></a>
+                            <a href="index-2.html"><img src="{{ asset('img/logo.png') }}" alt=""></a>
                         </div>
                         <div class="form-group">
                             <label>Email Address</label>
