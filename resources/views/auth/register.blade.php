@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-<!-- register24:03-->
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
@@ -11,44 +9,84 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/font-awesome.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/style.css') }}">
-    <!--[if lt IE 9]>
-		<script src="assets/js/html5shiv.min.js"></script>
-		<script src="assets/js/respond.min.js"></script>
-	<![endif]-->
 </head>
 
 <body>
-    <div class="main-wrapper  account-wrapper">
+    <div class="main-wrapper account-wrapper">
         <div class="account-page">
             <div class="account-center">
                 <div class="account-box">
+
+                    <!-- {{-- Show all validation errors on top --}}
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif -->
+
                     <form method="POST" action="{{ route('register') }}">
                         <div class="account-logo">
-                            <a href="index-2.html"><img src="{{ asset('admin/assets/img/logo-dark.png') }}" alt=""></a>
+                            <a href="#"><img src="{{ asset('admin/assets/img/logo-dark.png') }}" alt=""></a>
                         </div>
                         @csrf
 
+                        {{-- Name --}}
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input id="name" type="text" class="form-control" name="name" required autofocus>
+                            <input id="name" type="text"
+                                class="form-control @error('name') is-invalid @enderror"
+                                name="name" value="{{ old('name') }}" required autofocus>
+                            @error('name')
+                                <span class="invalid-feedback d-block text-danger" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
 
+                        {{-- Email --}}
                         <div class="form-group mt-2">
                             <label for="email">Email</label>
-                            <input id="email" type="email" class="form-control" name="email" required>
+                            <input id="email" type="email"
+                                class="form-control @error('email') is-invalid @enderror"
+                                name="email" value="{{ old('email') }}" required>
+                            @error('email')
+                                <span class="invalid-feedback d-block text-danger" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
 
+                        {{-- Password --}}
                         <div class="form-group mt-2">
                             <label for="password">Password</label>
-                            <input id="password" type="password" class="form-control" name="password" required>
+                            <input id="password" type="password"
+                                class="form-control @error('password') is-invalid @enderror"
+                                name="password" required>
+                            @error('password')
+                                <span class="invalid-feedback d-block text-danger" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
 
+                        {{-- Confirm Password --}}
                         <div class="form-group mt-2">
                             <label for="password-confirm">Confirm Password</label>
-                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                            <input id="password-confirm" type="password"
+                                class="form-control @error('password_confirmation') is-invalid @enderror"
+                                name="password_confirmation" required>
+                            @error('password_confirmation')
+                                <span class="invalid-feedback d-block text-danger" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
 
-                        <div class="form-group mt-3  text-center">
+                        <div class="form-group mt-3 text-center">
                             <button type="submit" class="btn btn-primary">
                                 {{ __('Register') }}
                             </button>
@@ -57,16 +95,16 @@
                             Already have an account? <a href="{{ url('login') }}">Login</a>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
     </div>
+
     <script src="{{ asset('admin/assets/js/jquery-3.2.1.min.js') }}"></script>
-	<script src="{{ asset('admin/assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/popper.min.js') }}"></script>
     <script src="{{ asset('admin/assets/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('admin/assets/js/app.js') }}"></script>
 </body>
 
-
-<!-- register24:03-->
 </html>
