@@ -268,10 +268,10 @@
     </div>
     <div class="modal-body">
         <p><strong>✅ English:</strong><br>
-            If you want to get a doctor’s or hospital’s profile approved, edit it and copy the URL, then send it via email. - (amiteshsingh94@gmail.com)
+            If you want to get a doctor’s or hospital’s profile approved, edit it and copy the URL, then send it via email. - (rogisewa25@gmail.com)
         </p>
         <p><strong>✅ Hindi:</strong><br>
-            अगर आप डॉक्टर या अस्पताल का प्रोफ़ाइल अप्रूव कराना चाहते हैं, तो उसे एडिट कीजिए और यूआरएल कॉपी करके मेल कर दीजिए। - (amiteshsingh94@gmail.com)
+            अगर आप डॉक्टर या अस्पताल का प्रोफ़ाइल अप्रूव कराना चाहते हैं, तो उसे एडिट कीजिए और यूआरएल कॉपी करके मेल कर दीजिए। - (rogisewa25@gmail.com)
         </p>
     </div>
     <div class="modal-footer">

@@ -23,33 +23,44 @@
                 </a>
             </h3>
 
+            <!-- Specialization -->
             <p class="mb-1">
                 <strong>Specialization:</strong>
                 @if($doctor->specializations->isNotEmpty())
-                    {{ $doctor->specializations->pluck('specialization.name')->implode(', ') }}
+                    <span class="text-primary">
+                        {!! $doctor->specializations->pluck('specialization.name')
+                            ->map(function($name) {
+                                return e($name);
+                            })
+                            ->join('<span class="text-danger">,</span> ') !!}
+                    </span>
                 @else
-                    N/A
+                    <span class="text-muted">N/A</span>
                 @endif
             </p>
 
+
+            <!-- Address with Icon -->
             <p class="mb-1">
-                <strong>Address:</strong>
+                <i class="fa fa-map-marker-alt text-danger me-1"></i>
                 @if($doctor->locations->isNotEmpty())
                     {{ $doctor->locations->first()->address }},
                     {{ $doctor->locations->first()->city }},
                     {{ $doctor->locations->first()->state }}
                     {{ $doctor->locations->first()->zip_code }}
                 @else
-                    N/A
+                    <span class="text-muted">N/A</span>
                 @endif
             </p>
 
+            <!-- Experience -->
             @if(!empty($doctor->experience))
                 <p class="mb-3"><strong>Experience:</strong>
                     {{ now()->year - $doctor->experience }}+ Years
                 </p>
             @endif
 
+            <!-- View Doctor Button -->
             <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($doctor->name)) }}"
                class="btn btn-primary btn-sm mt-2">
                View Doctor
@@ -60,7 +71,7 @@
 @empty
     <div class="col-12">
         <div class="alert alert-warning text-center">
-            No Doctors Availables
+            No Doctors Available
         </div>
     </div>
 @endforelse
