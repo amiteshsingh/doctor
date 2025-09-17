@@ -81,28 +81,27 @@ Route::middleware(['admin'])->group(function () {
 });
 // ------------------------------------------------------------------------------------
 // Doctor Routes
-Route::middleware(['doctor'])->group(function () {
+// Doctor Routes
+Route::middleware(['doctor'])->prefix('doctor')->group(function () {
     
-    Route::get('/doctor/dashboard', [DoctorPanelController::class, 'dashboard'])->name('doctor.dashboard');
-    Route::get('/doctor/edit-profile', [DoctorPanelController::class, 'editProfile'])->name('doctor.edit-profile');
-    Route::post('/doctor/update-profile', [DoctorPanelController::class, 'update'])->name('doctor.update-profile');
+    Route::get('/dashboard', [DoctorPanelController::class, 'dashboard'])->name('doctor.dashboard');
+    Route::get('/edit-profile', [DoctorPanelController::class, 'editProfile'])->name('doctor.edit-profile');
+    Route::post('/update-profile', [DoctorPanelController::class, 'update'])->name('doctor.update-profile');
 
-    Route::any('/doctor/mydoctor', [DoctorPanelController::class, 'index'])->name('doctor.mydoctor');
-    Route::any('/doctor/mydoctor/add', [DoctorPanelController::class, 'add'])->name('doctor.mydoctor.add');
-    Route::any('/doctor/mydoctor/delete/{id}', [DoctorPanelController::class, 'delete'])->name('doctor.mydoctor.delete');
-    Route::any('/doctor/mydoctor/doctor_specialization', [DoctorPanelController::class, 'doctorSpecializations'])->name('doctor.mydoctor.hospital_specialization');
-    Route::any('/doctor/mydoctor/doctor_location', [DoctorPanelController::class, 'doctorLocation'])->name('doctor.mydoctor.doctor_location');
-    Route::post('/doctor/mydoctor/doctor_availability', [DoctorPanelController::class, 'doctorAvailability'])->name('doctor.mydoctor.doctor_availability');
-    Route::get('/doctor/mydoctor/profile/{id}', [DoctorPanelController::class, 'profile'])->name('doctor.mydoctor.profile');
+    Route::any('/mydoctor', [DoctorPanelController::class, 'index'])->name('doctor.mydoctor');
+    Route::any('/mydoctor/add', [DoctorPanelController::class, 'add'])->name('doctor.mydoctor.add');
+    Route::any('/mydoctor/delete/{id}', [DoctorPanelController::class, 'delete'])->name('doctor.mydoctor.delete');
+    Route::any('/mydoctor/doctor_specialization', [DoctorPanelController::class, 'doctorSpecializations'])->name('doctor.mydoctor.hospital_specialization');
+    Route::any('/mydoctor/doctor_location', [DoctorPanelController::class, 'doctorLocation'])->name('doctor.mydoctor.doctor_location');
+    Route::post('/mydoctor/doctor_availability', [DoctorPanelController::class, 'doctorAvailability'])->name('doctor.mydoctor.doctor_availability');
+    Route::get('/mydoctor/profile/{id}', [DoctorPanelController::class, 'profile'])->name('doctor.mydoctor.profile');
 
-    Route::any('/doctor/myhospital', [MyHospitalController::class, 'index'])->name('doctor.myhospital');
-    Route::any('/doctor/myhospital/add', [MyHospitalController::class, 'add'])->name('doctor.myhospital.add');
-    Route::any('/doctor/myhospital/delete/{id}', [MyHospitalController::class, 'delete'])->name('doctor.myhospital.delete');
-    Route::any('/doctor/myhospital/hospital_specialization', [MyHospitalController::class, 'hospitalSpecializations'])->name('doctor.myhospital.hospital_specialization');
-
-
-
+    Route::any('/myhospital', [MyHospitalController::class, 'index'])->name('doctor.myhospital');
+    Route::any('/myhospital/add', [MyHospitalController::class, 'add'])->name('doctor.myhospital.add');
+    Route::any('/myhospital/delete/{id}', [MyHospitalController::class, 'delete'])->name('doctor.myhospital.delete');
+    Route::any('/myhospital/hospital_specialization', [MyHospitalController::class, 'hospitalSpecializations'])->name('doctor.myhospital.hospital_specialization');
 });
+
 
 // Auth Routes
 Auth::routes();
