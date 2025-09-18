@@ -52,9 +52,9 @@
                                         <input type="file" class="form-control" name="image" id="image" accept="image/*">
 
                                         @php
-                                            $Image = isset($hospital->image) && file_exists(public_path('uploads/hospital/'.$hospital->profile_pic))
-                                                            ? asset('uploads/hospital/'.$hospital->image)
-                                                            : asset('uploads/hospital/default.png'); // default image path
+                                            $Image = isset($hospital->image) && file_exists(public_path('storage/upload/hospital/'.$hospital->profile_pic))
+                                                            ? asset('storage/upload/hospital/'.$hospital->image)
+                                                            : asset('storage/upload/hospital/default.png'); // default image path
                                         @endphp
 
                                         <img class="doctor-img avatar" src="{{ $Image }}" style="margin-top: 10px;">

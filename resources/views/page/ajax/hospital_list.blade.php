@@ -4,7 +4,7 @@
             <div class="col-md-3 mb-3 mb-md-0">
                 <a href="{{ url('hospital-details/' . $hospital->id . '/' . Str::slug($hospital->name)) }}">
                     <img class="img-fluid rounded w-100"
-                         src="{{ asset('uploads/hospital/' . ($hospital->image ?? 'default.png')) }}"
+                         src="{{ asset('storage/upload/hospital/' . ($hospital->image ?? 'default.png')) }}"
                          alt="{{ $hospital->name }}"
                          style="object-fit: cover; height: 160px;">
                 </a>

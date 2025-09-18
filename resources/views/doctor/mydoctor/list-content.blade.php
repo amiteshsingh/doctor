@@ -18,9 +18,9 @@ foreach($res as $doctor){
         <div class="profile-widget">
             <div class="doctor-img">
                 @php
-                $profileImage = isset($doctor->profile_pic) && file_exists(public_path('uploads/doctor/'.$doctor->profile_pic))
-                                ? asset('uploads/doctor/'.$doctor->profile_pic)
-                                : asset('uploads/doctor/user.jpg'); // default image path
+                $profileImage = isset($doctor->profile_pic) && file_exists(public_path('storage/upload/doctor/'.$doctor->profile_pic))
+                                ? asset('storage/upload/doctor/'.$doctor->profile_pic)
+                                : asset('storage/upload/doctor/default.jpg'); // default image path
                 @endphp
                 <a class="avatar" href="{{ route('doctor.mydoctor.profile', ['id' => $doctor->id]) }}"><img alt="" src="{{ $profileImage }}"></a>
             </div>

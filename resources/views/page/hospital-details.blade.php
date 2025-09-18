@@ -9,7 +9,7 @@
         <div class="position-relative w-100">
             <!-- Banner Background (Blur + Dark) -->
             <div class="position-absolute top-0 start-0 w-100 h-100" 
-                 style="background: url('{{ asset('uploads/hospital/' . ($hospital->image ?? 'default.png')) }}') center/cover no-repeat;
+                 style="background: url('{{ asset('storage/upload//hospital/' . ($hospital->image ?? 'default.png')) }}') center/cover no-repeat;
                         filter: blur(2px) brightness(0.6);">
             </div>
 

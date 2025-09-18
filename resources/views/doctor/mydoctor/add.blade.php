@@ -47,10 +47,10 @@
                                     <div class="col-md-9">
                                         <input type="file" class="form-control" name="profile_pic" id="profile_pic" accept="image/*">
 
-                                        @php
-                                            $profileImage = isset($doctor->profile_pic) && file_exists(public_path('uploads/doctor/'.$doctor->profile_pic))
-                                                            ? asset('uploads/doctor/'.$doctor->profile_pic)
-                                                            : asset('uploads/doctor/user.jpg'); // default image path
+                                       @php
+                                            $profileImage = isset($doctor->profile_pic) && !empty($doctor->profile_pic)
+                                                ? asset('storage/upload/doctor/'.$doctor->profile_pic) 
+                                                : asset('storage/upload/doctor/default.jpg');                    
                                         @endphp
 
                                         <img class="doctor-img avatar" src="{{ $profileImage }}"  style="margin-top: 10px;">

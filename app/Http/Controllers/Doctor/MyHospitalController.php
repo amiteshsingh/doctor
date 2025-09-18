@@ -80,7 +80,8 @@ class MyHospitalController extends Controller
                     if ($request->hasFile('image')) {
                         $image = $request->file('image');
                         $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
-                        $image->move(public_path('uploads/hopital'), $imageName);
+                        // $image->move(public_path('uploads/hopital'), $imageName);
+                        $image->storeAs('upload/hopital', $imageName, 'public');
                         $update['image'] = $imageName;
                     }
                    
@@ -111,7 +112,8 @@ class MyHospitalController extends Controller
                     if ($request->hasFile('image')) {
                         $image = $request->file('image');
                         $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
-                        $image->move(public_path('uploads/hopital'), $imageName);
+                        // $image->move(public_path('uploads/hopital'), $imageName);
+                        $image->storeAs('upload/hopital', $imageName, 'public');
                         $hospital->image = $imageName;
                     }
                     $hospital->name = isset($data['name'])?$data['name']:'';

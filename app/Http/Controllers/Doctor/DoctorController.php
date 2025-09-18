@@ -86,7 +86,8 @@ class DoctorController extends Controller
                     if ($request->hasFile('profile_pic')) {
                         $image = $request->file('profile_pic');
                         $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
-                        $image->move(public_path('uploads/doctor'), $imageName);
+                        // $image->move(public_path('uploads/doctor'), $imageName);
+                        $image->storeAs('upload/doctor', $imageName, 'public');
                         $update['profile_pic'] = $imageName;
                     }
 
@@ -117,7 +118,8 @@ class DoctorController extends Controller
                     if ($request->hasFile('profile_pic')) {
                         $image = $request->file('profile_pic');
                         $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
-                        $image->move(public_path('uploads/doctor'), $imageName);
+                        // $image->move(public_path('uploads/doctor'), $imageName);
+                        $image->storeAs('upload/doctor', $imageName, 'public');
                         $doctor->profile_pic = $imageName;
                     }
                     $doctor->name = isset($data['name'])?$data['name']:'';
