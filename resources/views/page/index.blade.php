@@ -39,7 +39,7 @@
                             <div class="col-12 col-sm-5 h-100">
                                 <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}">
                                 <img class="img-fluid h-100" 
-                                    src="{{ $doctor->profile_pic ? asset('uploads/doctor/'.$doctor->profile_pic) : asset('img/default-doctor.jpg') }}" 
+                                    src="{{ $doctor->profile_pic ?asset('storage/upload/doctor/'.$doctor->profile_pic) : asset('storage/upload/doctor/user.jpg') }}" 
                                     style="object-fit: cover;">
                                 </a>
                             </div>

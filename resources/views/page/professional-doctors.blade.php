@@ -19,7 +19,7 @@
                 <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden doctor-card">
                     <!-- Doctor Image -->
                     <a href="{{ url('doctor-profile/'.$doctor->id.'/'.Str::slug($practiceName)) }}">
-                        <img src="{{ $doctor->profile_pic ? asset('uploads/doctor/'.$doctor->profile_pic) : asset('img/default-doctor.jpg') }}"
+                        <img src="{{ $doctor->profile_pic ? asset('storage/upload/doctor/'.$doctor->profile_pic) : asset('storage/upload/doctor/user.jpg') }}"
                              class="card-img-top doctor-img" alt="{{ $doctor->name }}">
                     </a>
 
