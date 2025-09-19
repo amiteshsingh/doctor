@@ -3,9 +3,9 @@
  * Author: Clavax Technologies Pvt. Ltd.
  * Varsion: 1.0
  */
-APP_URL = "http://127.0.0.1:8000/doctor/";
+// APP_URL = "http://127.0.0.1:8000/doctor/";
 
-// var APP_URL = "https://rogisewa.com/doctor/";
+var APP_URL = "https://rogisewa.com/doctor/";
 
  if(APP_URL.endsWith('/')===false){
     var base_url = APP_URL+'/';
