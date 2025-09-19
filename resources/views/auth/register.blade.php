@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/font-awesome.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/style.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
