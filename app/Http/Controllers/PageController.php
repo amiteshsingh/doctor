@@ -32,7 +32,20 @@ class PageController extends Controller
 
     public function about()
     {
-        return view('page.about');
+        $doctors = Doctor::with([
+            'availability',
+            'educations',
+            'languages',
+            'specializations.specialization',
+            'locations'
+        ])
+        ->where('is_professional', 1)
+        ->where('status', 1)
+        ->where('approval_status', 1)
+        ->limit(10)
+        ->get();
+    
+        return View::make('page.about', compact('doctors'));
     }
 
     
