@@ -33,7 +33,7 @@
                     <div class="tab-content">
                         <div class="tab-pane show active" id="basictab1">
                             <form method="POST" id="doctor_form" name="doctor_form" enctype="multipart/form-data">
-                                {{ csrf_field() }}
+                                @csrf
                                 <input type="hidden" name="id" value="{{isset($doctor->id)?$doctor->id:''}}">
                                 <div class="form-group row">
                                     <label class="col-form-label col-md-2">Full Name</label>
