@@ -81,7 +81,7 @@ class MyHospitalController extends Controller
                         $image = $request->file('image');
                         $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
                         // $image->move(public_path('uploads/hopital'), $imageName);
-                        $image->storeAs('upload/hopital', $imageName, 'public');
+                        $image->storeAs('upload/hospital', $imageName, 'public');
                         $update['image'] = $imageName;
                     }
                    
@@ -113,7 +113,7 @@ class MyHospitalController extends Controller
                         $image = $request->file('image');
                         $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
                         // $image->move(public_path('uploads/hopital'), $imageName);
-                        $image->storeAs('upload/hopital', $imageName, 'public');
+                        $image->storeAs('upload/hospital', $imageName, 'public');
                         $hospital->image = $imageName;
                     }
                     $hospital->name = isset($data['name'])?$data['name']:'';
