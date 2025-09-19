@@ -135,6 +135,7 @@ $(function() {
             },
             submitHandler: function () {
                 var formData = new FormData($("#doctor_form")[0]);
+                formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
                 let url = base_url + "mydoctor/add";
                 $.ajax({
                     url: url,
