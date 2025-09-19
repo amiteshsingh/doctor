@@ -3,6 +3,13 @@ $(function() {
     /**
      * Validate Hospital Form add, edit.
      */
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
      $(document).on("click", "#save_hospital", function(){
         $("#hospital_form").validate({
             rules: {

@@ -18,7 +18,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/select2.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/bootstrap-datetimepicker.min.css') }}">
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!--[if lt IE 9]>
 		<script src="assets/js/html5shiv.min.js"></script>

@@ -5,7 +5,7 @@
  */
 // APP_URL = "http://127.0.0.1:8000/doctor/";
 
-var APP_URL = "https://rogisewa.com/";
+var APP_URL = "https://rogisewa.com/admin/";
  if(APP_URL.endsWith('/')===false){
     var base_url = APP_URL+'/';
 }else{
