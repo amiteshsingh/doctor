@@ -25,8 +25,8 @@
             <div class="col-lg-12">
                 <div class="card-box">
                     <h4 class="card-title">{{ $form }} Hospital</h4>
-
-                    <ul class="nav nav-tabs nav-tabs-top">
+nav nav-tabs nav-tabs-solid
+                    <ul class="nav nav-tabs nav-tabs-solid">
                         <li class="nav-item"><a class="nav-link active" href="#basictab1" data-toggle="tab">Hospital Details</a></li>
                         <?php if(isset($hospital->id) && $hospital->id != ''){ ?>
                         <li class="nav-item"><a class="nav-link" href="#basictab2" data-toggle="tab">Hospital Specialization</a></li>

@@ -20,7 +20,7 @@
                 <div class="card-box">
                     <h4 class="card-title">{{ $form }} Doctor</h4>
 
-                    <ul class="nav nav-tabs nav-tabs-top">
+                    <ul class="nav nav-tabs nav-tabs-solid nav-justified">
                         <li class="nav-item"><a class="nav-link active" href="#basictab1" data-toggle="tab">Doctor's Details</a></li>
                         <?php if(isset($doctor->id) && $doctor->id != ''){ ?>
                         <li class="nav-item"><a class="nav-link" href="#basictab2" data-toggle="tab">Doctor's Specialization</a></li>

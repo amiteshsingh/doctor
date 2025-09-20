@@ -39,6 +39,57 @@
                  </a>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-12 col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Welcome {{ Auth::user()->name }}!</h4>
+                            <p>
+                            🔔 प्रिय {{ Auth::user()->name }}, कृपया बताएं कि आपको अपने डैशबोर्ड पर कौन-कौन-सी सुविधाएँ चाहिए?  
+                            आपकी आवश्यकताओं के आधार पर हम आपके लिए डैशबोर्ड को और बेहतर बनाएँगे।
+                            <br><br>
+                            👉 कृपया अपनी आवश्यकताएँ हमें <b>mail</b> पर भेजें: <a href="mailto:rogisewa25@gmail.com">rogisewa25@gmail.com</a>
+
+                            </p>
+
+                            <p>
+                            🩺 ऑनलाइन पर्चा / अपॉइंटमेंट मैनेजमेंट <br>
+                            👨‍⚕️ पेशेंट डेटा मैनेजमेंट <br>
+                            💊 मेडिसिन डेटा मैनेजमेंट <br>
+                            💳 पेमेंट मैनेजमेंट <br>
+                            📄 पर्चा इनवॉइस जनरेशन
+                            </p>
+          
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-sm-12 col-lg-12 col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Welcome {{ Auth::user()->name }}!</h4>
+                        
+                             <p>
+                            🔔 Dear {{ Auth::user()->name }}, please let us know which features you need on your dashboard.  
+                            Based on your requirements, we will improve and customize your dashboard.
+
+                            <br><br>
+                            👉 Please send us your requirements by email at: <a href="mailto:rogisewa25@gmail.com">rogisewa25@gmail.com</a>
+                             </p>
+
+                            <p>
+                            🩺 Online Prescription / Appointment Management <br>
+                            👨‍⚕️ Patient Data Management <br>
+                            💊 Medicine Data Management <br>
+                            💳 Payment Management <br>
+                            📄 Prescription Invoice Generation
+                            </p>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
        
    
     </div>
