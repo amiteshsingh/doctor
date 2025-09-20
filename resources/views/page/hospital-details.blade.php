@@ -27,7 +27,7 @@
                 <div class="col-lg-4">
                     <!-- Profile Card -->
                     <div class="card shadow-lg border-0 rounded-4 text-center p-4 bg-light">
-                        <img src="{{ asset('uploads/hospital/' . ($hospital->image ?? 'default.png')) }}" 
+                        <img src="{{ asset('storage/upload/hospital/' . ($hospital->image ?? 'default.png')) }}" 
                              class="rounded-circle mx-auto mb-3 border border-4 border-primary" 
                              alt="{{ $hospital->name ?? 'Hospital' }}" 
                              style="width: 160px; height: 160px; object-fit: cover;">
