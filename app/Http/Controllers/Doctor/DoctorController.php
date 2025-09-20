@@ -502,11 +502,13 @@ class DoctorController extends Controller
         if ($request->hasFile('profile_image')) {
             $image = $request->file('profile_image');
             $filename = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads/profile_images'), $filename);
+            // $image->move(public_path('uploads/profile_images'), $filename);
+            $image->storeAs('upload/profile_images', $filename, 'public');
 
             // पुरानी image delete कर सकते हैं अगर stored है
             if ($user->profile_image && file_exists(public_path('uploads/profile_images/' . $user->profile_image))) {
-                unlink(public_path('uploads/profile_images/' . $user->profile_image));
+                // unlink(public_path('uploads/profile_images/' . $user->profile_image));
+                // unlink(public_path('upload/profile_images/' . $user->profile_image));
             }
 
             $user->profile_image = $filename;

@@ -33,7 +33,14 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="profile-img-wrap">
-                            <img class="inline-block" src="{{ $user->profile_image ? asset('uploads/profile_images/' . $user->profile_image) : asset('admin/assets/img/user.jpg') }}" alt="user">
+
+                            @php
+                                $Image = isset( $user->profile_image) && file_exists(public_path('storage/upload/profile_images/'. $user->profile_image))
+                                                ? asset('storage/upload/profile_images/'. $user->profile_image)
+                                                : asset('storage/upload/profile_images/user.png'); // default image path
+                            @endphp
+
+                            <img class="inline-block" src="{{ $Image }}" alt="user">
                             <div class="fileupload btn">
                                 <span class="btn-text">edit</span>
                                 <input class="upload" type="file" name="profile_image">

@@ -142,7 +142,7 @@
 
                                     <div class="col-md-4 text-right">
                                     <button type="submit" id="save_hospital" class="btn btn-primary">Submit</button>
-                                    <a href="{{ route('admin.hospital') }}" type="submit" class="btn btn-primary">Back</a>
+                                    <a href="{{ route('doctor.myhospital') }}" type="submit" class="btn btn-primary">Back</a>
                                         
                                 </div>
                             
