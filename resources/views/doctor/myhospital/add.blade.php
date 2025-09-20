@@ -52,7 +52,7 @@
                                         <input type="file" class="form-control" name="image" id="image" accept="image/*">
 
                                         @php
-                                            $Image = isset($hospital->image) && file_exists(public_path('storage/upload/hospital/'.$hospital->profile_pic))
+                                            $Image = isset($hospital->image) && file_exists(public_path('storage/upload/hospital/'.$hospital->image))
                                                             ? asset('storage/upload/hospital/'.$hospital->image)
                                                             : asset('storage/upload/hospital/default.png'); // default image path
                                         @endphp
