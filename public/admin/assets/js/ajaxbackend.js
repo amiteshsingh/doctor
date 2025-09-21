@@ -3,12 +3,17 @@
  * Author: Clavax Technologies Pvt. Ltd.
  * Varsion: 1.0
  */
-// APP_URL = "http://127.0.0.1:8000/doctor/";
+var APP_URL = window.location.origin;  
 
-var APP_URL = "https://rogisewa.com/admin/";
- if(APP_URL.endsWith('/')===false){
-    var base_url = APP_URL+'/';
-}else{
+if (APP_URL.includes("127.0.0.1") || APP_URL.includes("localhost")) {
+    APP_URL = APP_URL + "/admin/";
+} else {
+    APP_URL = APP_URL + "/admin/";
+}
+
+if (!APP_URL.endsWith("/")) {
+    var base_url = APP_URL + "/";
+} else {
     var base_url = APP_URL;
 }
 
