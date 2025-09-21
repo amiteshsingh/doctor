@@ -108,7 +108,7 @@ class HospitalController extends Controller
                         $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
                         // $image->move(public_path('uploads/hopital'), $imageName);
                         $image->storeAs('upload/hospital', $imageName, 'public');
-                        $doctor->image = $imageName;
+                        $hospital->image = $imageName;
                     }
                     $hospital->name = isset($data['name'])?$data['name']:'';
                     $hospital->phone_no = isset($data['phone_no'])?$data['phone_no']:'';
