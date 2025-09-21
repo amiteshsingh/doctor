@@ -49,14 +49,14 @@
                                     </span>
                                 @enderror
                         </div>
-                        <div class="form-group text-right">
+                        <!-- <div class="form-group text-right">
                             @if (Route::has('password.request'))
                                 <a class="" href="{{ route('password.request') }}">
                                     {{ __('Forgot Your Password?') }}
                                 </a>
                             @endif
 
-                        </div>
+                        </div> -->
                         <div class="form-group text-center">
                             <button type="submit" class="btn btn-primary account-btn">{{ __('Login') }}</button>
                         </div>

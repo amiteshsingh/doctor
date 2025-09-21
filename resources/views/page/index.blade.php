@@ -118,6 +118,59 @@
     <!-- Search End -->
 
 
+<!-- Bootstrap 5 Modal -->
+<div class="modal fade" id="registrationPopup" tabindex="-1" aria-labelledby="registrationPopupLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-3 shadow">
+
+      <div class="modal-header">
+        <h5 class="modal-title text-primary fw-bold" id="registrationPopupLabel">
+          📢 डॉक्टर और हॉस्पिटल रजिस्ट्रेशन / Doctor & Hospital Registration
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-2">
+          <b>RogiSewa.com</b> पर रजिस्टर होकर अपने क्लिनिक/हॉस्पिटल की जानकारी पूरे <b>भारत</b> में पहुँचाएँ।  
+          यह प्लेटफ़ॉर्म आपके मरीजों तक पहुँचने का आसान और भरोसेमंद माध्यम है।  
+        </p>
+        <p class="mb-3">
+          Register your clinic/hospital on <b>RogiSewa.com</b> and reach patients across <b>India</b>.  
+          This platform is the most reliable way to connect with patients.  
+        </p>
+
+        <ul class="list-unstyled">
+          <li>✅ अपने नाम और हॉस्पिटल की पहचान पूरे इंडिया में बनाएँ / Build your clinic & hospital identity across India</li>
+          <li>✅ मरीज सीधे आपके पास पहुँच सकेंगे / Patients can directly reach you</li>
+          <li>✅ आपके विशेषज्ञता और सेवाओं का प्रचार-प्रसार ऑल इंडिया लेवल पर / Promote your expertise & services at All-India level</li>
+        </ul>
+      </div>
+
+      <div class="modal-footer d-flex justify-content-between">
+        <a href="http://rogisewa.com/register" class="btn btn-success fw-bold">
+          👉 अभी रजिस्टर करें / Register Now
+        </a>
+        <button type="button" class="btn btn-danger fw-bold" data-bs-dismiss="modal">
+          ❌ बंद करें / Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Script to Auto-open Modal -->
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(function(){
+      var myModal = new bootstrap.Modal(document.getElementById('registrationPopup'));
+      myModal.show();
+    }, 2000); // 2 seconds delay
+  });
+</script>
+
+
 
     
     @endsection
