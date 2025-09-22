@@ -65,6 +65,7 @@
                                 <th>Name <i class="fas ajaxSorting fa-sort " data-type="doctor" data-sort_by="name" data-sort_order="asc"></i> </th>
                                 <th>Phone <i class="fas ajaxSorting fa-sort" data-type="doctor" data-sort_by="phone_no" data-sort_order="asc"></i></th>
                                 <th>Email <i class="fas ajaxSorting fa-sort" data-type="doctor" data-sort_by="email" data-sort_order="asc"></i></th>
+                                <th>VIsitCount <i class="fas ajaxSorting fa-sort" data-type="doctor" data-sort_by="visit_count" data-sort_order="asc"></i></th>
                                 <th >Status <i class="fas ajaxSorting fa-sort" data-type="doctor" data-sort_by="status" data-sort_order="asc"></i></th>
                                 <th>Approve <i class="fas ajaxSorting fa-sort" data-type="doctor" data-sort_by="approval_status" data-sort_order="asc"></i></th>
                                 <th class="text-right">Actions</th>

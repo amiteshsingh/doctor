@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\HospitalController;
 use App\Http\Controllers\Admin\SpecializationController;
 use App\Http\Controllers\Admin\DoctorController;
-
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Doctor\DoctorController as DoctorPanelController;
 use App\Http\Controllers\Doctor\MyHospitalController;
 use Illuminate\Support\Facades\Auth;
@@ -75,6 +75,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::any('/doctor/doctor_specialization', [DoctorController::class, 'doctorSpecializations'])->name('admin.doctor.hospital_specialization');
     Route::any('/doctor/doctor_location', [DoctorController::class, 'doctorLocation'])->name('admin.doctor.doctor_location');
     Route::post('/doctor/doctor_availability', [DoctorController::class, 'doctorAvailability'])->name('admin.doctor_availability');
+
+    Route::any('/user', [UserController::class, 'index'])->name('admin.user');
+
 
 
 

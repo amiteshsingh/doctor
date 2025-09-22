@@ -195,11 +195,17 @@ class PageController extends Controller
         return view('page.contact');
     }
 
-     public function doctor_profile(Request $request, $id = null, $name=null)
+    public function doctor_profile(Request $request, $id = null, $name=null)
     {
-        $doctor = Doctor::with(['availability','educations','languages','specializations','locations'
-                    ])->where('id', $id)->first();
+        $doctor = Doctor::with([
+            'availability',
+            'educations',
+            'languages',
+            'specializations',
+            'locations'
+        ])->findOrFail($id);
 
+        $doctor->increment('visit_count');
         
         return view('page.doctor-profile', ['doctor' => $doctor]);
     }
