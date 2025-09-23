@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+use DB;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -59,6 +61,57 @@ class User extends Authenticatable
     public function isDoctor()
     {
         return $this->role && $this->role->role === 'doctor';
+    }
+
+        public static function getResult($page = 1, $page_size = 10, $filter = []){
+        $offset = ($page - 1) * $page_size;
+        $query = DB::table('users')
+                ->select('users.*')
+                ->offset($offset)
+                ->limit($page_size);
+
+                if(isset($filter['sortBy']) && $filter['sortBy'] !="" && isset($filter['orderBy']) && $filter['orderBy'] != ""){
+                    $sortBy = $filter['sortBy'];
+                    $orderBy = $filter['orderBy']; 
+                    $query->orderBy($sortBy,$orderBy);
+                }else{
+                    $query->orderBy('users.id', 'desc');
+                }
+           
+                if(isset($filter['search']) && $filter['search'] !=""){
+                    $search = $filter['search'];
+                    $query->where(function($query) use ($search){
+                        $query->Where('name', 'LIKE','%' . $search . '%')
+                        ->orWhere('phone_no', 'LIKE','%' . $search . '%')
+                        ->orWhere('email', 'LIKE','%' . $search . '%');
+                    });   
+                }
+        $data = $query->get()->toArray();
+        // echo $query->toSql();
+        return $data;
+    }
+
+    /**
+    * Get total count data according to filter.
+    * param  parameter filter array mixed type
+    * return Result fetching data
+    */
+    public static function getTotalResult($filter=[]){
+        $query = DB::table('users')
+        ->select('users.id') // Only selecting ID to optimize count
+        ->orderBy('users.id', 'desc');
+
+        if(isset($filter['search']) && $filter['search'] !=""){
+            $search = $filter['search'];
+            $query->where(function($query) use ($search){
+                $query->Where('name', 'LIKE','%' . $search . '%')
+                ->orWhere('phone_no', 'LIKE','%' . $search . '%')
+                ->orWhere('email', 'LIKE','%' . $search . '%');
+            });   
+        }
+        // echo $data = $query->toSQL(); die;
+        $data = $query->get()->toArray();
+        return count($data);
     }
  
 }

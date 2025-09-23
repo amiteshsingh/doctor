@@ -33,6 +33,11 @@ $(document).ready(function(){
         ajaxSearching(1, 'doctor', 'doctor');
     })
 
+    $(document).on("change keyup",".filterUser", function(){
+        $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+        ajaxSearching(1, 'user', 'user');
+    })
+
     
     
 
@@ -144,6 +149,17 @@ function ajaxSearching(current_page, filtertype, url) {
             approval_status: approval_status,
             page: page,
         }
+    }else if(type === 'user'){ 
+        var url = base_url + url;
+        var search = $("#search").val();
+		var sortBy = $("#sortBy").val();
+		var orderBy = $("#orderBy").val();
+        var data = {
+            sortBy: sortBy,
+			orderBy: orderBy,
+			search: search,
+            page: page,
+        }
     }else {
         console.log('clothNot url defile here');
         return;
@@ -207,6 +223,7 @@ function FilterReset(page, type, url){
     $('.filterHospital').val('').trigger('change');
     $('.filterSpecialization').val('').trigger('change');
     $('.filterDoctor').val('').trigger('change');
+    $('.filterUser').val('').trigger('change');
 
 
     $('.ajaxSorting').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
