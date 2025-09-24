@@ -6,7 +6,7 @@
                 <div class="col-lg-3 col-md-6">
                     <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Get In Touch</h4>
                     <p class="mb-4">Have a question or need assistance? The RogiSewa team is always here to help you.  Contact us to find the right doctor or hospital for your healthcare needs.</p>
-                    <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>123 Street, New York, USA</p>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>Ashok Vihar Phase 3, gurgaon INDIA</p>
                     <p class="mb-2"><i class="fa fa-envelope text-primary me-3"></i>rogisewa25@gmail.com</p>
                     <!-- <p class="mb-0"><i class="fa fa-phone-alt text-primary me-3"></i>+012 345 67890</p> -->
                 </div>
