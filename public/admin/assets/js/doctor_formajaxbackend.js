@@ -339,6 +339,72 @@ $(function() {
 
 
 
+    $(document).on("click", "#save_invoice", function(){
+        $("#invoice_form").validate({
+            rules: {
+                doctor_id: {
+                    required: true,
+                    number: true
+                },
+                hospital_clinic_name: {
+                    required: true
+                },
+                consultation_fee: {
+                    required: true,
+                    number: true
+                },
+            },
+            messages: {
+                doctor_id: {
+                    required: "Doctor ID is required.",
+                    number: "Please enter a valid number."
+                },
+                hospital_clinic_name: {
+                    required: "Hospital/Clinic Name is required."
+                },
+                consultation_fee: {
+                    required: "Consultation Fee is required.",
+                    number: "Please enter a valid amount."
+                },
+            },
+            submitHandler: function () {
+                var formData = new FormData($("#invoice_form")[0]);
+                let url = base_url + "invoice-master/add";
+                $.ajax({
+                    url: url,
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    beforeSend: function () {
+                        $(".loaderDiv").removeClass("hidden"); // loader show
+                    },
+                    success: function (response) {
+                        $(".loaderDiv").addClass("hidden"); // loader hide
+                        if (response.status === 200) {
+                            $.jGrowl(response.msg, { header: "Invoice", theme: 'success-theme' });
+
+                            setTimeout(function(){
+                                window.location.href = base_url + "invoice-master";
+                            }, 2000);
+                        } else {
+                            $.jGrowl(response.msg, { header: "Invoice", theme: 'error-theme' });
+                        }
+                    },
+                    error: function () {
+                        $(".loaderDiv").addClass("hidden");
+                        $.jGrowl("Something went wrong.", { header: "Error", theme: 'error-theme' });
+                    }
+                });
+            }
+        });
+    });
+
+
+
+
+
 
 
   });

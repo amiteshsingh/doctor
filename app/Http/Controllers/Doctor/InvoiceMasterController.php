@@ -1,0 +1,157 @@
+<?php
+
+namespace App\Http\Controllers\Doctor;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\InvoiceMaster;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+
+class InvoiceMasterController extends Controller
+{
+    /**
+     * List invoices (with AJAX + pagination support)
+     */
+    public function index(Request $request)
+    {
+        try {
+            $page = 1;
+            $page_size = 10;
+            $filter = [];
+            $result = [];
+
+            if ($request->isMethod('post') && $request->ajax() && $request->session()->has('user_id')) {
+                $filter = $request->all();
+                $page = isset($filter['page']) ? $filter['page'] : $page;
+
+                $records = InvoiceMaster::orderBy('id', 'DESC')
+                    ->skip(($page - 1) * $page_size)
+                    ->take($page_size)
+                    ->get();
+
+                $total = InvoiceMaster::count();
+
+                $content_html = view('doctor.invoice_master.list-content')
+                    ->with(['res' => $records, 'page' => $page, 'page_size' => $page_size])
+                    ->render();
+
+                $pagination_html = view('pagination.pagination')
+                    ->with([
+                        'url' => 'invoice-master',
+                        'recTotal' => $total,
+                        'pageSize' => $page_size,
+                        'curPage' => $page,
+                        'filterAjax' => 'ajaxSearching',
+                        'filterType' => 'invoice-master'
+                    ])->render();
+
+                $result['pagination_html'] = $pagination_html;
+                $result['content_html'] = $content_html;
+                $result['error'] = 0;
+                $result['msg'] = 'Fetch data successfully';
+
+                return response()->json($result);
+            } else {
+                $records = InvoiceMaster::orderBy('id', 'DESC')
+                    ->skip(($page - 1) * $page_size)
+                    ->take($page_size)
+                    ->get();
+
+                $result['total_count'] = InvoiceMaster::count();
+                $result['page'] = $page;
+                $result['page_size'] = $page_size;
+
+                $pagination_html = view('pagination.pagination')
+                    ->with([
+                        'url' => 'invoice-master',
+                        'recTotal' => $result['total_count'],
+                        'pageSize' => $page_size,
+                        'curPage' => $page,
+                        'filterAjax' => 'ajaxSearching',
+                        'filterType' => 'invoice-master'
+                    ])->render();
+
+                $result['pagination_html'] = $pagination_html;
+                $content_html = view('doctor.invoice_master.list-content')
+                    ->with(['res' => $records, 'page' => $page, 'page_size' => $page_size])
+                    ->render();
+
+                $result['content_html'] = $content_html;
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->withError('Something went wrong: ' . $e->getMessage());
+        }
+
+        $title = "Invoice Master List";
+        return view('doctor.invoice_master.index', compact('result', 'title'));
+    }
+
+    /**
+     * Add or Update Invoice
+     */
+    public function add(Request $request)
+    {
+        $data = $request->all();
+
+        if ($request->isMethod('post') && $request->ajax()) {
+            try {
+                $request->validate([
+                    'doctor_id' => 'required|integer',
+                    'hospital_clinic_name' => 'required|string|max:255',
+                    'consultation_fee' => 'required|numeric',
+                ]);
+
+                // Update
+                if (isset($data['id']) && $data['id'] != "") {
+                    $update['doctor_id'] = $data['doctor_id'];
+                    $update['hospital_clinic_name'] = $data['hospital_clinic_name'];
+                    $update['consultation_fee'] = $data['consultation_fee'];
+                    $update['updated_at'] = now();
+
+                    if (DB::table('invoice_master')->where('id', $data['id'])->update($update)) {
+                        return response()->json(["status" => 200, "msg" => "Invoice updated successfully."]);
+                    } else {
+                        return response()->json(["status" => 403, "msg" => "Invoice not updated."]);
+                    }
+                } else {
+                    // Insert
+                    $invoice = new InvoiceMaster;
+                    $invoice->doctor_id = $data['doctor_id'];
+                    $invoice->hospital_clinic_name = $data['hospital_clinic_name'];
+                    $invoice->consultation_fee = $data['consultation_fee'];
+                    $invoice->created_at = now();
+                    $invoice->updated_at = now();
+
+                    if ($invoice->save()) {
+                        return response()->json(["status" => 200, "msg" => "Invoice saved successfully."]);
+                    } else {
+                        return response()->json(["status" => 403, "msg" => "Invalid request"]);
+                    }
+                }
+            } catch (\Exception $e) {
+                return response()->json(["status" => 402, "msg" => $e->getMessage()]);
+            }
+        } else {
+            $invoice = (object)[];
+            if (isset($data['id']) && !empty($data['id'])) {
+                $invoice = InvoiceMaster::find($data['id']);
+            }
+            return view('doctor.invoice_master.add', compact('invoice'));
+        }
+    }
+
+    /**
+     * Delete Invoice
+     */
+    public function delete(Request $request, $id)
+    {
+        if (empty(Session::get('user_id'))) {
+            return redirect('/');
+        }
+
+        DB::table('invoice_master')->where('id', '=', $id)->delete();
+        $request->session()->flash('msg', 'Invoice deleted successfully.');
+        return redirect('doctor/invoice-master');
+    }
+}

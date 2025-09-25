@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Doctor\DoctorController as DoctorPanelController;
 use App\Http\Controllers\Doctor\MyHospitalController;
+use App\Http\Controllers\Doctor\InvoiceMasterController;
 use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
@@ -103,6 +104,10 @@ Route::middleware(['doctor'])->prefix('doctor')->group(function () {
     Route::any('/myhospital/add', [MyHospitalController::class, 'add'])->name('doctor.myhospital.add');
     Route::any('/myhospital/delete/{id}', [MyHospitalController::class, 'delete'])->name('doctor.myhospital.delete');
     Route::any('/myhospital/hospital_specialization', [MyHospitalController::class, 'hospitalSpecializations'])->name('doctor.myhospital.hospital_specialization');
+
+    Route::any('/invoice-master', [InvoiceMasterController::class, 'index'])->name('invoice-master.index');
+    Route::any('/invoice-master/add', [InvoiceMasterController::class, 'add'])->name('invoice-master.add');
+    Route::any('/invoice-master/delete/{id}', [InvoiceMasterController::class, 'delete'])->name('invoice-master.delete');
 });
 
 

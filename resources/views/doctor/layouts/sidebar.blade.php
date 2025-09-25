@@ -15,10 +15,14 @@
                             <a href="{{ route('doctor.mydoctor') }}"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
                         </li>
 
-                        <!-- <li class="submenu">
+                        <li>
+                            <a href="#" title="पर्चा इनवॉइस जनरेशन/Prescription Invoice Generation"><span>coming soon<br>पर्चा इनवॉइस जनरेशन/Prescription Invoice Generation</span></a>
+                        </li>
+
+                         <!-- <li class="submenu">
 							<a href="#"><i class="fa fa-pencil-square-o"></i> <span> Invoice Settings </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
-								<li><a href="#">Invoice</a></li>
+								<li><a href="#">Prescription Invoice</a></li>
 								<li><a href="#">Invoice Settings</a></li>
 							</ul>
 						</li> -->
