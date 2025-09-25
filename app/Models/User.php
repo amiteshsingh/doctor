@@ -66,7 +66,9 @@ class User extends Authenticatable
         public static function getResult($page = 1, $page_size = 10, $filter = []){
         $offset = ($page - 1) * $page_size;
         $query = DB::table('users')
-                ->select('users.*')
+                ->join('user_roles', 'users.id', '=', 'user_roles.user_id')
+                ->select('users.*', 'user_roles.role', 'user_roles.user_id')
+                ->where('user_roles.role', '=', 'doctor')
                 ->offset($offset)
                 ->limit($page_size);
 
@@ -98,7 +100,9 @@ class User extends Authenticatable
     */
     public static function getTotalResult($filter=[]){
         $query = DB::table('users')
+        ->join('user_roles', 'users.id', '=', 'user_roles.user_id')
         ->select('users.id') // Only selecting ID to optimize count
+        ->where('user_roles.role', '=', 'doctor')
         ->orderBy('users.id', 'desc');
 
         if(isset($filter['search']) && $filter['search'] !=""){
