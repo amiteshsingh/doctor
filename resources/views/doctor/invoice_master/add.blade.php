@@ -28,13 +28,21 @@
                             <input type="hidden" name="id" value="{{ $invoice->id ?? '' }}">
 
                             <div class="form-group row">
-                                <label class="col-form-label col-lg-3">Doctor ID</label>
+                                <label class="col-form-label col-lg-3">Doctor</label>
                                 <div class="col-md-9">
                                     <div class="input-group">
-                                        <input type="number" name="doctor_id" value="{{ $invoice->doctor_id ?? '' }}" class="form-control">
+                                        <select name="doctor_id" class="form-control">
+                                            <option value="">-- Select Doctor --</option>
+                                            @foreach($doctors as $id => $name)
+                                                <option value="{{ $id }}" {{ (isset($invoice->doctor_id) && $invoice->doctor_id == $id) ? 'selected' : '' }}>
+                                                    {{ $name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
+
 
                             <div class="form-group row">
                                 <label class="col-form-label col-lg-3">Hospital/Clinic Name</label>

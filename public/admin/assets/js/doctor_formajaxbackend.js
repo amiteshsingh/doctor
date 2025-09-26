@@ -383,7 +383,7 @@ $(function() {
                     success: function (response) {
                         $(".loaderDiv").addClass("hidden"); // loader hide
                         if (response.status === 200) {
-                            $.jGrowl(response.msg, { header: "Invoice", theme: 'success-theme' });
+                            $.jGrowl(response.msg, { header: "Invoice Master", theme: 'success-theme' });
 
                             setTimeout(function(){
                                 window.location.href = base_url + "invoice-master";
@@ -402,6 +402,81 @@ $(function() {
     });
 
 
+
+    $(document).on("click", "#save_prescription_invoice", function () {
+        $("#prescription_invoice_form").validate({
+            rules: {
+                invoice_master_id: {
+                    required: true,
+                    number: true
+                },
+                invoice_number: {
+                    required: true
+                },
+                patient_name: {
+                    required: true
+                },
+                patient_address: {
+                    required: true
+                },
+                patient_phone_no: {
+                    required: true,
+                    digits: true,
+                    minlength: 10,
+                    maxlength: 15
+                },
+            },
+            messages: {
+                invoice_master_id: {
+                    required: "Invoice Master ID is required.",
+                    number: "Please enter a valid number."
+                },
+                patient_name: {
+                    required: "Patient Name is required."
+                },
+                patient_address: {
+                    required: "Patient Address is required."
+                },
+                patient_phone_no: {
+                    required: "Patient Phone Number is required.",
+                    digits: "Please enter a valid phone number.",
+                    minlength: "Phone number must be at least 10 digits.",
+                    maxlength: "Phone number cannot exceed 15 digits."
+                },
+            },
+            submitHandler: function () {
+                var formData = new FormData($("#prescription_invoice_form")[0]);
+                let url = base_url + "prescription-invoice/add";
+                $.ajax({
+                    url: url,
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    beforeSend: function () {
+                        $(".loaderDiv").removeClass("hidden"); // loader show
+                    },
+                    success: function (response) {
+                        $(".loaderDiv").addClass("hidden"); // loader hide
+                        if (response.status === 200) {
+                            $.jGrowl(response.msg, { header: "Prescription Invoice", theme: 'success-theme' });
+
+                            setTimeout(function () {
+                                window.location.href = base_url + "prescription-invoice";
+                            }, 2000);
+                        } else {
+                            $.jGrowl(response.msg, { header: "Prescription Invoice", theme: 'error-theme' });
+                        }
+                    },
+                    error: function () {
+                        $(".loaderDiv").addClass("hidden");
+                        $.jGrowl("Something went wrong.", { header: "Error", theme: 'error-theme' });
+                    }
+                });
+            }
+        });
+    });
 
 
 

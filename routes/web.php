@@ -14,6 +14,8 @@ use App\Http\Controllers\Doctor\MyHospitalController;
 use App\Http\Controllers\Doctor\InvoiceMasterController;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\Doctor\PrescriptionInvoiceController;
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -108,6 +110,15 @@ Route::middleware(['doctor'])->prefix('doctor')->group(function () {
     Route::any('/invoice-master', [InvoiceMasterController::class, 'index'])->name('invoice-master.index');
     Route::any('/invoice-master/add', [InvoiceMasterController::class, 'add'])->name('invoice-master.add');
     Route::any('/invoice-master/delete/{id}', [InvoiceMasterController::class, 'delete'])->name('invoice-master.delete');
+
+    Route::any('/prescription-invoice', [PrescriptionInvoiceController::class, 'index'])->name('prescription-invoice.index');
+    Route::any('/prescription-invoice/add', [PrescriptionInvoiceController::class, 'add'])->name('prescription-invoice.add');
+    Route::any('/prescription-invoice/delete/{id}', [PrescriptionInvoiceController::class, 'delete'])->name('prescription-invoice.delete');
+    Route::get('prescription-invoice/pdf/{id}', [PrescriptionInvoiceController::class, 'generatePdf'])->name('prescription-invoice.pdf');
+
+
+
+
 });
 
 

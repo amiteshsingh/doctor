@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Doctor;
 
 class InvoiceMaster extends Model
 {
@@ -18,4 +19,10 @@ class InvoiceMaster extends Model
     {
         return $this->hasMany(PrescriptionInvoice::class, 'invoice_master_id');
     }
+
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class, 'doctor_id');
+    }
+
 }

@@ -20,4 +20,8 @@ class PrescriptionInvoice extends Model
     {
         return $this->belongsTo(InvoiceMaster::class, 'invoice_master_id');
     }
+    public function invoiceMaster()
+    {
+        return $this->belongsTo(InvoiceMaster::class, 'invoice_master_id');
+    }
 }

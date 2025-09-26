@@ -11,10 +11,11 @@
     </thead>
     <tbody>
     @if(count($res) > 0)
+        @php $i = 1; @endphp
         @foreach($res as $invoice)
             <tr>
-                <td>{{ $invoice->id }}</td>
-                <td>{{ $invoice->doctor_id }}</td>
+                <td>{{ $i++ }}</td>
+                <td>{{ $invoice->doctor_name }}</td>
                 <td>{{ $invoice->hospital_clinic_name }}</td>
                 <td>₹ {{ number_format($invoice->consultation_fee, 2) }}</td>
                 <td>{{ $invoice->created_at }}</td>

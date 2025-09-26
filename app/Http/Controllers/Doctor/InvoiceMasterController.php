@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\InvoiceMaster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use App\Models\Doctor;
 
 class InvoiceMasterController extends Controller
 {
@@ -25,9 +26,12 @@ class InvoiceMasterController extends Controller
                 $filter = $request->all();
                 $page = isset($filter['page']) ? $filter['page'] : $page;
 
-                $records = InvoiceMaster::orderBy('id', 'DESC')
+                $records = InvoiceMaster::join('doctors', 'doctors.id', '=', 'invoice_master.doctor_id')
+                    ->where('doctors.added_by', $request->session()->get('user_id')) // सिर्फ वही doctors
+                    ->orderBy('invoice_master.id', 'DESC')
                     ->skip(($page - 1) * $page_size)
                     ->take($page_size)
+                    ->select('invoice_master.*', 'doctors.name as doctor_name')
                     ->get();
 
                 $total = InvoiceMaster::count();
@@ -53,9 +57,12 @@ class InvoiceMasterController extends Controller
 
                 return response()->json($result);
             } else {
-                $records = InvoiceMaster::orderBy('id', 'DESC')
+                $records = InvoiceMaster::join('doctors', 'doctors.id', '=', 'invoice_master.doctor_id')
+                    ->where('doctors.added_by', $request->session()->get('user_id')) // सिर्फ वही doctors
+                    ->orderBy('invoice_master.id', 'DESC')
                     ->skip(($page - 1) * $page_size)
                     ->take($page_size)
+                    ->select('invoice_master.*', 'doctors.name as doctor_name')
                     ->get();
 
                 $result['total_count'] = InvoiceMaster::count();
@@ -137,7 +144,8 @@ class InvoiceMasterController extends Controller
             if (isset($data['id']) && !empty($data['id'])) {
                 $invoice = InvoiceMaster::find($data['id']);
             }
-            return view('doctor.invoice_master.add', compact('invoice'));
+            $doctors = Doctor::where('added_by', auth()->id())->pluck('name', 'id');
+            return view('doctor.invoice_master.add', compact('invoice', 'doctors'));
         }
     }
 
