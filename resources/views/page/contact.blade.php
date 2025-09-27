@@ -10,28 +10,28 @@
                 <h1 class="display-4">Please Feel Free To Contact Us</h1>
             </div>
             <div class="row g-5 mb-5">
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="bg-light rounded d-flex flex-column align-items-center justify-content-center text-center" style="height: 200px;">
                         <div class="d-flex align-items-center justify-content-center bg-primary rounded-circle mb-4" style="width: 100px; height: 70px; transform: rotate(-15deg);">
                             <i class="fa fa-2x fa-location-arrow text-white" style="transform: rotate(15deg);"></i>
                         </div>
-                        <h6 class="mb-0">123 Street, New York, USA</h6>
+                        <h6 class="mb-0">Ashok Vihar Phase 3, gurgaon INDIA</h6>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <!-- <div class="col-lg-4">
                     <div class="bg-light rounded d-flex flex-column align-items-center justify-content-center text-center" style="height: 200px;">
                         <div class="d-flex align-items-center justify-content-center bg-primary rounded-circle mb-4" style="width: 100px; height: 70px; transform: rotate(-15deg);">
                             <i class="fa fa-2x fa-phone text-white" style="transform: rotate(15deg);"></i>
                         </div>
                         <h6 class="mb-0">+012 345 6789</h6>
                     </div>
-                </div>
-                <div class="col-lg-4">
+                </div> -->
+                <div class="col-lg-6">
                     <div class="bg-light rounded d-flex flex-column align-items-center justify-content-center text-center" style="height: 200px;">
                         <div class="d-flex align-items-center justify-content-center bg-primary rounded-circle mb-4" style="width: 100px; height: 70px; transform: rotate(-15deg);">
                             <i class="fa fa-2x fa-envelope-open text-white" style="transform: rotate(15deg);"></i>
                         </div>
-                        <h6 class="mb-0">info@example.com</h6>
+                        <h6 class="mb-0">rogisewa25@gmail.com</h6>
                     </div>
                 </div>
             </div>
