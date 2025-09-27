@@ -102,7 +102,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 80px;
+            font-size: 50px;
             color: rgba(0,0,0,0.05);
             font-weight: bold;
             pointer-events: none;
