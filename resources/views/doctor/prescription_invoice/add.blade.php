@@ -44,14 +44,37 @@
                                 </div>
                             </div>
 
-                            
-
                             <!-- Patient Name -->
                             <div class="form-group row">
                                 <label class="col-form-label col-lg-3">Patient Name</label>
                                 <div class="col-md-9">
                                     <div class="input-group">
                                         <input type="text" name="patient_name" value="{{ $prescription->patient_name ?? '' }}" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Patient Age -->
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Patient Age</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="age" name="age" value="{{ $prescription->age ?? '' }}" class="form-control" min="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Patient Gender -->
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Gender</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <select name="gender" class="form-control">
+                                            <option value="">-- Select Gender --</option>
+                                            <option value="Male" {{ (isset($prescription->gender) && $prescription->gender == 'Male') ? 'selected' : '' }}>Male</option>
+                                            <option value="Female" {{ (isset($prescription->gender) && $prescription->gender == 'Female') ? 'selected' : '' }}>Female</option>
+                                            <option value="Other" {{ (isset($prescription->gender) && $prescription->gender == 'Other') ? 'selected' : '' }}>Other</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

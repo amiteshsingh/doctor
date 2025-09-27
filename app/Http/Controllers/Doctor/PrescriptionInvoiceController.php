@@ -110,6 +110,8 @@ class PrescriptionInvoiceController extends Controller
                         'patient_name' => $data['patient_name'],
                         'patient_address' => $data['patient_address'] ?? '',
                         'patient_phone_no' => $data['patient_phone_no'] ?? '',
+                        'age' => $data['age'] ?? '',
+                        'gender' => $data['gender'] ?? '',
                         'updated_at' => now(),
                     ];
 
@@ -128,6 +130,8 @@ class PrescriptionInvoiceController extends Controller
                     $invoice->patient_name = $data['patient_name'];
                     $invoice->patient_address = $data['patient_address'] ?? '';
                     $invoice->patient_phone_no = $data['patient_phone_no'] ?? '';
+                    $invoice->age = $data['age'] ?? '';
+                    $invoice->gender = $data['gender'] ?? '';
                     $invoice->created_at = now();
                     $invoice->updated_at = now();
 

@@ -12,6 +12,8 @@ if(isset($res) && count($res) > 0){
                     <td>{{ ++$i }}</td>
                     <td>{{ $row->invoice_number }}</td>
                     <td>{{ $row->patient_name }}</td>
+                    <td>{{ $row->age }}</td>
+                    <td>{{ $row->gender }}</td>
                     <td>{{ $row->patient_address }}</td>
                     <td>{{ $row->patient_phone_no }}</td>
                     <td>{{ $row->created_at }}</td>
