@@ -152,7 +152,9 @@ class PrescriptionInvoiceController extends Controller
 
             // === provide variable name that Blade expects: $invoiceMasters ===
             // (You can use pluck if you just want hospital_clinic_name, or build labels with fee)
-            $invoiceMasters = InvoiceMaster::orderBy('hospital_clinic_name')->get()
+            $invoiceMasters = InvoiceMaster::orderBy('hospital_clinic_name')
+             ->where('added_by', $request->session()->get('user_id'))
+            ->get()
                 ->mapWithKeys(function($inv){
                     $doctorName = $inv->doctor->name ?? 'N/A';
                     $label = $doctorName . ' - ' . $inv->hospital_clinic_name . ' (₹' . number_format($inv->consultation_fee, 2) . ')';

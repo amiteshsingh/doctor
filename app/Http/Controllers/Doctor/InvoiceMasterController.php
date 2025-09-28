@@ -118,6 +118,7 @@ class InvoiceMasterController extends Controller
                     $update['phone_no'] = $data['phone_no'];
                     $update['email'] = $data['email'];
                     $update['updated_at'] = now();
+                    $update['updated_by'] = Session::get('user_id');
 
                     if (DB::table('invoice_master')->where('id', $data['id'])->update($update)) {
                         return response()->json(["status" => 200, "msg" => "Invoice updated successfully."]);
@@ -135,6 +136,8 @@ class InvoiceMasterController extends Controller
                     $invoice->email = $data['email'];
                     $invoice->created_at = now();
                     $invoice->updated_at = now();
+                    $invoice->added_by = Session::get('user_id');
+                    $invoice->updated_by = Session::get('user_id');
 
                     if ($invoice->save()) {
                         return response()->json(["status" => 200, "msg" => "Invoice saved successfully."]);
