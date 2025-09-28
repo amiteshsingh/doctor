@@ -27,7 +27,7 @@ class InvoiceMasterController extends Controller
                 $page = isset($filter['page']) ? $filter['page'] : $page;
 
                 $records = InvoiceMaster::join('doctors', 'doctors.id', '=', 'invoice_master.doctor_id')
-                    ->where('doctors.added_by', $request->session()->get('user_id')) // सिर्फ वही doctors
+                    ->where('doctors.added_by', $request->session()->get('user_id'))
                     ->orderBy('invoice_master.id', 'DESC')
                     ->skip(($page - 1) * $page_size)
                     ->take($page_size)
@@ -58,7 +58,7 @@ class InvoiceMasterController extends Controller
                 return response()->json($result);
             } else {
                 $records = InvoiceMaster::join('doctors', 'doctors.id', '=', 'invoice_master.doctor_id')
-                    ->where('doctors.added_by', $request->session()->get('user_id')) // सिर्फ वही doctors
+                    ->where('doctors.added_by', $request->session()->get('user_id'))
                     ->orderBy('invoice_master.id', 'DESC')
                     ->skip(($page - 1) * $page_size)
                     ->take($page_size)
@@ -114,6 +114,9 @@ class InvoiceMasterController extends Controller
                     $update['doctor_id'] = $data['doctor_id'];
                     $update['hospital_clinic_name'] = $data['hospital_clinic_name'];
                     $update['consultation_fee'] = $data['consultation_fee'];
+                    $update['address'] = $data['address'];
+                    $update['phone_no'] = $data['phone_no'];
+                    $update['email'] = $data['email'];
                     $update['updated_at'] = now();
 
                     if (DB::table('invoice_master')->where('id', $data['id'])->update($update)) {
@@ -127,6 +130,9 @@ class InvoiceMasterController extends Controller
                     $invoice->doctor_id = $data['doctor_id'];
                     $invoice->hospital_clinic_name = $data['hospital_clinic_name'];
                     $invoice->consultation_fee = $data['consultation_fee'];
+                    $invoice->address = $data['address'];
+                    $invoice->phone_no = $data['phone_no'];
+                    $invoice->email = $data['email'];
                     $invoice->created_at = now();
                     $invoice->updated_at = now();
 

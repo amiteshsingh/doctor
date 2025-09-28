@@ -2,8 +2,9 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Doctor ID</th>
+            <th>Doctor Name</th>
             <th>Hospital/Clinic</th>
+            <th>Phone No.</th>
             <th>Consultation Fee</th>
             <th>Created At</th>
             <th>Action</th>
@@ -17,6 +18,7 @@
                 <td>{{ $i++ }}</td>
                 <td>{{ $invoice->doctor_name }}</td>
                 <td>{{ $invoice->hospital_clinic_name }}</td>
+                <td>{{ $invoice->phone_no }}</td>
                 <td>₹ {{ number_format($invoice->consultation_fee, 2) }}</td>
                 <td>{{ $invoice->created_at }}</td>
                 <td>

@@ -24,7 +24,7 @@
         .header h2 {
             margin: 0;
             font-size: 22px;
-            color: #007bff;
+            color: #ff0000ff;
             font-weight: 700;
             text-transform: uppercase;
         }
@@ -67,27 +67,45 @@
     <!-- Header -->
     <div class="header">
         <h2>{{ $invoice_master->hospital_clinic_name }}</h2>
-        <p>123 Health Street, Gurugram</p>
-        <p>Phone: +91-9876543210 | Email: info@hospital.com</p>
+        @if(!empty($invoice_master->address))
+            <p style="color:red">{{ $invoice_master->address }}</p>
+        @endif
+
+        @if(!empty($invoice_master->phone_no) || !empty($invoice_master->email))
+            <p style="color:red">
+                @if(!empty($invoice_master->phone_no))
+                    Phone: +91-{{ $invoice_master->phone_no }}
+                @endif
+
+                @if(!empty($invoice_master->phone_no) && !empty($invoice_master->email))
+                    &nbsp; | &nbsp;
+                @endif
+
+                @if(!empty($invoice_master->email))
+                    Email: {{ $invoice_master->email }}
+                @endif
+            </p>
+        @endif
+
     </div>
 
     <!-- Invoice / Purja Details -->
     <div class="invoice-details">
         <table>
             <tr>
-                <td><strong>Invoice No:</strong> {{ $invoice->invoice_number }}</td>
-                <td><strong>Date:</strong> {{ $invoice->created_at->format('d-m-Y') }}</td>
+                <td><strong style="color:red">Invoice No:</strong><span style="color:blue"> {{ $invoice->invoice_number }}<span></td>
+                <td><strong style="color:red">Date:</strong><span style="color:blue"> {{ $invoice->created_at->format('d-m-Y') }}<span></td>
             </tr>
             <tr>
-                <td colspan="2"><strong>Doctor:</strong> {{ $invoice_master->doctor->name ?? '' }}</td>
+                <td colspan="2"><strong  style="color:red">Doctor:</strong> <span style="color:blue">{{ $invoice_master->doctor->name ?? '' }}<span></td>
             </tr>
             <tr>
-                <td><strong>Patient Name:</strong> {{ $invoice->patient_name }}</td>
-                <td><strong>Age / Gender:</strong> {{ $invoice->age }} / {{ $invoice->gender }}</td>
+                <td><strong style="color:red">Patient Name:</strong><span style="color:blue"> {{ $invoice->patient_name }}<span></td>
+                <td><strong style="color:red">Age / Gender:</strong> <span style="color:blue">{{ $invoice->age }} / {{ $invoice->gender }}<span></td>
             </tr>
             <tr>
-                <td><strong>Phone:</strong> {{ $invoice->patient_phone_no }}</td>
-                <td><strong>Address:</strong> {{ $invoice->patient_address }}</td>
+                <td><strong style="color:red">Address:</strong><span style="color:blue"> {{ $invoice->patient_address }}<span></td>
+                <td><strong style="color:red">Phone:</strong> <span style="color:blue">{{ $invoice->patient_phone_no }}<span></td>
             </tr>
         </table>
     </div>

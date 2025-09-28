@@ -53,6 +53,38 @@
                                 </div>
                             </div>
 
+                        <!-- Address Field -->
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Address</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="text" name="address" value="{{ $invoice->address ?? '' }}" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Phone Number Field -->
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Phone Number</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">+91</span>
+                                        </div>
+                                        <input type="text" name="phone_no" value="{{ $invoice->phone_no ?? '' }}" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Email ID <small class="text-muted">(optional)</small></label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="email" name="email" value="{{ $invoice->email ?? '' }}" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-group row">
                                 <label class="col-form-label col-lg-3">Consultation Fee</label>
                                 <div class="col-md-9">

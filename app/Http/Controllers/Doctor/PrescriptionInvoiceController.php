@@ -174,28 +174,6 @@ class PrescriptionInvoiceController extends Controller
         return redirect('doctor/prescription-invoice');
     }
 
-    // public function generatePdf($id)
-    // {
-    //     // Get the invoice
-    //     $invoice = PrescriptionInvoice::with('invoiceMaster')->find($id);
-
-    //     if (!$invoice) {
-    //         return redirect()->back()->with('msg', 'Invoice not found.');
-    //     }
-
-    //     // Prepare data for PDF
-    //     $data = [
-    //         'invoice' => $invoice,
-    //         'invoice_master' => $invoice->invoiceMaster,
-    //     ];
-
-    //     // Load view and generate PDF
-    //     $pdf = PDF::loadView('doctor.prescription_invoice.pdf', $data);
-
-    //     // Return PDF for download
-    //     return $pdf->download('Prescription_Invoice_' . $invoice->invoice_number . '.pdf');
-    // }
-
     public function generatePdf($id)
     {
         // Get the invoice
