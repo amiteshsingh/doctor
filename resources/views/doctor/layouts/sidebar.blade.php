@@ -7,25 +7,25 @@
                             <a href="{{ route('doctor.dashboard') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
 
-                        <li class="{{ request()->routeIs('doctor.myhospital') ? 'active' : '' }}">
+                        <li class="{{ request()->routeIs('doctor.myhospital') || request()->routeIs('doctor.myhospital.*') ? 'active' : '' }}">
                             <a href="{{ route('doctor.myhospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
                         </li>
 
-                        <li class="{{ request()->routeIs('doctor.mydoctor') ? 'active' : '' }}">
+                        <li class="{{ request()->routeIs('doctor.mydoctor')  || request()->routeIs('doctor.mydoctor.*') ? 'active' : '' }}">
                             <a href="{{ route('doctor.mydoctor') }}"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
                         </li>
-
-                        <li>
-                            <a href="#" title="पर्चा इनवॉइस जनरेशन/Prescription Invoice Generation"><span>coming soon<br>पर्चा इनवॉइस जनरेशन/Prescription Invoice Generation</span></a>
+                
+                        <li class="submenu {{ request()->routeIs('prescription-invoice.*') || request()->routeIs('invoice-master.*') ? 'active' : '' }}">
+                            <a href="#"><i class="fa fa-pencil-square-o"></i> <span> Invoice Settings </span> <span class="menu-arrow"></span></a>
+                            <ul style="display: {{ request()->routeIs('prescription-invoice.*') || request()->routeIs('invoice-master.*') ? 'block' : 'none' }};">
+                                <li class="{{ request()->routeIs('prescription-invoice.*') ? 'active' : '' }}">
+                                    <a href="{{ route('prescription-invoice.index') }}">पर्चा इनवॉइस/Prescription Invoice</a>
+                                </li>
+                                <li class="{{ request()->routeIs('invoice-master.*') ? 'active' : '' }}">
+                                    <a href="{{ route('invoice-master.index') }}">Invoice Settings</a>
+                                </li>
+                            </ul>
                         </li>
-
-                         <!-- <li class="submenu">
-							<a href="#"><i class="fa fa-pencil-square-o"></i> <span> Invoice Settings </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="#">Prescription Invoice</a></li>
-								<li><a href="#">Invoice Settings</a></li>
-							</ul>
-						</li> -->
 
                         <!-- <li>
                             <a href="patients.html"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>

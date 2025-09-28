@@ -18,7 +18,7 @@
                 <td>{{ $i++ }}</td>
                 <td>{{ $invoice->doctor_name }}</td>
                 <td>{{ $invoice->hospital_clinic_name }}</td>
-                <td>{{ $invoice->phone_no }}</td>
+                <td>+91-{{ $invoice->phone_no }}</td>
                 <td>₹ {{ number_format($invoice->consultation_fee, 2) }}</td>
                 <td>{{ $invoice->created_at }}</td>
                 <td>
