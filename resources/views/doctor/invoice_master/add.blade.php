@@ -71,7 +71,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">+91</span>
                                         </div>
-                                        <input type="text" name="phone_no" value="{{ $invoice->phone_no ?? '' }}" class="form-control" required>
+                                        <input type="number" name="phone_no" value="{{ $invoice->phone_no ?? '' }}" class="form-control" required>
                                     </div>
                                 </div>
                             </div>
