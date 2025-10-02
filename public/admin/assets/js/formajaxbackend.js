@@ -340,18 +340,36 @@ $(function() {
     // Validate doctor_availability_form add, edit
     $(document).on("click", "#save_doctor_availability", function () {
         $("#doctor_availability_form").validate({
+            ignore: [], // hidden fields भी validate होंगे
             rules: {
-                // Add dynamic rules if needed
-                // 'availability[Monday][start_time]': { required: true },
-                // 'availability[Monday][end_time]': { required: true },
-                // etc...
+                // हम यहाँ static rules नहीं देंगे, बल्कि नीचे dynamic check करेंगे
             },
-            messages: {
-                // Dynamic messages can be added if required
-            },
+            messages: {},
             submitHandler: function () {
+                let valid = true;
+
+                // Loop through all slots and check start/end time
+                $("#doctor_availability_form .slot").each(function () {
+                    let start = $(this).find("input[name*='[start_time]']").val();
+                    let end   = $(this).find("input[name*='[end_time]']").val();
+
+                    // अगर user ने कोई एक भरा और दूसरा खाली छोड़ दिया
+                    if ((start && !end) || (!start && end)) {
+                        valid = false;
+                        $(this).find("input").addClass("error");
+                    } else {
+                        $(this).find("input").removeClass("error");
+                    }
+                });
+
+                if (!valid) {
+                    $.jGrowl("Please fill both Start and End time for each slot!", { header: "Validation Error", theme: 'error-theme' });
+                    return false;
+                }
+
+                // ✅ अगर सब ठीक है तो Ajax submit होगा
                 var formData = new FormData($("#doctor_availability_form")[0]);
-                let url = base_url + "doctor/doctor_availability";
+                let url = base_url + "mydoctor/doctor_availability";
 
                 $.ajax({
                     url: url,
@@ -371,20 +389,20 @@ $(function() {
 
                             // Redirect or jump to another tab
                             setTimeout(function () {
-                                window.location.href = base_url + `doctor/add?id=${response.doctor_id}#basictab4`;
+                                window.location.href = base_url + `mydoctor/add?id=${response.doctor_id}#basictab4`;
                             }, 2000);
                         } else {
                             $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
                         }
                     },
-                    error: function (xhr) {
+                    error: function () {
                         $(".loaderDiv").addClass("hidden");
                         $.jGrowl("Something went wrong!", { header: "Error", theme: 'error-theme' });
                     }
                 });
             }
         });
-    });
+    })
 
 
 
