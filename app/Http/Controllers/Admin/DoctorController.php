@@ -234,9 +234,6 @@ class DoctorController extends Controller
                     'pin_code'           => 'required|numeric',
                     'location_phone'     => 'required',
                     'degree_type'        => 'required',
-                    'institution_name'   => 'required',
-                    'graduation_year'    => 'required',
-                    'education_details'  => 'required',
                     'languages'          => 'required|array|min:1',
                 ]);
 

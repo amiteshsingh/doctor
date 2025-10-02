@@ -120,10 +120,12 @@
                                             {{ ucfirst($slot->day) ?? 'N/A' }}
                                         </td>
                                         <td class="text-success">
-                                            <i class="bi bi-alarm me-1"></i> {{ $slot->start_time ?? 'N/A' }}
+                                            <i class="bi bi-alarm me-1"></i> 
+                                            {!! $isToday ? '<b>' . ($slot->start_time ?? 'N/A') . '</b>' : ($slot->start_time ?? 'N/A') !!}
                                         </td>
                                         <td class="text-danger">
-                                            <i class="bi bi-alarm-fill me-1"></i> {{ $slot->end_time ?? 'N/A' }}
+                                            <i class="bi bi-alarm-fill me-1"></i> 
+                                            {!! $isToday ? '<b>' . ($slot->end_time ?? 'N/A') . '</b>' : ($slot->end_time ?? 'N/A') !!}
                                         </td>
                                     </tr>
                                 @endforeach

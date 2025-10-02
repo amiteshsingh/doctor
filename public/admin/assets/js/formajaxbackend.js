@@ -289,9 +289,7 @@ $(function() {
                 zip_code: { required: true },
                 location_phone: { required: true },
                 degree_type: { required: true },
-                institution_name: { required: true },
-                graduation_year: { required: true },
-                education_details: { required: true },
+
                 'languages[]': { required: true },
             },
             messages: {
@@ -302,9 +300,7 @@ $(function() {
                 zip_code: { required: "This field is required." },
                 location_phone: { required: "This field is required." },
                 degree_type: { required: "This field is required." },
-                institution_name: { required: "This field is required." },
-                graduation_year: { required: "This field is required." },
-                education_details: { required: "This field is required." },
+         
                 'languages[]': { required: "Please select at least one language." },
             },
             submitHandler: function () {
