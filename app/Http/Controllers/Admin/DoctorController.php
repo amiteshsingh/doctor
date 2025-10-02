@@ -58,7 +58,6 @@ class DoctorController extends Controller
                 $request->validate([
                     'name' => 'required',
                     'phone_no' => 'required',
-                    'email' => 'required',
                     'status' => 'required',
                     'approval_status' => 'required',
                 ]);
