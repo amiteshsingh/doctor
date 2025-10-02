@@ -203,7 +203,10 @@ class PageController extends Controller
             'languages',
             'specializations',
             'locations'
-        ])->findOrFail($id);
+        ])
+        ->where('status', 1)
+        ->where('approval_status', 1)
+        ->findOrFail($id);
 
         $doctor->increment('visit_count');
         
