@@ -323,35 +323,41 @@
                                 @endphp
 
                                 @foreach($days as $day)
-                                <div class="row">
-                                    <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="col-form-label col-md-2">{{ $day }}</label>
-                                    </div>
-                                    </div>
-                              
+                                    <div class="day-wrapper mb-3" data-day="{{ $day }}">
+                                        <label class="font-weight-bold">{{ $day }}</label>
 
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Start Time</label>
-                                            <div class="time-icon">
-                                                <input type="text" name="availability[{{ $day }}][start_time]" class="form-control datetimepicker3"
-                                                        value="{{ $doctor->availability[$day]['start_time'] ?? '' }}">
-                                            </div>
+                                        <div class="slot-wrapper">
+                                            @php
+                                                $slots = $doctor->availability[$day] ?? [['start_time' => '', 'end_time' => '']];
+                                            @endphp
+
+                                            @foreach($slots as $index => $slot)
+                                                <div class="slot row mb-2">
+                                                    <div class="col-md-4">
+                                                        <input type="text" 
+                                                            name="availability[{{ $day }}][{{ $index }}][start_time]" 
+                                                            class="form-control datetimepicker3" 
+                                                            placeholder="Start Time"
+                                                            value="{{ $slot['start_time'] ?? '' }}">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input type="text" 
+                                                            name="availability[{{ $day }}][{{ $index }}][end_time]" 
+                                                            class="form-control datetimepicker3" 
+                                                            placeholder="End Time"
+                                                            value="{{ $slot['end_time'] ?? '' }}">
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if($index == 0)
+                                                            <button type="button" class="btn btn-success add-slot">+</button>
+                                                        @else
+                                                            <button type="button" class="btn btn-danger remove-slot">-</button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>End Time</label>
-                                            <div class="time-icon">
-                                                <input type="text" name="availability[{{ $day }}][end_time]" class="form-control datetimepicker3" 
-                                                        value="{{ $doctor->availability[$day]['end_time'] ?? '' }}">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
                                 @endforeach
 
                                 <div class="form-group row">
@@ -362,6 +368,7 @@
                                 </div>
                             </form>
                         </div>
+
 
 
 
@@ -406,6 +413,57 @@
     }
 
     google.maps.event.addDomListener(window, 'load', initializeAutocomplete);
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    function initDateTimePicker() {
+        $('.datetimepicker3').datetimepicker({
+            format: 'hh:mm A'   // ✅ AM/PM format
+        });
+    }
+
+    // Already existing inputs initialize
+    initDateTimePicker();
+
+    document.querySelectorAll(".day-wrapper").forEach(function(dayWrapper) {
+        dayWrapper.addEventListener("click", function(e) {
+            if (e.target.classList.contains("add-slot")) {
+                let slotWrapper = dayWrapper.querySelector(".slot-wrapper");
+                let day = dayWrapper.getAttribute("data-day");
+                let index = slotWrapper.querySelectorAll(".slot").length;
+
+                let newSlot = document.createElement("div");
+                newSlot.classList.add("slot", "row", "mb-2");
+
+                newSlot.innerHTML = `
+                    <div class="col-md-4">
+                        <input type="text" name="availability[${day}][${index}][start_time]" 
+                               class="form-control datetimepicker3" placeholder="Start Time">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" name="availability[${day}][${index}][end_time]" 
+                               class="form-control datetimepicker3" placeholder="End Time">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-danger remove-slot">-</button>
+                    </div>
+                `;
+
+                slotWrapper.appendChild(newSlot);
+
+                // ✅ initialize datetimepicker for new slot also
+                initDateTimePicker();
+            }
+
+            if (e.target.classList.contains("remove-slot")) {
+                e.target.closest(".slot").remove();
+            }
+        });
+    });
+});
 </script>
 
 

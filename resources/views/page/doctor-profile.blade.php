@@ -3,6 +3,20 @@
 @section('title', 'RogiSewa - ' . $doctor->name ?? 'Doctor Profile')
 
 @section('content')
+
+<style>
+/* Blink effect for day name only */
+@keyframes blink-color {
+    0%, 50%, 100% { opacity: 1; color: blue; }
+    25%, 75% { opacity: 0; color: red; }
+}
+
+.blink {
+    animation: blink-color 1s infinite;
+}
+</style>
+
+
 <div class="container py-5">
     @if($doctor)
         <div class="row g-4">
@@ -78,32 +92,54 @@
                     @endforelse
                 </div>
 
+
                 <!-- Availability -->
-                <div class="card shadow border-0 rounded-4 p-4 mb-4 bg-white">
-                    <h4 class="text-warning fw-bold border-bottom pb-2">🕑 Availability</h4>
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Day</th>
-                                <th>Start</th>
-                                <th>End</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($doctor->availability as $slot)
+                <div class="card shadow-sm border-0 rounded-4 p-4 mb-4 bg-white">
+                    <h4 class="fw-bold text-warning mb-3">
+                        <i class="bi bi-clock-history me-2"></i> Availability
+                    </h4>
+
+                    @if($doctor->availability && count($doctor->availability) > 0)
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
                                 <tr>
-                                    <td>{{ $slot->day ?? 'N/A' }}</td>
-                                    <td class="text-success">{{ $slot->start_time ?? 'N/A' }}</td>
-                                    <td class="text-danger">{{ $slot->end_time ?? 'N/A' }}</td>
+                                    <th>Day</th>
+                                    <th>Start</th>
+                                    <th>End</th>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-muted text-center">No schedule available</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach($doctor->availability as $slot)
+                                    @php
+                                        $today = \Carbon\Carbon::now()->format('l'); // Current day like "Thursday"
+                                        $isToday = ($slot->day == $today); // assuming $slot->day is lowercase
+                                    @endphp
+                                    <tr>
+                                        <td class="fw-bold text-dark {{ $isToday ? 'blink' : '' }}">
+                                            <i class="bi bi-calendar3 me-2 text-primary"></i>
+                                            {{ ucfirst($slot->day) ?? 'N/A' }}
+                                        </td>
+                                        <td class="text-success">
+                                            <i class="bi bi-alarm me-1"></i> {{ $slot->start_time ?? 'N/A' }}
+                                        </td>
+                                        <td class="text-danger">
+                                            <i class="bi bi-alarm-fill me-1"></i> {{ $slot->end_time ?? 'N/A' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="text-center text-muted py-3">
+                            <i class="bi bi-exclamation-circle me-2"></i> No schedule available
+                        </div>
+                    @endif
                 </div>
+
+
+
+
+
 
                 <!-- About Doctor -->
                 <div class="card shadow border-0 rounded-4 p-4 mb-4 bg-white">

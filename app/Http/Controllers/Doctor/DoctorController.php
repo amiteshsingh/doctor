@@ -189,7 +189,7 @@ class DoctorController extends Controller
                 $doctor_availability = DB::table('doctor_availability')->where('doctor_id', $data['id'])->get();
                 $availability = [];
                 foreach ($doctor_availability as $entry) {
-                    $availability[$entry->day] = [
+                    $availability[$entry->day][] = [
                         'start_time' => $entry->start_time,
                         'end_time' => $entry->end_time,
                     ];
@@ -334,6 +334,67 @@ class DoctorController extends Controller
     }
 
 
+    // public function doctorAvailability(Request $request)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'id'           => 'required|integer|exists:doctors,id',
+    //             'availability' => 'required|array',
+    //         ]);
+
+    //         $doctorId    = $request->input('id');
+    //         $availability = $request->input('availability');
+    //         // Delete existing availability
+    //         DB::table('doctor_availability')->where('doctor_id', $doctorId)->delete();
+
+    //         $inserts = [];
+    //         foreach ($availability as $day => $time) {
+    //             if (!empty($time['start_time']) && !empty($time['end_time'])) {
+    //                 $inserts[] = [
+    //                     'doctor_id'  => $doctorId,
+    //                     'day'        => $day,
+    //                     'start_time' => $time['start_time'],
+    //                     'end_time'   => $time['end_time'],
+    //                     'created_at' => now(),
+    //                     'updated_at' => now(),
+    //                 ];
+    //             }else{
+    //                 $inserts[] = [
+    //                     'doctor_id'  => $doctorId,
+    //                     'day'        => $day,
+    //                     'start_time' => 'Closed',
+    //                     'end_time'   => 'Closed',
+    //                     'created_at' => now(),
+    //                     'updated_at' => now(),
+    //                 ];
+    //             }
+    //         }
+
+    //         if (!empty($inserts)) {
+    //             DB::table('doctor_availability')->insert($inserts);
+    //         }
+
+    //         return response()->json([
+    //             'status'     => 200,
+    //             'msg'    => 'Availability saved successfully!',
+    //             'doctor_id'  => $doctorId,
+    //         ]);
+
+    //     } catch (\Illuminate\Validation\ValidationException $ve) {
+    //         return response()->json([
+    //             'status'  => 422,
+    //             'msg' => 'Validation failed.',
+    //             'errors'  => $ve->errors()
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Doctor Availability Error: ' . $e->getMessage());
+    //         return response()->json([
+    //             'status'  => 500,
+    //             'msg' => 'Server Error: ' . $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
     public function doctorAvailability(Request $request)
     {
         try {
@@ -342,23 +403,30 @@ class DoctorController extends Controller
                 'availability' => 'required|array',
             ]);
 
-            $doctorId    = $request->input('id');
+            $doctorId     = $request->input('id');
             $availability = $request->input('availability');
-            // Delete existing availability
+
+            // पुराने slots delete करो
             DB::table('doctor_availability')->where('doctor_id', $doctorId)->delete();
 
             $inserts = [];
-            foreach ($availability as $day => $time) {
-                if (!empty($time['start_time']) && !empty($time['end_time'])) {
-                    $inserts[] = [
-                        'doctor_id'  => $doctorId,
-                        'day'        => $day,
-                        'start_time' => $time['start_time'],
-                        'end_time'   => $time['end_time'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }else{
+
+            foreach ($availability as $day => $slots) {
+                if (!empty($slots) && is_array($slots)) {
+                    foreach ($slots as $slot) {
+                        if (!empty($slot['start_time']) && !empty($slot['end_time'])) {
+                            $inserts[] = [
+                                'doctor_id'  => $doctorId,
+                                'day'        => $day,
+                                'start_time' => $slot['start_time'],
+                                'end_time'   => $slot['end_time'],
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                        }
+                    }
+                } else {
+                    // अगर कोई slot नहीं भरा तो Closed save करो
                     $inserts[] = [
                         'doctor_id'  => $doctorId,
                         'day'        => $day,
@@ -375,25 +443,26 @@ class DoctorController extends Controller
             }
 
             return response()->json([
-                'status'     => 200,
-                'msg'    => 'Availability saved successfully!',
-                'doctor_id'  => $doctorId,
+                'status'    => 200,
+                'msg'       => 'Availability saved successfully!',
+                'doctor_id' => $doctorId,
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $ve) {
             return response()->json([
-                'status'  => 422,
-                'msg' => 'Validation failed.',
-                'errors'  => $ve->errors()
+                'status' => 422,
+                'msg'    => 'Validation failed.',
+                'errors' => $ve->errors()
             ]);
         } catch (\Exception $e) {
             \Log::error('Doctor Availability Error: ' . $e->getMessage());
             return response()->json([
-                'status'  => 500,
-                'msg' => 'Server Error: ' . $e->getMessage()
+                'status' => 500,
+                'msg'    => 'Server Error: ' . $e->getMessage()
             ]);
         }
     }
+
 
 
     public function delete(Request $request, $id){
