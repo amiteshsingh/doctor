@@ -141,9 +141,9 @@
         </p>
 
         <ul class="list-unstyled">
-          <li>✅ अपने नाम और हॉस्पिटल की पहचान पूरे इंडिया में बनाएँ / Build your clinic & hospital identity across India</li>
-          <li>✅ मरीज सीधे आपके पास पहुँच सकेंगे / Patients can directly reach you</li>
-          <li>✅ आपके विशेषज्ञता और सेवाओं का प्रचार-प्रसार ऑल इंडिया लेवल पर / Promote your expertise & services at All-India level</li>
+          <li>✅ अपने नाम और हॉस्पिटल की पहचान पूरे इंडिया में बनाएँ / Build your clinic & hospital identity across India.</li>
+          <li>✅ मरीज सीधे आपके पास पहुँच सकेंगे / Patients can directly reach you.</li>
+          <li>✅ आपके विशेषज्ञता और सेवाओं का प्रचार-प्रसार ऑल इंडिया लेवल पर / Promote your expertise & services at All-India level.</li>
         </ul>
       </div>
 
