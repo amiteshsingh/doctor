@@ -11,6 +11,9 @@
     <meta name="keywords" content="@yield('meta_keywords', 'Rogi Sewa, Rogisewa, doctors, hospitals, health, online appointment, Bihar, India, healthcare, medical services')">
     <meta name="robots" content="index, follow">
 
+
+    <link rel="canonical" href="{{ url()->current() }}">
+
     <!-- Favicon -->
     <link href="{{ asset('img/logo.png') }}" rel="icon"> 
 
