@@ -3,10 +3,13 @@
 
 <head>
     <meta charset="utf-8">
-    <title>@yield('title', 'RogiSewa')</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="RogiSewa.com" name="keywords">
-    <meta content="RogiSewa.com" name="description">
+    <title>@yield('title', 'RogiSewa - Find Doctors & Hospitals Near You')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {{-- SEO Meta Tags --}}
+    <meta name="description" content="@yield('meta_description', 'RogiSewa helps you find trusted doctors and hospitals nearby. Book appointments, check reviews, and get the best healthcare guidance online.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'Rogi Sewa, Rogisewa, doctors, hospitals, health, online appointment, Bihar, India, healthcare, medical services')">
+    <meta name="robots" content="index, follow">
 
     <!-- Favicon -->
     <link href="{{ asset('img/logo.png') }}" rel="icon"> 
