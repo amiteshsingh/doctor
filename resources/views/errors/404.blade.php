@@ -73,7 +73,7 @@
   <div class="error-container">
     <img src="https://rogisewa.com/img/logo.png" alt="RogiSewa Logo" width="160" class="mb-4">
     <div class="error-code">404</div>
-    <div class="error-message">पेज नहीं मिला / Page Not Found</div>
+    <div class="error-message">Page Not Found</div>
     <div class="error-subtext">
       माफ करें! आपने जिस पेज को खोजा वह उपलब्ध नहीं है।<br>
       Sorry! The page you’re looking for doesn’t exist or may have been moved.
