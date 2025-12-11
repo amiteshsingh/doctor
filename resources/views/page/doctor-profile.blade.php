@@ -147,7 +147,7 @@
                     <!-- About Doctor -->
                     <div class="card shadow border-0 rounded-4 p-4 mb-4 bg-white">
                         <h4 class="text-success fw-bold border-bottom pb-2">👨‍⚕️ About Doctor</h4>
-                        <p class="mb-0">{{ $doctor->educations->first()->details }}</p>
+                        <p class="mb-0">{!! $doctor->educations->first()->details !!}</p>
                     </div>
                 @endif
 
