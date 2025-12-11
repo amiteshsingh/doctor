@@ -282,7 +282,7 @@
                                 <div class="form-group row">
                                     <label class="col-form-label col-md-2">Details</label>
                                     <div class="col-md-9">
-                                        <textarea class="form-control" name="education_details">{{isset($doctor->education_details)?$doctor->education_details:''}}</textarea>
+                                        <textarea class="form-control" id="editor" name="education_details">{{isset($doctor->education_details)?$doctor->education_details:''}}</textarea>
                                     </div>
                                 </div>
 
@@ -380,6 +380,15 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#editor'))
+        .catch(error => {
+            console.error(error);
+        });
+</script>
+
 
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places"></script>
 
