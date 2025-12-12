@@ -13,28 +13,28 @@
                 <div class="col-lg-3 col-md-6">
                     <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Quick Links</h4>
                     <div class="d-flex flex-column justify-content-start">
-                        <a class="text-light mb-2" href="{{ route('/') }}"><i class="fa fa-angle-right me-2"></i>Home</a>
-                        <a class="text-light mb-2" href="{{ route('about') }}"><i class="fa fa-angle-right me-2"></i>About Us</a>
-                        <a class="text-light mb-2" href="{{ route('doctors') }}"><i class="fa fa-angle-right me-2"></i>Our Doctor</a>
-                        <a class="text-light mb-2" href="{{ route('hospitals') }}"><i class="fa fa-angle-right me-2"></i>Hospital</a>
-                        <a class="text-light mb-2" href="{{ route('professional.doctors') }}"><i class="fa fa-angle-right me-2"></i>Professional Doctors</a>
-                        <a class="text-light mb-2" href="{{ route('contact') }}"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
-                        <a class="text-light mb-2" href="{{ route('terms') }}"><i class="fa fa-angle-right me-2"></i>Terms & Conditions</a>
-                        <a class="text-light mb-2" href="{{ route('disclaimer') }}"><i class="fa fa-angle-right me-2"></i>Disclaimer</a>
+                        <a class="text-light mb-1" href="{{ route('/') }}"><i class="fa fa-angle-right me-2"></i>Home</a>
+                        <a class="text-light mb-1" href="{{ route('about') }}"><i class="fa fa-angle-right me-2"></i>About Us</a>
+                        <a class="text-light mb-1" href="{{ route('doctors') }}"><i class="fa fa-angle-right me-2"></i>Our Doctor</a>
+                        <a class="text-light mb-1" href="{{ route('hospitals') }}"><i class="fa fa-angle-right me-2"></i>Hospital</a>
+                        <a class="text-light mb-1" href="{{ route('professional.doctors') }}"><i class="fa fa-angle-right me-2"></i>Professional Doctors</a>
+                        <a class="text-light mb-1" href="{{ route('contact') }}"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
+                        <a class="text-light mb-1" href="{{ route('terms') }}"><i class="fa fa-angle-right me-2"></i>Terms & Conditions</a>
+                        <a class="text-light mb-1" href="{{ route('disclaimer') }}"><i class="fa fa-angle-right me-2"></i>Disclaimer</a>
                         <a class="text-light" href="{{ route('privacy-policy') }}"><i class="fa fa-angle-right me-2"></i>Privacy Policy</a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Popular Links</h4>
                     <div class="d-flex flex-column justify-content-start">
-                        <a class="text-light mb-2" href="{{ route('/') }}"><i class="fa fa-angle-right me-2"></i>Home</a>
-                        <a class="text-light mb-2" href="{{ route('about') }}"><i class="fa fa-angle-right me-2"></i>About Us</a>
-                        <a class="text-light mb-2" href="{{ route('doctors') }}"><i class="fa fa-angle-right me-2"></i>Our Doctor</a>
-                        <a class="text-light mb-2" href="{{ route('hospitals') }}"><i class="fa fa-angle-right me-2"></i>Hospital</a>
-                        <a class="text-light mb-2" href="{{ route('professional.doctors') }}"><i class="fa fa-angle-right me-2"></i>Professional Doctors</a>
-                        <a class="text-light mb-2" href="{{ route('contact') }}"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
-                        <a class="text-light mb-2" href="{{ route('terms') }}"><i class="fa fa-angle-right me-2"></i>Terms & Conditions</a>
-                        <a class="text-light mb-2" href="{{ route('disclaimer') }}"><i class="fa fa-angle-right me-2"></i>Disclaimer</a>
+                        <a class="text-light mb-1" href="{{ route('/') }}"><i class="fa fa-angle-right me-2"></i>Home</a>
+                        <a class="text-light mb-1" href="{{ route('about') }}"><i class="fa fa-angle-right me-2"></i>About Us</a>
+                        <a class="text-light mb-1" href="{{ route('doctors') }}"><i class="fa fa-angle-right me-2"></i>Our Doctor</a>
+                        <a class="text-light mb-1" href="{{ route('hospitals') }}"><i class="fa fa-angle-right me-2"></i>Hospital</a>
+                        <a class="text-light mb-1" href="{{ route('professional.doctors') }}"><i class="fa fa-angle-right me-2"></i>Professional Doctors</a>
+                        <a class="text-light mb-1" href="{{ route('contact') }}"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
+                        <a class="text-light mb-1" href="{{ route('terms') }}"><i class="fa fa-angle-right me-2"></i>Terms & Conditions</a>
+                        <a class="text-light mb-1" href="{{ route('disclaimer') }}"><i class="fa fa-angle-right me-2"></i>Disclaimer</a>
                         <a class="text-light" href="{{ route('privacy-policy') }}"><i class="fa fa-angle-right me-2"></i>Privacy Policy</a>
                     </div>
                 </div>
