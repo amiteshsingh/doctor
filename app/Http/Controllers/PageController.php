@@ -195,6 +195,19 @@ class PageController extends Controller
         return view('page.contact');
     }
 
+    public function terms()
+    {
+        return view('page.terms');
+    }
+    public function disclaimer()
+    {
+        return view('page.disclaimer');
+    }
+    public function privacy_policy()
+    {
+        return view('page.privacy_policy');
+    }
+
     public function doctor_profile(Request $request, $id = null, $name=null)
     {
         $doctor = Doctor::with([

@@ -19,6 +19,9 @@
                         <a class="text-light mb-2" href="{{ route('hospitals') }}"><i class="fa fa-angle-right me-2"></i>Hospital</a>
                         <a class="text-light mb-2" href="{{ route('professional.doctors') }}"><i class="fa fa-angle-right me-2"></i>Professional Doctors</a>
                         <a class="text-light" href="{{ route('contact') }}"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
+                        <a class="text-light" href="{{ route('terms') }}"><i class="fa fa-angle-right me-2"></i>Terms & Conditions</a>
+                        <a class="text-light" href="{{ route('disclaimer') }}"><i class="fa fa-angle-right me-2"></i>Disclaimer</a>
+                        <a class="text-light" href="{{ route('privacy-policy') }}"><i class="fa fa-angle-right me-2"></i>Privacy Policy</a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -30,6 +33,9 @@
                         <a class="text-light mb-2" href="{{ route('hospitals') }}"><i class="fa fa-angle-right me-2"></i>Hospital</a>
                         <a class="text-light mb-2" href="{{ route('professional.doctors') }}"><i class="fa fa-angle-right me-2"></i>Professional Doctors</a>
                         <a class="text-light" href="{{ route('contact') }}"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
+                        <a class="text-light" href="{{ route('terms') }}"><i class="fa fa-angle-right me-2"></i>Terms & Conditions</a>
+                        <a class="text-light" href="{{ route('disclaimer') }}"><i class="fa fa-angle-right me-2"></i>Disclaimer</a>
+                        <a class="text-light" href="{{ route('privacy-policy') }}"><i class="fa fa-angle-right me-2"></i>Privacy Policy</a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
