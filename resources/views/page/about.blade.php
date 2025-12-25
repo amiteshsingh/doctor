@@ -31,59 +31,129 @@
                     <div class="container">
                    
                     <ul class="nav nav-tabs" id="aboutTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="en-tab" data-bs-toggle="tab" data-bs-target="#en" type="button" role="tab" aria-controls="en" aria-selected="true">
-                            English
-                        </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="hi-tab" data-bs-toggle="tab" data-bs-target="#hi" type="button" role="tab" aria-controls="hi" aria-selected="false">
-                            हिंदी
-                        </button>
-                        </li>
+                        <li class="nav-item"><button class="nav-link active" id="en-tab" data-bs-toggle="tab" data-bs-target="#en">English</button></li>
+                        <li class="nav-item"><button class="nav-link" id="hi-tab" data-bs-toggle="tab" data-bs-target="#hi">हिंदी</button></li>
+                        <li class="nav-item"><button class="nav-link" id="ta-tab" data-bs-toggle="tab" data-bs-target="#ta">தமிழ்</button></li>
+                        <li class="nav-item"><button class="nav-link" id="te-tab" data-bs-toggle="tab" data-bs-target="#te">తెలుగు</button></li>
+                        <li class="nav-item"><button class="nav-link" id="mr-tab" data-bs-toggle="tab" data-bs-target="#mr">मराठी</button></li>
+                        <li class="nav-item"><button class="nav-link" id="bn-tab" data-bs-toggle="tab" data-bs-target="#bn">বাংলা</button></li>
                     </ul>
 
                     <div class="tab-content p-3 border border-top-0 rounded-bottom" id="aboutTabsContent">
                         <!-- English -->
                         <div class="tab-pane fade show active" id="en" role="tabpanel" aria-labelledby="en-tab">
-                        <p>
-                            Welcome to <strong>RogiSewa.com</strong> – your trusted partner in finding the best medical care for yourself and your family.
-                        </p>
-                        <p>
-                            Our purpose is simple yet meaningful – to make quality healthcare easily accessible for everyone. Through our platform, any user can quickly search for the nearest <strong>doctors</strong> and <strong>hospitals</strong>, explore their specializations, and connect with the right healthcare professional for their needs.
-                        </p>
-                        <p>We understand that when it comes to health, every second counts. That’s why we provide a user-friendly platform where you can:</p>
-                        <ul class="mb-3">
-                            <li>Search for doctors and hospitals by <strong>location, specialty, or disease</strong></li>
-                            <li>Find verified and reliable information about medical experts</li>
-                            <li>Choose the right healthcare professional for your patient or family member</li>
-                        </ul>
-                        <p>
-                            At <strong>RogiSewa.com</strong>, our mission is to bridge the gap between patients and healthcare providers. Whether you are looking for routine check-ups, specialized treatments, or emergency care – we are here to help you make informed decisions and ensure your loved ones receive the best medical care at the right time.
-                        </p>
-                        <p>Your health, your choice – and we are here to make it simpler.</p>
+                            <p>
+                                Welcome to <strong>RogiSewa.com</strong> – your trusted partner in finding the best medical care for yourself and your family.
+                            </p>
+                            <p>
+                                Our purpose is simple yet meaningful – to make quality healthcare easily accessible for everyone. Through our platform, any user can quickly search for the nearest <strong>doctors</strong> and <strong>hospitals</strong>, explore their specializations, and connect with the right healthcare professional for their needs.
+                            </p>
+                            <p>We understand that when it comes to health, every second counts. That’s why we provide a user-friendly platform where you can:</p>
+                            <ul class="mb-3">
+                                <li>Search for doctors and hospitals by <strong>location, specialty, or disease</strong></li>
+                                <li>Find verified and reliable information about medical experts</li>
+                                <li>Choose the right healthcare professional for your patient or family member</li>
+                            </ul>
+                            <p>
+                                At <strong>RogiSewa.com</strong>, our mission is to bridge the gap between patients and healthcare providers. Whether you are looking for routine check-ups, specialized treatments, or emergency care – we are here to help you make informed decisions and ensure your loved ones receive the best medical care at the right time.
+                            </p>
+                            <p>Your health, your choice – and we are here to make it simpler.</p>
                         </div>
 
                         <!-- Hindi -->
                         <div class="tab-pane fade" id="hi" role="tabpanel" aria-labelledby="hi-tab">
-                        <p>
-                            <strong>RogiSewa.com</strong> पर आपका स्वागत है – आपके और आपके परिवार के लिए बेहतरीन स्वास्थ्य सेवाओं की खोज का भरोसेमंद साथी।
-                        </p>
-                        <p>
-                            हमारा उद्देश्य सरल है – हर किसी तक गुणवत्तापूर्ण स्वास्थ्य सेवाएँ आसानी से पहुँचाना। इस प्लेटफ़ॉर्म के माध्यम से कोई भी यूज़र अपने नज़दीकी <strong>डॉक्टर</strong> और <strong>अस्पताल</strong> खोज सकता है, उनकी विशेषज्ञता देख सकता है और अपनी ज़रूरत के अनुसार सही डॉक्टर से जुड़ सकता है।
-                        </p>
-                        <p>हम जानते हैं कि स्वास्थ्य के मामलों में हर पल मायने रखता है। इसलिए हमने ऐसा प्लेटफ़ॉर्म बनाया है जहाँ आप:</p>
-                        <ul class="mb-3">
-                            <li><strong>स्थान, विशेषज्ञता या बीमारी</strong> के आधार पर डॉक्टर और अस्पताल खोज सकते हैं</li>
-                            <li>चिकित्सा विशेषज्ञों की विश्वसनीय और प्रमाणित जानकारी प्राप्त कर सकते हैं</li>
-                            <li>अपने या अपने प्रियजनों के लिए सही स्वास्थ्य सेवाओं का चुनाव कर सकते हैं</li>
-                        </ul>
-                        <p>
-                            <strong>RogiSewa.com</strong> का मिशन है – मरीज और स्वास्थ्य सेवा प्रदाताओं के बीच की दूरी को कम करना। चाहे आपको सामान्य जाँच, विशेष इलाज या आपातकालीन देखभाल की ज़रूरत हो – हम आपके निर्णय को आसान बनाते हैं ताकि आपके प्रियजनों को समय पर सर्वोत्तम चिकित्सा सेवाएँ मिल सकें।
-                        </p>
-                        <p>आपका स्वास्थ्य, आपका निर्णय – और हम आपके साथ हैं।</p>
+                            <p>
+                                <strong>RogiSewa.com</strong> पर आपका स्वागत है – आपके और आपके परिवार के लिए बेहतरीन स्वास्थ्य सेवाओं की खोज का भरोसेमंद साथी।
+                            </p>
+                            <p>
+                                हमारा उद्देश्य सरल है – हर किसी तक गुणवत्तापूर्ण स्वास्थ्य सेवाएँ आसानी से पहुँचाना। इस प्लेटफ़ॉर्म के माध्यम से कोई भी यूज़र अपने नज़दीकी <strong>डॉक्टर</strong> और <strong>अस्पताल</strong> खोज सकता है, उनकी विशेषज्ञता देख सकता है और अपनी ज़रूरत के अनुसार सही डॉक्टर से जुड़ सकता है।
+                            </p>
+                            <p>हम जानते हैं कि स्वास्थ्य के मामलों में हर पल मायने रखता है। इसलिए हमने ऐसा प्लेटफ़ॉर्म बनाया है जहाँ आप:</p>
+                            <ul class="mb-3">
+                                <li><strong>स्थान, विशेषज्ञता या बीमारी</strong> के आधार पर डॉक्टर और अस्पताल खोज सकते हैं</li>
+                                <li>चिकित्सा विशेषज्ञों की विश्वसनीय और प्रमाणित जानकारी प्राप्त कर सकते हैं</li>
+                                <li>अपने या अपने प्रियजनों के लिए सही स्वास्थ्य सेवाओं का चुनाव कर सकते हैं</li>
+                            </ul>
+                            <p>
+                                <strong>RogiSewa.com</strong> का मिशन है – मरीज और स्वास्थ्य सेवा प्रदाताओं के बीच की दूरी को कम करना। चाहे आपको सामान्य जाँच, विशेष इलाज या आपातकालीन देखभाल की ज़रूरत हो – हम आपके निर्णय को आसान बनाते हैं ताकि आपके प्रियजनों को समय पर सर्वोत्तम चिकित्सा सेवाएँ मिल सकें।
+                            </p>
+                            <p>आपका स्वास्थ्य, आपका निर्णय – और हम आपके साथ हैं।</p>
                         </div>
+
+                        <div class="tab-pane fade" id="ta">
+                            <p><strong>RogiSewa.com</strong>க்கு உங்களை வரவேற்கிறோம் — உங்கள் மற்றும் உங்கள் குடும்பத்தின் சிறந்த சுகாதார சேவைகளை கண்டுபிடிக்க நம்பகமான துணை.</p>
+
+                            <p>எங்களின் நோக்கம் எளிதானது — தரமான சுகாதார சேவைகளை அனைவருக்கும் எளிதாகக் கிடைக்கச் செய்வது. இந்த தளத்தின் மூலம் பயனர்கள் அருகிலுள்ள <strong>மருத்துவர்கள்</strong> மற்றும் <strong>மருத்துவமனைகள்</strong> தேடி, அவர்களின் சிறப்பு துறைகளை அறிந்து, தங்களின் தேவைக்கு ஏற்ற மருத்துவரைத் தேர்ந்தெடுக்கலாம்.</p>
+
+                            <p>சுகாதார விஷயங்களில் ஒவ்வொரு நொடியும் முக்கியம் என்பதை நாங்கள் அறிவோம். அதனால் நீங்கள்:</p>
+                            <ul class="mb-3">
+                            <li><strong>இடம், சிறப்பு துறை அல்லது நோய்</strong> அடிப்படையில் மருத்துவர்கள் மற்றும் மருத்துவமனைகளைத் தேடலாம்</li>
+                            <li>நம்பகமான மற்றும் சான்றளிக்கப்பட்ட மருத்துவ நிபுணர் தகவல்களைப் பெறலாம்</li>
+                            <li>உங்கள் அல்லது உங்கள் அன்பினர்களுக்கான சரியான சிகிச்சையைத் தேர்வு செய்யலாம்</li>
+                            </ul>
+
+                            <p><strong>RogiSewa.com</strong> இன் இலக்கு — நோயாளிகளுக்கும் சுகாதார சேவை வழங்குநர்களுக்கும் இடையிலான தூரத்தை குறைப்பது. சாதாரண பரிசோதனை, சிறப்பு சிகிச்சை அல்லது அவசர சேவைகள் எதுவாக இருந்தாலும் — சரியான முடிவெடுக்க நாங்கள் உங்களுடன் இருக்கிறோம்.</p>
+
+                            <p>உங்கள் சுகாதாரம், உங்கள் முடிவு — நாங்கள் உங்கள் பக்கத்தில் இருக்கிறோம்.</p>
+                        </div>
+
+                        <div class="tab-pane fade" id="te">
+                            <p><strong>RogiSewa.com</strong> కు స్వాగతం — మీకు మరియు మీ కుటుంబానికి ఉత్తమ ఆరోగ్య సేవలను కనుగొనే నమ్మకమైన భాగస్వామి.</p>
+
+                            <p>మా లక్ష్యం సులభం — నాణ్యమైన ఆరోగ్య సేవలను ప్రతి ఒక్కరికీ సులభంగా అందించడం. ఈ వేదిక ద్వారా వినియోగదారులు తమకు సమీపంలోని <strong>డాక్టర్లు</strong> మరియు <strong>ఆసుపత్రులను</strong> వెతికి, వారి నైపుణ్యాలను తెలుసుకుని, అవసరానికి తగిన డాక్టర్‌ను ఎంచుకోవచ్చు.</p>
+
+                            <p>ఆరోగ్య విషయాల్లో ప్రతి క్షణం విలువైనదని మాకు తెలుసు. అందుకే మీరు:</p>
+                            <ul class="mb-3">
+                            <li><strong>ప్రాంతం, నైపుణ్యం లేదా వ్యాధి</strong> ఆధారంగా డాక్టర్లు మరియు ఆసుపత్రులను వెతకవచ్చు</li>
+                            <li>నమ్మదగిన మరియు ధృవీకరించబడిన వైద్య నిపుణుల సమాచారం పొందవచ్చు</li>
+                            <li>మీరు లేదా మీ ప్రియమైనవారికి సరైన చికిత్సను ఎంచుకోవచ్చు</li>
+                            </ul>
+
+                            <p><strong>RogiSewa.com</strong> యొక్క లక్ష్యం — రోగులు మరియు ఆరోగ్య సేవాప్రదాతల మధ్య దూరాన్ని తగ్గించడం. సాధారణ పరీక్షలైనా, ప్రత్యేక చికిత్సలైనా లేదా అత్యవసర సేవలైనా — సరైన నిర్ణయం తీసుకునేందుకు మేము మీతో ఉన్నాము.</p>
+
+                            <p>మీ ఆరోగ్యం, మీ నిర్ణయం — మేము మీ వెంట ఉన్నాము.</p>
+                        </div>
+
+                        <div class="tab-pane fade" id="mr">
+                            <p><strong>RogiSewa.com</strong> वर आपले स्वागत आहे — आपल्या आणि आपल्या कुटुंबासाठी उत्तम आरोग्य सेवा शोधण्याचा विश्वासार्ह साथीदार.</p>
+
+                            <p>आमचे उद्दिष्ट सोपे आहे — दर्जेदार आरोग्य सेवा प्रत्येकापर्यंत सहज पोहोचवणे. या प्लॅटफॉर्मद्वारे कोणीही आपल्या जवळचे <strong>डॉक्टर</strong> आणि <strong>रुग्णालय</strong> शोधू शकतो, त्यांची तज्ञता पाहू शकतो आणि आपल्या गरजेनुसार योग्य डॉक्टर निवडू शकतो.</p>
+
+                            <p>आरोग्याच्या बाबतीत प्रत्येक क्षण महत्त्वाचा असतो. म्हणून आपण:</p>
+                            <ul class="mb-3">
+                            <li><strong>स्थान, तज्ञता किंवा आजार</strong> यांच्या आधारे डॉक्टर आणि रुग्णालय शोधू शकता</li>
+                            <li>विश्वसनीय आणि प्रमाणित वैद्यकीय तज्ञांची माहिती मिळवू शकता</li>
+                            <li>आपल्या किंवा आपल्या प्रियजनांसाठी योग्य उपचार निवडू शकता</li>
+                            </ul>
+
+                            <p><strong>RogiSewa.com</strong> चे ध्येय — रुग्ण आणि आरोग्य सेवा पुरवणाऱ्यांमधील अंतर कमी करणे. सामान्य तपासणी असो, विशेष उपचार असो किंवा आपत्कालीन सेवा असो — योग्य निर्णय घेण्यासाठी आम्ही तुमच्यासोबत आहोत.</p>
+
+                            <p>आपले आरोग्य, आपला निर्णय — आणि आम्ही तुमच्या सोबत आहोत.</p>
+                        </div>
+
+                        <div class="tab-pane fade" id="bn">
+                            <p><strong>RogiSewa.com</strong> এ আপনাকে স্বাগতম — আপনার এবং আপনার পরিবারের জন্য সেরা স্বাস্থ্য পরিষেবা খুঁজে পাওয়ার বিশ্বস্ত সঙ্গী।</p>
+
+                            <p>আমাদের উদ্দেশ্য সহজ — সবার জন্য মানসম্মত স্বাস্থ্য পরিষেবাকে সহজলভ্য করা। এই প্ল্যাটফর্মের মাধ্যমে যে কেউ কাছাকাছি <strong>ডাক্তার</strong> এবং <strong>হাসপাতাল</strong> খুঁজে নিতে পারেন, তাঁদের বিশেষত্ব দেখতে পারেন এবং নিজের প্রয়োজন অনুযায়ী সঠিক চিকিৎসকের সাথে যোগাযোগ করতে পারেন।</p>
+
+                            <p>স্বাস্থ্যের ক্ষেত্রে প্রতিটি মুহূর্ত গুরুত্বপূর্ণ। তাই আপনি:</p>
+                            <ul class="mb-3">
+                            <li><strong>অবস্থান, বিশেষত্ব বা রোগ</strong> অনুযায়ী ডাক্তার ও হাসপাতাল খুঁজতে পারবেন</li>
+                            <li>বিশ্বস্ত ও যাচাইকৃত চিকিৎসা বিশেষজ্ঞদের তথ্য পাবেন</li>
+                            <li>নিজের বা প্রিয়জনের জন্য সঠিক চিকিৎসা বেছে নিতে পারবেন</li>
+                            </ul>
+
+                            <p><strong>RogiSewa.com</strong> এর লক্ষ্য — রোগী ও স্বাস্থ্য পরিষেবা প্রদানকারীদের মধ্যে দূরত্ব কমানো। সাধারণ চেকআপ, বিশেষ চিকিৎসা বা জরুরি পরিষেবা — যাই হোক না কেন, সঠিক সিদ্ধান্ত নিতে আমরা আপনার পাশে আছি।</p>
+
+                            <p>আপনার স্বাস্থ্য, আপনার সিদ্ধান্ত — এবং আমরা আপনার সঙ্গে আছি।</p>
+                        </div>
+
+
+
+
                     </div>
+
+
                     </div>
 
 
