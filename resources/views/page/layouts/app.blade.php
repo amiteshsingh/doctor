@@ -10,6 +10,8 @@
     <meta name="description" content="@yield('meta_description', 'RogiSewa helps you find trusted doctors and hospitals nearby. Book appointments, check reviews, and get the best healthcare guidance online.')">
     <meta name="keywords" content="@yield('meta_keywords', 'Rogi Sewa, Rogisewa, doctors, hospitals, health, online appointment, Bihar, India, healthcare, medical services')">
     <meta name="robots" content="index, follow">
+    
+    <meta name="google-adsense-account" content="ca-pub-3979062395254203">
 
 
     <link rel="canonical" href="{{ url()->current() }}">
