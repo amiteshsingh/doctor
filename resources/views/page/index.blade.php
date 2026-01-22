@@ -99,9 +99,10 @@
             <div class="text-center mx-auto mb-5" style="max-width: 500px;">
                 <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">Find A Doctor</h5>
                 <h1 class="display-4 mb-4">Find A Healthcare Professionals</h1>
-                <h5 class="text-white fw-normal">Duo ipsum erat stet dolor sea ut nonumy tempor. Tempor duo lorem eos sit sed ipsum takimata ipsum sit est. Ipsum ea voluptua ipsum sit justo</h5>
+                <h5 class="text-white fw-normal">Find the right doctor for your health needs with ease. At RogiSewa, we help you connect with experienced and verified doctors across multiple specialties. Whether you are looking for a general physician, specialist, or surgeon, our platform makes it simple to search and compare doctors based on location, expertise, and patient needs. Our goal is to ensure you get timely and reliable medical guidance from trusted professionals.</h5>
+                <h5 class="text-white fw-normal">RogiSewa is your one-stop platform to discover qualified healthcare professionals and hospitals near you. We provide detailed information to help patients make informed healthcare decisions. From clinics to multi-specialty hospitals, our directory is designed to save time and improve access to quality healthcare services. We focus on patient convenience, transparency, and reliable healthcare information.</h5>
             </div>
-            <div class="mx-auto" style="width: 100%; max-width: 600px;">
+            <!-- <div class="mx-auto" style="width: 100%; max-width: 600px;">
                 <div class="input-group">
                     <select class="form-select border-primary w-25" style="height: 60px;">
                         <option selected>Department</option>
@@ -112,7 +113,7 @@
                     <input type="text" class="form-control border-primary w-50" placeholder="Keyword">
                     <button class="btn btn-dark border-0 w-25">Search</button>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     <!-- Search End -->
