@@ -3,176 +3,151 @@
 @section('title', 'RogiSewa - Home')
 
 @section('content')
-    <!-- Hero Start -->
-    <div class="container-fluid bg-primary py-5 mb-5 hero-header">
-        <div class="container py-5">
-            <div class="row justify-content-start">
-                <div class="col-lg-8 text-center text-lg-start">
-                    <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5" style="border-color: rgba(256, 256, 256, .3) !important;">Welcome To RogiSewa</h5>
-                    <h1 class="display-1 text-white mb-md-4">Best Healthcare Solution In Your City</h1>
-                    <div class="pt-2">
-                        <a href="{{ url('doctors') }}" class="btn btn-light rounded-pill py-md-3 px-md-5 mx-2">Find Doctor</a>
-                        <a href="{{ url('hospitals') }}" class="btn btn-light rounded-pill py-md-3 px-md-5 mx-2">Find Hospital</a>
-                    </div>
+
+<!-- Hero Start -->
+<div class="container-fluid bg-primary py-5 mb-5 hero-header">
+    <div class="container py-5">
+        <div class="row justify-content-start">
+            <div class="col-lg-8 text-center text-lg-start">
+                <h5 class="d-inline-block text-white text-uppercase border-bottom border-5"
+                    style="border-color: rgba(256,256,256,.3)!important;">
+                    Welcome To RogiSewa
+                </h5>
+                <h1 class="display-1 text-white mb-md-4">
+                    Best Healthcare Solution In Your City
+                </h1>
+                <div class="pt-2">
+                    <a href="{{ url('doctors') }}" class="btn btn-light rounded-pill py-md-3 px-md-5 mx-2">
+                        Find Doctor
+                    </a>
+                    <a href="{{ url('hospitals') }}" class="btn btn-light rounded-pill py-md-3 px-md-5 mx-2">
+                        Find Hospital
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Hero End -->
+</div>
+<!-- Hero End -->
 
+<!-- Doctors Start -->
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5" style="max-width:600px;">
+            <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">
+                Our Doctors
+            </h5>
+            <h2 class="display-7">Qualified Healthcare Professionals</h2>
+            <p class="text-muted mt-3">
+                RogiSewa connects patients with experienced doctors from various medical specialties,
+                helping them access reliable healthcare services with ease.
+            </p>
+        </div>
 
-    <!-- Team Start -->
-    <div class="container-fluid py-5">
-        <div class="container">
-            <div class="text-center mx-auto mb-5" style="max-width: 500px;">
-                <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Our Doctors</h5>
-                <h2 class="display-7">Qualified Healthcare Professionals</h2>
-            </div>
+        <div class="owl-carousel team-carousel position-relative">
+            @foreach($doctors as $doctor)
+                @php
+                    $practiceName = optional($doctor->locations->first())->practice_name ?? $doctor->name;
+                @endphp
+                <div class="team-item">
+                    <div class="row g-0 bg-light rounded overflow-hidden">
+                        <div class="col-12 col-sm-5 h-100">
+                            <a href="{{ url('doctor-profile/'.$doctor->id.'/'.Str::slug($practiceName)) }}">
+                                <img class="img-fluid h-100"
+                                     src="{{ $doctor->profile_pic ? asset('storage/upload/doctor/'.$doctor->profile_pic) : asset('storage/upload/doctor/user.jpg') }}"
+                                     style="object-fit:cover;">
+                            </a>
+                        </div>
+                        <div class="col-12 col-sm-7 h-100 d-flex flex-column">
+                            <div class="mt-auto p-4">
+                                <h3>{{ $practiceName }}</h3>
+                                <h6 class="fw-normal fst-italic text-primary mb-2">
+                                    {{ $doctor->specializations->first()->specialization->name ?? 'General Specialist' }}
+                                </h6>
+                                <p>{{ $doctor->educations->first()->degree ?? 'Experienced Healthcare Professional' }}</p>
 
-            <div class="owl-carousel team-carousel position-relative">
-                @foreach($doctors as $doctor)
-                    @php
-                        $practiceName = optional($doctor->locations->first())->practice_name ?? $doctor->name;
-                    @endphp
-                    <div class="team-item">
-                        <div class="row g-0 bg-light rounded overflow-hidden">
-                            <div class="col-12 col-sm-5 h-100">
-                                <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}">
-                                <img class="img-fluid h-100" 
-                                    src="{{ $doctor->profile_pic ?asset('storage/upload/doctor/'.$doctor->profile_pic) : asset('storage/upload/doctor/user.jpg') }}" 
-                                    style="object-fit: cover;">
-                                </a>
-                            </div>
-                            <div class="col-12 col-sm-7 h-100 d-flex flex-column">
-                                <div class="mt-auto p-4">
-                                    <h3> <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}">{{ $practiceName }}</a></h3>
-                                    <h6 class="fw-normal fst-italic text-primary mb-2">
-                                        {{ $doctor->specializations->first()->specialization->name ?? 'General Specialist' }}
-                                    </h6>
-                                    <p class="mb-2">
-                                        {{ $doctor->educations->first()->degree ?? 'Experienced Healthcare Professional' }}
-                                    </p>
-
-                                    @php
-                                        $location = $doctor->locations->first();
-                                    @endphp
-                                    @if($location)
-                                        <p class="text-muted small mb-0">
-                                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                            {{ $location->address }},
-                                            {{ $location->city }},
-                                            {{ $location->state }} - {{ $location->zip_code }}
-                                        </p>
-                                    @else
-                                        <p class="text-muted small mb-0">
-                                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                            Address not available
-                                        </p>
-                                    @endif
-                                </div>
-
-                                <div class="d-flex mt-auto border-top p-4">
-                                    <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-3" href="{{ $doctor->twitter ?? '#' }}"><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-3" href="{{ $doctor->facebook ?? '#' }}"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-lg btn-primary btn-lg-square rounded-circle" href="{{ $doctor->linkedin ?? '#' }}"><i class="fab fa-linkedin-in"></i></a>
-                                </div>
+                                @php $location = $doctor->locations->first(); @endphp
+                                <p class="text-muted small">
+                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                    {{ $location ? $location->city.', '.$location->state : 'Location not available' }}
+                                </p>
                             </div>
                         </div>
                     </div>
-                @endforeach
-            </div>
-
-            <div class="text-end mt-3">
-                <a href="{{ route('professional.doctors') }}" class="btn btn-light btn-sm">
-                    View More <i class="fa fa-arrow-right ms-2"></i>
-                </a>
-            </div>
-
-        </div>
-    </div>
-    <!-- Team End -->
-
-
-    <!-- Search Start -->
-    <div class="container-fluid bg-primary my-5 py-5">
-        <div class="container py-5">
-            <div class="text-center mx-auto mb-5" style="max-width: 500px;">
-                <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">Find A Doctor</h5>
-                <h1 class="display-4 mb-4">Find A Healthcare Professionals</h1>
-                <h5 class="text-white fw-normal">Find the right doctor for your health needs with ease. At RogiSewa, we help you connect with experienced and verified doctors across multiple specialties. Whether you are looking for a general physician, specialist, or surgeon, our platform makes it simple to search and compare doctors based on location, expertise, and patient needs. Our goal is to ensure you get timely and reliable medical guidance from trusted professionals.</h5>
-                <h5 class="text-white fw-normal">RogiSewa is your one-stop platform to discover qualified healthcare professionals and hospitals near you. We provide detailed information to help patients make informed healthcare decisions. From clinics to multi-specialty hospitals, our directory is designed to save time and improve access to quality healthcare services. We focus on patient convenience, transparency, and reliable healthcare information.</h5>
-            </div>
-            <!-- <div class="mx-auto" style="width: 100%; max-width: 600px;">
-                <div class="input-group">
-                    <select class="form-select border-primary w-25" style="height: 60px;">
-                        <option selected>Department</option>
-                        <option value="1">Department 1</option>
-                        <option value="2">Department 2</option>
-                        <option value="3">Department 3</option>
-                    </select>
-                    <input type="text" class="form-control border-primary w-50" placeholder="Keyword">
-                    <button class="btn btn-dark border-0 w-25">Search</button>
                 </div>
-            </div> -->
+            @endforeach
+        </div>
+
+        <div class="text-end mt-3">
+            <a href="{{ route('professional.doctors') }}" class="btn btn-light btn-sm">
+                View More <i class="fa fa-arrow-right ms-2"></i>
+            </a>
         </div>
     </div>
-    <!-- Search End -->
+</div>
+<!-- Doctors End -->
 
+<!-- Informational Section -->
+<div class="container-fluid bg-primary py-5">
+    <div class="container py-5">
+        <div class="text-center mx-auto" style="max-width:800px;">
+            <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">
+                Find a Doctor
+            </h5>
+            <h2 class="text-white mb-4">
+                Trusted Healthcare Information & Medical Discovery Platform
+            </h2>
 
-<!-- Bootstrap 5 Modal -->
-<div class="modal fade" id="registrationPopup" tabindex="-1" aria-labelledby="registrationPopupLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content rounded-3 shadow">
+            <p class="text-white">
+                RogiSewa is designed to simplify the process of finding reliable healthcare services.
+                Patients can explore doctors, hospitals, and clinics based on location, specialization,
+                and healthcare needs.
+            </p>
 
-      <div class="modal-header">
-        <h5 class="modal-title text-primary fw-bold" id="registrationPopupLabel">
-          📢 डॉक्टर और हॉस्पिटल रजिस्ट्रेशन / Doctor & Hospital Registration
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+            <p class="text-white">
+                We understand that timely medical care is essential. Our platform ensures that patients
+                can access accurate and structured healthcare information to make informed decisions.
+            </p>
 
-      <div class="modal-body">
-        <p class="mb-2">
-          <b>RogiSewa.com</b> पर रजिस्टर होकर अपने क्लिनिक/हॉस्पिटल की जानकारी पूरे <b>भारत</b> में पहुँचाएँ।  
-          यह प्लेटफ़ॉर्म आपके मरीजों तक पहुँचने का आसान और भरोसेमंद माध्यम है।  
-        </p>
-        <p class="mb-3">
-          Register your clinic/hospital on <b>RogiSewa.com</b> and reach patients across <b>India</b>.  
-          This platform is the most reliable way to connect with patients.  
-        </p>
-
-        <ul class="list-unstyled">
-          <li>✅ अपने नाम और हॉस्पिटल की पहचान पूरे इंडिया में बनाएँ / Build your clinic & hospital identity across India.</li>
-          <li>✅ मरीज सीधे आपके पास पहुँच सकेंगे / Patients can directly reach you.</li>
-          <li>✅ आपके विशेषज्ञता और सेवाओं का प्रचार-प्रसार ऑल इंडिया लेवल पर / Promote your expertise & services at All-India level.</li>
-          <li>✅ <b>पर्चा इनवॉइस जनरेशन सेवा बिल्कुल मुफ्त है, आप इसे उपयोग कर सकते हैं।</b> / <b>Prescription Invoice Generation service is completely free — you can use it anytime.</b></li>
-        </ul>
-      </div>
-
-      <div class="modal-footer d-flex justify-content-between">
-        <a href="http://rogisewa.com/register" class="btn btn-success fw-bold">
-          👉 अभी रजिस्टर करें / Register Now
-        </a>
-        <button type="button" class="btn btn-danger fw-bold" data-bs-dismiss="modal">
-          ❌ बंद करें / Close
-        </button>
-      </div>
-
+            <p class="text-white">
+                RogiSewa focuses on improving healthcare awareness and accessibility by connecting
+                patients with verified healthcare professionals across India.
+            </p>
+        </div>
     </div>
-  </div>
 </div>
 
-<!-- Script to Auto-open Modal -->
-<script>
-  document.addEventListener("DOMContentLoaded", function(){
-    setTimeout(function(){
-      var myModal = new bootstrap.Modal(document.getElementById('registrationPopup'));
-      myModal.show();
-    }, 2000); // 2 seconds delay
-  });
-</script>
+<!-- Extra Content Section -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <h3>Why Healthcare Awareness Matters</h3>
+            <p>
+                Healthcare awareness helps individuals recognize symptoms early and seek timely medical
+                attention. Understanding healthcare options enables patients to choose the right doctor
+                or hospital and avoid unnecessary delays in treatment.
+            </p>
+        </div>
+        <div class="col-md-6 mb-4">
+            <h3>How RogiSewa Supports Patients</h3>
+            <p>
+                RogiSewa provides organized healthcare data that helps patients compare doctors and
+                healthcare facilities. Our platform promotes transparency, convenience, and informed
+                healthcare decisions.
+            </p>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Our Vision for Better Healthcare Access</h3>
+            <p>
+                Our vision is to create a trusted healthcare discovery ecosystem where patients can
+                easily find medical professionals and healthcare services. RogiSewa aims to reduce
+                healthcare information gaps and improve patient outcomes through awareness and access.
+            </p>
+        </div>
+    </div>
+</div>
 
-
-    
-    @endsection
+@endsection
