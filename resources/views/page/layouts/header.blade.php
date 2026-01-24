@@ -60,6 +60,7 @@
                                 
                             </div>
                         </div>
+                        <a href="{{ route('blog') }}" class="nav-item nav-link {{ Request::is('blog') ? 'active' : '' }}">Blog</a>
                         <a href="{{ route('contact') }}" class="nav-item nav-link {{ Request::is('contact') ? 'active' : '' }}">Contact</a>
 
                         @if (isset(Auth::user()->role->role) && Auth::user()->role->role == 'admin')

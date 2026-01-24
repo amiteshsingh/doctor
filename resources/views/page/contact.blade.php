@@ -48,31 +48,84 @@
             <div class="row justify-content-center position-relative" style="margin-top: -200px; z-index: 1;">
                 <div class="col-lg-8">
                     <div class="bg-white rounded p-5 m-5 mb-0">
-                        <form>
+                        <form id="contactForm">
+                            @csrf
                             <div class="row g-3">
                                 <div class="col-12 col-sm-6">
-                                    <input type="text" class="form-control bg-light border-0" placeholder="Your Name" style="height: 55px;">
+                                    <input type="text" name="name" class="form-control bg-light border-0"
+                                        placeholder="Your Name" style="height: 55px;" required>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <input type="email" name="email" class="form-control bg-light border-0"
+                                        placeholder="Your Email" style="height: 55px;" required>
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <input type="email" class="form-control bg-light border-0" placeholder="Your Email" style="height: 55px;">
+                                    <input type="text"
+                                        name="phone"
+                                        class="form-control bg-light border-0"
+                                        placeholder="Phone Number (optional)"
+                                        style="height: 55px;">
                                 </div>
+
+
                                 <div class="col-12">
-                                    <input type="text" class="form-control bg-light border-0" placeholder="Subject" style="height: 55px;">
+                                    <input type="text" name="subject" class="form-control bg-light border-0"
+                                        placeholder="Subject" style="height: 55px;" required>
                                 </div>
+
                                 <div class="col-12">
-                                    <textarea class="form-control bg-light border-0" rows="5" placeholder="Message"></textarea>
+                                    <textarea name="message" class="form-control bg-light border-0"
+                                        rows="5" placeholder="Message" required></textarea>
                                 </div>
+
                                 <div class="col-12">
-                                    <button class="btn btn-primary w-100 py-3" type="submit">Send Message</button>
+                                    <button type="submit" class="btn btn-primary w-100 py-3">
+                                        Send Message
+                                    </button>
                                 </div>
                             </div>
                         </form>
+
+                        <div id="formResponse" class="mt-3 text-center"></div>
+
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Contact End -->
+
+    <script>
+document.getElementById('contactForm').addEventListener('submit', function(e){
+    e.preventDefault();
+
+    let form = this;
+    let formData = new FormData(form);
+
+    fetch("{{ route('contact') }}", {
+        method: "POST",
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status){
+            document.getElementById('formResponse').innerHTML =
+                '<div class="alert alert-success">'+data.message+'</div>';
+            form.reset();
+        }
+    })
+    .catch(() => {
+        document.getElementById('formResponse').innerHTML =
+            '<div class="alert alert-danger">Something went wrong. Try again.</div>';
+    });
+});
+</script>
+
 
     @endsection
 

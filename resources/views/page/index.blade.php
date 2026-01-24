@@ -150,4 +150,75 @@
     </div>
 </div>
 
+
+
+
+
+<!-- ================= Registration Popup Modal ================= -->
+
+<div class="modal fade" id="registrationPopup" tabindex="-1"
+     aria-labelledby="registrationPopupLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-3 shadow">
+
+            <div class="modal-header">
+                <h5 class="modal-title text-primary fw-bold" id="registrationPopupLabel">
+                    📢 Doctor & Hospital Registration / डॉक्टर व हॉस्पिटल रजिस्ट्रेशन
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <p class="mb-2">
+                    <b>RogiSewa.com</b> पर अपने क्लिनिक या हॉस्पिटल को रजिस्टर करें और
+                    पूरे <b>भारत</b> में मरीजों तक आसानी से पहुँचें।
+                </p>
+
+                <p class="mb-3">
+                    Register your clinic or hospital on <b>RogiSewa.com</b> and connect with
+                    patients across <b>India</b>. Our platform helps healthcare professionals
+                    build trust, visibility, and patient reach.
+                </p>
+
+                <ul class="list-unstyled">
+                    <li>✅ पूरे भारत में अपने क्लिनिक और हॉस्पिटल की पहचान बनाएँ</li>
+                    <li>✅ मरीज सीधे आपसे संपर्क कर सकेंगे</li>
+                    <li>✅ अपनी विशेषज्ञता और मेडिकल सेवाओं का प्रचार करें</li>
+                    <li>✅ <b>Prescription Invoice Generation सेवा बिल्कुल FREE है</b></li>
+                </ul>
+            </div>
+
+            <div class="modal-footer d-flex justify-content-between">
+                <a href="https://rogisewa.com/register"
+                   class="btn btn-success fw-bold">
+                    👉 Register Now / अभी रजिस्टर करें
+                </a>
+                <button type="button" class="btn btn-danger fw-bold"
+                        data-bs-dismiss="modal">
+                    ❌ Close / बंद करें
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     setTimeout(function () {
+//         var myModal = new bootstrap.Modal(
+//             document.getElementById('registrationPopup')
+//         );
+//         myModal.show();
+//     }, 2000); // 2 seconds delay
+// });
+
+</script>
+
+
 @endsection

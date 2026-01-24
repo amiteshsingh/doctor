@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\View;
 use App\Models\Doctor;
 use App\Models\Hospital;
 use App\Models\Specialization;
+use Illuminate\Support\Facades\Mail;
 
 
 class PageController extends Controller
@@ -174,6 +175,11 @@ class PageController extends Controller
         return view('page.blog');
     }
 
+    public function blogDetail()
+    {
+        return view('page.blog-detail');
+    }
+
     public function detail()
     {
         return view('page.detail');
@@ -190,10 +196,36 @@ class PageController extends Controller
         return view('page.appointment');
     }
 
-    public function contact()
-    {
+    public function contact(Request $request){
+        // AJAX POST request
+        if ($request->isMethod('post')) {
+
+            $request->validate([
+                'name'    => 'required|string|max:100',
+                'email'   => 'required|email',
+                'phone'   => 'nullable|string|max:20',
+                'subject' => 'required|string|max:150',
+                'message' => 'required|string|max:1000',
+            ]);
+
+            $data = $request->only('name','email','phone','subject','message');
+
+            Mail::send('emails.contact', $data, function ($mail) use ($data) {
+                $mail->to('rogisewa25@gmail.com')
+                    ->subject('New Contact Message - RogiSewa')
+                    ->replyTo($data['email'], $data['name']);
+            });
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Thank you! Your message has been sent successfully.'
+            ]);
+        }
+
+        // Normal GET page load
         return view('page.contact');
     }
+
 
     public function terms()
     {
