@@ -196,11 +196,11 @@ class PageController extends Controller
         return view('page.appointment');
     }
 
-    public function contact(Request $request){
-        // AJAX POST request
+    public function contact(Request $request)
+    {
         if ($request->isMethod('post')) {
 
-            $request->validate([
+            $validated = $request->validate([
                 'name'    => 'required|string|max:100',
                 'email'   => 'required|email',
                 'phone'   => 'nullable|string|max:20',
@@ -208,23 +208,30 @@ class PageController extends Controller
                 'message' => 'required|string|max:1000',
             ]);
 
-            $data = $request->only('name','email','phone','subject','message');
+            try {
+                Mail::send('emails.contact', $validated, function ($mail) use ($validated) {
+                    $mail->to('rogisewa25@gmail.com')
+                        ->subject('New Contact Message - RogiSewa')
+                        ->replyTo($validated['email'], $validated['name']);
+                });
 
-            Mail::send('emails.contact', $data, function ($mail) use ($data) {
-                $mail->to('rogisewa25@gmail.com')
-                    ->subject('New Contact Message - RogiSewa')
-                    ->replyTo($data['email'], $data['name']);
-            });
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Thank you! Your message has been sent successfully.'
+                ]);
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Thank you! Your message has been sent successfully.'
-            ]);
+            } catch (\Exception $e) {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Mail error: '.$e->getMessage()
+                ], 500);
+            }
         }
 
-        // Normal GET page load
         return view('page.contact');
     }
+
 
 
     public function terms()

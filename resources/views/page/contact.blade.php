@@ -97,34 +97,28 @@
     </div>
     <!-- Contact End -->
 
-    <script>
-document.getElementById('contactForm').addEventListener('submit', function(e){
+<script>
+$('#contactForm').on('submit', function(e){
     e.preventDefault();
 
-    let form = this;
-    let formData = new FormData(form);
-
-    fetch("{{ route('contact') }}", {
-        method: "POST",
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
+    $.ajax({
+        url: "{{ route('contact') }}",
+        type: "POST",
+        data: $(this).serialize(),
+        success: function(res){
+            alert(res.message);
+            if(res.status){
+                $('#contactForm')[0].reset();
+            }
         },
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status){
-            document.getElementById('formResponse').innerHTML =
-                '<div class="alert alert-success">'+data.message+'</div>';
-            form.reset();
+        error: function(xhr){
+            alert(xhr.responseJSON?.message ?? 'Something went wrong');
         }
-    })
-    .catch(() => {
-        document.getElementById('formResponse').innerHTML =
-            '<div class="alert alert-danger">Something went wrong. Try again.</div>';
     });
 });
 </script>
+
+
 
 
     @endsection
