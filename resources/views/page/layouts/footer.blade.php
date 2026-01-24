@@ -57,6 +57,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Medical Disclaimer -->
+    <div class="container-fluid bg-dark text-light border-top border-secondary py-3">
+        <div class="container">
+            <p class="mb-0 small text-center">
+                <strong>Medical Disclaimer:</strong>
+                RogiSewa does not provide medical advice, diagnosis, or treatment.
+                The information available on this website is for general informational purposes only
+                and should not be considered a substitute for professional medical consultation.
+            </p>
+        </div>
+    </div>
+
+
     <div class="container-fluid bg-dark text-light border-top border-secondary py-4">
         <div class="container">
             <div class="row g-5">
