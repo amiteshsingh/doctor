@@ -43,6 +43,17 @@ Route::get('disclaimer', [PageController::class, 'disclaimer'])->name('disclaime
 Route::get('privacy-policy', [PageController::class, 'privacy_policy'])->name('privacy-policy');
 
 
+Route::get('/test-mail', function() {
+    try {
+        Mail::raw('This is a test mail', function($message) {
+            $message->to('rogisewa25@gmail.com')
+                    ->subject('Test Mail');
+        });
+        return 'Mail sent successfully!';
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
+});
 
 
 
