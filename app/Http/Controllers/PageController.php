@@ -209,7 +209,7 @@ class PageController extends Controller
             ]);
 
             try {
-                Mail::send('emails.contact', $validated, function ($mail) use ($validated) {
+                Mail::send('page.contact', $validated, function ($mail) use ($validated) {
                     $mail->to('rogisewa25@gmail.com')
                         ->subject('New Contact Message - RogiSewa')
                         ->replyTo($validated['email'], $validated['name']);

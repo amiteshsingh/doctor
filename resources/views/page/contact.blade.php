@@ -96,28 +96,34 @@
         </div>
     </div>
     <!-- Contact End -->
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-$('#contactForm').on('submit', function(e){
-    e.preventDefault();
+$(document).ready(function () {
 
-    $.ajax({
-        url: "{{ route('contact') }}",
-        type: "POST",
-        data: $(this).serialize(),
-        success: function(res){
-            alert(res.message);
-            if(res.status){
+    $('#contactForm').on('submit', function (e) {
+        e.preventDefault(); // ❗ STOP PAGE REFRESH
+
+        $.ajax({
+            url: "{{ route('contact') }}",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (res) {
+                $('#formResponse').html(
+                    '<div class="alert alert-success">' + res.message + '</div>'
+                );
                 $('#contactForm')[0].reset();
+            },
+            error: function (xhr) {
+                let msg = xhr.responseJSON?.message ?? 'Something went wrong';
+                $('#formResponse').html(
+                    '<div class="alert alert-danger">' + msg + '</div>'
+                );
             }
-        },
-        error: function(xhr){
-            alert(xhr.responseJSON?.message ?? 'Something went wrong');
-        }
+        });
     });
+
 });
 </script>
-
 
 
 
