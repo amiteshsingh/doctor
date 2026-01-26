@@ -11,7 +11,7 @@
     <meta name="keywords" content="@yield('meta_keywords', 'Rogi Sewa, Rogisewa, doctors, hospitals, health, online appointment, Bihar, India, healthcare, medical services')">
     <meta name="robots" content="index, follow">
     
-    <meta name="google-adsense-account" content="ca-pub-3979062395254203">
+    <meta name="google-adsense-account" content="ca-pub-9062741479178096">
 
 
     <link rel="canonical" href="{{ url()->current() }}">
@@ -38,8 +38,7 @@
     <!-- Template Stylesheet -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3979062395254203" crossorigin="anonymous"></script>
-     
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9062741479178096" crossorigin="anonymous"></script>     
 </head>
 
 <body>
