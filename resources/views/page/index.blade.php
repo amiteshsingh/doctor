@@ -55,7 +55,7 @@
                             <a href="{{ url('doctor-profile/'.$doctor->id.'/'.Str::slug($practiceName)) }}">
                                 <img class="img-fluid h-100"
                                      src="{{ $doctor->profile_pic ? asset('storage/upload/doctor/'.$doctor->profile_pic) : asset('storage/upload/doctor/user.jpg') }}"
-                                     style="object-fit:cover;">
+                                     alt="{{ $practiceName }}" style="object-fit:cover;">
                             </a>
                         </div>
                         <div class="col-12 col-sm-7 h-100 d-flex flex-column">
