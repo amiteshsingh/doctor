@@ -148,6 +148,45 @@
             </p>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>How to Choose the Right Doctor</h3>
+            <p> Choosing the right doctor is one of the most important steps toward better health. Patients should always consider the doctor’s specialization, years of experience, and qualifications before booking an appointment. A doctor who specializes in your specific health concern can provide more accurate diagnosis and effective treatment.
+
+Location and availability are also important factors. Selecting a doctor near your home or workplace helps in easy follow-ups and timely medical care. Patient reviews and ratings can give valuable insight into the doctor’s approach, behavior, and treatment success.
+
+RogiSewa makes this process simple by allowing patients to search and compare doctors based on specialization, location, and experience. Our platform helps patients make confident healthcare decisions without confusion or unnecessary delays.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Benefits of Online Doctor Search</h3>
+            <p>
+               Online doctor search platforms have transformed the way patients access healthcare services. Instead of visiting multiple clinics or relying on limited local information, patients can explore a wide range of doctors and hospitals from a single platform.
+
+One of the biggest advantages is time savings. Patients can search, compare, and choose healthcare professionals without long waiting hours. Online platforms also improve transparency by providing verified doctor profiles, clinic details, and healthcare information.
+
+RogiSewa helps patients discover trusted doctors and hospitals across India. By offering structured and reliable healthcare data, we ensure that patients receive the right medical support at the right time.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Healthcare in India – Challenges & Solutions</h3>
+            <p>
+              India’s healthcare system faces several challenges, including lack of awareness, uneven access to medical facilities, and difficulty in finding trusted healthcare professionals. Many patients struggle to identify the right doctor or hospital for their medical needs.
+
+Digital healthcare platforms play a key role in bridging this gap. By organizing healthcare information and improving accessibility, online platforms empower patients to make informed choices. Easy access to healthcare data reduces delays in treatment and improves overall health outcomes.
+
+RogiSewa aims to address these challenges by creating a transparent and reliable healthcare discovery platform. Our goal is to support patients with accurate information and connect them with verified medical professionals across India.
+            </p>
+        </div>
+    </div>
+
 </div>
 
 
