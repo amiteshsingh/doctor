@@ -266,4 +266,67 @@
     </div>
     <!-- Team End -->
 
+        <!-- ================= EXTRA INFORMATION SECTION ================= -->
+    <div class="container-fluid py-5">
+        <div class="container">
+
+            <!-- How to Choose Doctor -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h3 class="mb-3">How to Choose the Right Doctor</h3>
+                    <p>
+                        Choosing the right doctor is an important step toward effective medical treatment.
+                        Patients should consider factors such as the doctor’s specialization, experience,
+                        location, and availability before making a decision.
+                    </p>
+                    <p>
+                        RogiSewa helps simplify this process by allowing users to compare doctors based on
+                        specialization, city, and healthcare needs. By accessing structured and verified
+                        information, patients can confidently choose the most suitable healthcare professional.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Benefits of Online Doctor Search -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h3 class="mb-3">Benefits of Online Doctor Search</h3>
+                    <p>
+                        Online doctor search platforms have transformed the way patients access healthcare
+                        information. Instead of relying on word-of-mouth or outdated sources, patients can
+                        now explore multiple healthcare options from a single platform.
+                    </p>
+                    <p>
+                        With RogiSewa, users can save time, compare doctors and hospitals, and make informed
+                        healthcare decisions. Online healthcare discovery also improves accessibility for
+                        patients living in remote or unfamiliar locations.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Healthcare in India -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h3 class="mb-3">Healthcare in India – Challenges & Solutions</h3>
+                    <p>
+                        India’s healthcare system faces challenges such as limited access to verified
+                        information, uneven distribution of medical facilities, and lack of healthcare
+                        awareness in many regions.
+                    </p>
+                    <p>
+                        Digital healthcare platforms like RogiSewa aim to address these challenges by
+                        organizing healthcare data and improving transparency. By making doctor and hospital
+                        information easily accessible, RogiSewa supports better healthcare awareness and
+                        timely medical decisions.
+                    </p>
+                </div>
+            </div>
+
+            
+
+        </div>
+    </div>
+    <!-- ================= EXTRA INFORMATION SECTION END ================= -->
+
+
     @endsection
