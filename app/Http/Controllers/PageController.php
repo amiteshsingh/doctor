@@ -190,6 +190,11 @@ class PageController extends Controller
         return view('page.team');
     }
 
+    public function faq()
+    {
+        return view('page.faq');
+    }
+
 
     public function appointment()
     {

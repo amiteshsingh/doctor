@@ -22,6 +22,7 @@
                         <a class="text-light mb-1" href="{{ route('terms') }}"><i class="fa fa-angle-right me-2"></i>Terms & Conditions</a>
                         <a class="text-light mb-1" href="{{ route('disclaimer') }}"><i class="fa fa-angle-right me-2"></i>Disclaimer</a>
                         <a class="text-light" href="{{ route('privacy-policy') }}"><i class="fa fa-angle-right me-2"></i>Privacy Policy</a>
+                        <a class="text-light" href="{{ route('faq') }}"><i class="fa fa-angle-right me-2"></i>FAQ</a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -36,6 +37,7 @@
                         <a class="text-light mb-1" href="{{ route('terms') }}"><i class="fa fa-angle-right me-2"></i>Terms & Conditions</a>
                         <a class="text-light mb-1" href="{{ route('disclaimer') }}"><i class="fa fa-angle-right me-2"></i>Disclaimer</a>
                         <a class="text-light" href="{{ route('privacy-policy') }}"><i class="fa fa-angle-right me-2"></i>Privacy Policy</a>
+                        <a class="text-light" href="{{ route('faq') }}"><i class="fa fa-angle-right me-2"></i>FAQ</a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">

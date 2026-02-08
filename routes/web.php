@@ -30,6 +30,7 @@ Route::get('blog', [PageController::class, 'blog'])->name('blog');
 Route::get('blog-detail', [PageController::class, 'blogDetail'])->name('blog-detail');
 Route::get('detail', [PageController::class, 'detail'])->name('detail');
 Route::get('team', [PageController::class, 'team'])->name('team');
+Route::get('faq', [PageController::class, 'faq'])->name('faq');
 Route::get('testimonial', [PageController::class, 'testimonial'])->name('testimonial');
 Route::get('appointment', [PageController::class, 'appointment'])->name('appointment');
 Route::get('search', [PageController::class, 'search'])->name('search');

@@ -31,12 +31,12 @@
                     <div class="container">
                    
                     <ul class="nav nav-tabs" id="aboutTabs" role="tablist">
-                        <li class="nav-item"><button class="nav-link active" id="en-tab" data-bs-toggle="tab" data-bs-target="#en">English</button></li>
-                        <li class="nav-item"><button class="nav-link" id="hi-tab" data-bs-toggle="tab" data-bs-target="#hi">हिंदी</button></li>
+                        <!-- <li class="nav-item"><button class="nav-link active" id="en-tab" data-bs-toggle="tab" data-bs-target="#en">English</button></li> -->
+                        <!-- <li class="nav-item"><button class="nav-link" id="hi-tab" data-bs-toggle="tab" data-bs-target="#hi">हिंदी</button></li>
                         <li class="nav-item"><button class="nav-link" id="ta-tab" data-bs-toggle="tab" data-bs-target="#ta">தமிழ்</button></li>
                         <li class="nav-item"><button class="nav-link" id="te-tab" data-bs-toggle="tab" data-bs-target="#te">తెలుగు</button></li>
                         <li class="nav-item"><button class="nav-link" id="mr-tab" data-bs-toggle="tab" data-bs-target="#mr">मराठी</button></li>
-                        <li class="nav-item"><button class="nav-link" id="bn-tab" data-bs-toggle="tab" data-bs-target="#bn">বাংলা</button></li>
+                        <li class="nav-item"><button class="nav-link" id="bn-tab" data-bs-toggle="tab" data-bs-target="#bn">বাংলা</button></li> -->
                     </ul>
 
                     <div class="tab-content p-3 border border-top-0 rounded-bottom" id="aboutTabsContent">
@@ -61,7 +61,7 @@
                         </div>
 
                         <!-- Hindi -->
-                        <div class="tab-pane fade" id="hi" role="tabpanel" aria-labelledby="hi-tab">
+                        <!-- <div class="tab-pane fade" id="hi" role="tabpanel" aria-labelledby="hi-tab">
                             <p>
                                 <strong>RogiSewa.com</strong> पर आपका स्वागत है – आपके और आपके परिवार के लिए बेहतरीन स्वास्थ्य सेवाओं की खोज का भरोसेमंद साथी।
                             </p>
@@ -146,7 +146,7 @@
                             <p><strong>RogiSewa.com</strong> এর লক্ষ্য — রোগী ও স্বাস্থ্য পরিষেবা প্রদানকারীদের মধ্যে দূরত্ব কমানো। সাধারণ চেকআপ, বিশেষ চিকিৎসা বা জরুরি পরিষেবা — যাই হোক না কেন, সঠিক সিদ্ধান্ত নিতে আমরা আপনার পাশে আছি।</p>
 
                             <p>আপনার স্বাস্থ্য, আপনার সিদ্ধান্ত — এবং আমরা আপনার সঙ্গে আছি।</p>
-                        </div>
+                        </div> -->
 
 
 
