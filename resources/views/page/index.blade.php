@@ -192,6 +192,195 @@ RogiSewa aims to address these challenges by creating a transparent and reliable
 
 
 
+<!-- ================= SEO + AdSense Support Section ================= -->
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>How RogiSewa Helps Patients Across India</h3>
+            <p>
+                Finding the right healthcare professional can be challenging,
+                especially when patients do not have access to structured and
+                reliable information. RogiSewa simplifies this process by
+                organizing doctor and hospital data in a user-friendly format.
+            </p>
+
+            <p>
+                Patients can explore doctors based on specialization,
+                location, education, and practice details. This structured
+                approach reduces confusion and helps individuals make
+                informed healthcare decisions.
+            </p>
+
+            <p>
+                Our goal is to improve healthcare accessibility and
+                awareness by connecting patients with verified medical
+                professionals across India.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================= Detailed Healthcare Information ================= -->
+
+<div class="container-fluid bg-primary py-5">
+    <div class="container">
+        <h3 class="mb-4 text-center text-white">Understanding Healthcare Access in India</h3>
+
+        <p class="text-white">
+            India has a diverse healthcare ecosystem that includes government
+            hospitals, private clinics, multi-specialty hospitals, and
+            independent medical practitioners. However, many patients face
+            challenges when trying to identify the right healthcare provider.
+        </p>
+
+        <p class="text-white">
+            Digital healthcare platforms like RogiSewa help bridge this gap
+            by offering centralized access to medical professionals and
+            healthcare facilities. Easy search functionality ensures that
+            patients can quickly find relevant doctors in their city.
+        </p>
+
+        <p class="text-white">
+            Access to reliable healthcare information empowers patients,
+            reduces treatment delays, and promotes better health outcomes.
+        </p>
+    </div>
+</div>
+
+
+<!-- ================= Trust & Transparency Section ================= -->
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Commitment to Transparency</h3>
+
+            <p>
+                RogiSewa does not provide medical advice or treatment.
+                The information displayed on this platform is for
+                informational purposes only.
+            </p>
+
+            <p>
+                Patients are encouraged to directly consult qualified
+                healthcare professionals for diagnosis and treatment.
+                In case of emergency, please contact your nearest hospital.
+            </p>
+
+            <p>
+                We aim to maintain transparency by displaying structured
+                and organized healthcare data to support informed decision-making.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================= Why Trust RogiSewa ================= -->
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Why Patients Trust RogiSewa</h3>
+
+            <p>
+                RogiSewa is built with a mission to simplify healthcare discovery in India.
+                Our platform focuses on structured, location-based, and specialization-based
+                doctor listings to help patients quickly identify relevant healthcare professionals.
+            </p>
+
+            <p>
+                We continuously work to maintain updated profiles, organized clinic information,
+                and transparent healthcare data. Our goal is not to replace medical consultation,
+                but to assist patients in finding the right healthcare provider efficiently.
+            </p>
+
+            <p>
+                By prioritizing accessibility, transparency, and user-friendly navigation,
+                RogiSewa aims to become a trusted healthcare discovery partner for individuals
+                and families across India.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- ================= Healthcare Specializations Section ================= -->
+
+<div class="container-fluid bg-primary py-5">
+    <div class="container">
+        <h3 class="text-center mb-4 text-white">Search Doctors by Specialization</h3>
+
+        <p class="text-white">
+            Patients can explore doctors across multiple medical specializations including
+            General Medicine, Cardiology, Pediatrics, Orthopedics, Gynecology,
+            Dermatology, Neurology, and more.
+        </p>
+
+        <p class="text-white">
+            Searching by specialization ensures that patients connect with the
+            most relevant healthcare professional for their specific health concern.
+            RogiSewa simplifies this process through structured categorization.
+        </p>
+    </div>
+</div>
+
+
+
+<!-- ================= About Our Platform ================= -->
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>About Our Healthcare Platform</h3>
+
+            <p>
+                RogiSewa is an independent healthcare information and discovery platform.
+                We aim to organize publicly available healthcare information in a
+                structured format to improve patient access and awareness.
+            </p>
+
+            <p>
+                We do not provide medical treatment, prescriptions, or clinical advice.
+                Patients must consult qualified healthcare professionals for
+                diagnosis and treatment decisions.
+            </p>
+
+            <p>
+                Our mission is to bridge the gap between patients and healthcare
+                providers through digital accessibility and transparency.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- ================= Local Presence Section ================= -->
+
+<div class="container-fluid bg-primary text-white py-5">
+    <div class="container">
+        <h3 class="mb-3 text-center text-white">Serving Patients Across Indian Cities</h3>
+
+        <p>
+            RogiSewa supports patients searching for doctors and hospitals
+            in major cities and growing healthcare hubs across India.
+            Our platform is designed to expand healthcare accessibility
+            in urban and semi-urban regions.
+        </p>
+
+        <p>
+            Whether you are searching for a nearby clinic or a specialized
+            hospital, RogiSewa helps you discover structured healthcare
+            information in one place.
+        </p>
+    </div>
+</div>
+
+
 
 <!-- ================= Registration Popup Modal ================= -->
 
