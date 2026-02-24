@@ -5,16 +5,32 @@
     <meta charset="utf-8">
     <title>@yield('title', 'RogiSewa - Find Doctors & Hospitals Near You')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="RogiSewa">
 
     {{-- SEO Meta Tags --}}
     <meta name="description" content="@yield('meta_description', 'RogiSewa helps you find trusted doctors and hospitals nearby. Book appointments, check reviews, and get the best healthcare guidance online.')">
     <meta name="keywords" content="@yield('meta_keywords', 'Rogi Sewa, Rogisewa, doctors, hospitals, health, online appointment, Bihar, India, healthcare, medical services')">
     <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
     
     <meta name="google-adsense-account" content="ca-pub-9062741479178096">
 
 
     <link rel="canonical" href="{{ url()->current() }}">
+
+    {{-- Open Graph Meta Tags --}}
+    <meta property="og:title" content="@yield('title', 'RogiSewa - Find Doctors & Hospitals Near You')">
+    <meta property="og:description" content="@yield('meta_description', 'RogiSewa helps you find trusted doctors and hospitals nearby.')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ asset('img/logo.png') }}">
+    <meta property="og:site_name" content="RogiSewa">
+
+    {{-- Twitter Card Meta Tags --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'RogiSewa - Find Doctors & Hospitals Near You')">
+    <meta name="twitter:description" content="@yield('meta_description', 'RogiSewa helps you find trusted doctors and hospitals nearby.')">
+    <meta name="twitter:image" content="{{ asset('img/logo.png') }}">
 
     <!-- Favicon -->
     <link href="{{ asset('img/logo.png') }}" rel="icon"> 
@@ -38,7 +54,8 @@
     <!-- Template Stylesheet -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9062741479178096" crossorigin="anonymous"></script>     
+    {{-- Google AdSense --}}
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9062741479178096" crossorigin="anonymous"></script>
 </head>
 
 <body>

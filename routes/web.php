@@ -39,7 +39,7 @@ Route::get('doctor-profile/{id}/{name}', [PageController::class, 'doctor_profile
 Route::get('hospital-details/{id}/{name}', [PageController::class, 'hospital_details'])->name('hospital-details');
 Route::get('/professional-doctors', [PageController::class, 'professionalDoctors'])->name('professional.doctors');
 Route::get('/specializations/suggest', [PageController::class, 'specializationSuggest'])->name('specializations.suggest');
-Route::get('terms-and-conditions', [PageController::class, 'terms'])->name('terms');
+Route::get('terms', [PageController::class, 'terms'])->name('terms');
 Route::get('disclaimer', [PageController::class, 'disclaimer'])->name('disclaimer');
 Route::get('privacy-policy', [PageController::class, 'privacy_policy'])->name('privacy-policy');
 
