@@ -172,12 +172,14 @@ class PageController extends Controller
 
     public function blog()
     {
-        return view('page.blog');
+        $blogs = \App\Models\Blog::where('status', 1)->latest()->paginate(10);
+        return view('page.blog', compact('blogs'));
     }
 
-    public function blogDetail()
+    public function blogDetail($slug)
     {
-        return view('page.blog-detail');
+        $blog = \App\Models\Blog::where('slug', $slug)->where('status', 1)->firstOrFail();
+        return view('page.blog-detail', compact('blog'));
     }
 
     public function detail()

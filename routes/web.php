@@ -27,7 +27,7 @@ Route::get('about', [PageController::class, 'about'])->name('about');
 Route::get('doctors', [PageController::class, 'doctor'])->name('doctors');
 Route::get('hospitals', [PageController::class, 'hospital'])->name('hospitals');
 Route::get('blog', [PageController::class, 'blog'])->name('blog');
-Route::get('blog-detail', [PageController::class, 'blogDetail'])->name('blog-detail');
+Route::get('blog/{slug}', [PageController::class, 'blogDetail'])->name('blog-detail');
 Route::get('detail', [PageController::class, 'detail'])->name('detail');
 Route::get('team', [PageController::class, 'team'])->name('team');
 Route::get('faq', [PageController::class, 'faq'])->name('faq');
@@ -97,6 +97,14 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::post('/doctor/doctor_availability', [DoctorController::class, 'doctorAvailability'])->name('admin.doctor_availability');
 
     Route::any('/user', [UserController::class, 'index'])->name('admin.user');
+
+    // Blog Routes
+    Route::get('/blog', [\App\Http\Controllers\Admin\BlogController::class, 'index'])->name('admin.blog.index');
+    Route::get('/blog/add', [\App\Http\Controllers\Admin\BlogController::class, 'add'])->name('admin.blog.add');
+    Route::post('/blog/store', [\App\Http\Controllers\Admin\BlogController::class, 'store'])->name('admin.blog.store');
+    Route::get('/blog/edit/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'edit'])->name('admin.blog.edit');
+    Route::put('/blog/update/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'update'])->name('admin.blog.update');
+    Route::delete('/blog/delete/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'delete'])->name('admin.blog.delete');
 
 
 

@@ -19,6 +19,9 @@
                         <li>
                             <a href="{{ route('admin.user') }}"><i class="fa fa-user"></i> <span>Users</span></a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.blog.index') }}"><i class="fa fa-newspaper-o"></i> <span>Blogs</span></a>
+                        </li>
                         
                     </ul>
                 </div>
