@@ -68,6 +68,7 @@
                                 <th>City <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="city" data-sort_order="asc"></i></th>
                                 <th>State <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="state" data-sort_order="asc"></i></th>
                                 <th>Pin Code <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="pin_code" data-sort_order="asc"></i></th>
+                                <th>Visits <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="visit_count" data-sort_order="asc"></i></th>
                                 <th >Status <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="status" data-sort_order="asc"></i></th>
                                 <th>Approve <i class="fas ajaxSorting fa-sort" data-type="hospital" data-sort_by="approval_status" data-sort_order="asc"></i></th>
                                 <th class="text-right">Actions</th>

@@ -20,6 +20,7 @@ foreach($res as $hospital){
     <td>{{ $hospital->city}}</td>
     <td>{{ $hospital->state}}</td>
     <td>{{ $hospital->zip_code}}</td>
+    <td>{{ $hospital->visit_count ?? 0 }}</td>
     <td>
     @if ($hospital->status == 1)
         <a class="custom-badge status-green " href="#" data-toggle="dropdown" aria-expanded="false">
@@ -67,6 +68,6 @@ foreach($res as $hospital){
 }else{
 ?>
 <tr>
-   <td colspan="8" class="text-center">No record found.</td>
+   <td colspan="9" class="text-center">No record found.</td>
 </tr>
 <?php  } ?>

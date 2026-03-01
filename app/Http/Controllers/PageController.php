@@ -278,7 +278,8 @@ class PageController extends Controller
     {
         $hospital = Hospital::with(['specializations.specialization'])
                     ->where('id', $id)
-                    ->first();
+                    ->findOrFail($id);
+        $hospital->increment('visit_count');
 
         return view('page.hospital-details', ['hospital' => $hospital]);
     }
