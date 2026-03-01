@@ -8,9 +8,9 @@
         <!-- Doctor Image -->
         <div class="col-md-3 mb-3 mb-md-0">
             <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}">
-                <img class="img-fluid rounded w-100"
+                <img class="img-fluid rounded"
                      src="{{ asset('storage/upload/doctor/' . ($doctor->profile_pic ?? 'user.jpg')) }}"
-                     style="object-fit:cover;" alt="{{ $doctor->name }}">
+                     style="width: 100%; height: 250px; object-fit: cover;" alt="{{ $doctor->name }}">
             </a>
         </div>
 

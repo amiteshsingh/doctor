@@ -363,16 +363,16 @@ RogiSewa aims to address these challenges by creating a transparent and reliable
 
 <div class="container-fluid bg-primary text-white py-5">
     <div class="container">
-        <h3 class="mb-3 text-center text-white">Serving Patients Across Indian Cities</h3>
+        <h3 class="mb-3 text-center" style="color: #ffffff !important;">Serving Patients Across Indian Cities</h3>
 
-        <p>
+        <p style="color: #ffffff !important;">
             RogiSewa supports patients searching for doctors and hospitals
             in major cities and growing healthcare hubs across India.
             Our platform is designed to expand healthcare accessibility
             in urban and semi-urban regions.
         </p>
 
-        <p>
+        <p style="color: #ffffff !important;">
             Whether you are searching for a nearby clinic or a specialized
             hospital, RogiSewa helps you discover structured healthcare
             information in one place.
