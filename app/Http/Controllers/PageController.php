@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\View;
 use App\Models\Doctor;
 use App\Models\Hospital;
 use App\Models\Specialization;
+use App\Models\Blog;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -172,13 +173,14 @@ class PageController extends Controller
 
     public function blog()
     {
-        $blogs = \App\Models\Blog::where('status', 1)->latest()->paginate(10);
+        $blogs = Blog::where('status', 1)->latest()->paginate(10);
         return view('page.blog', compact('blogs'));
     }
 
     public function blogDetail($slug)
     {
-        $blog = \App\Models\Blog::where('slug', $slug)->where('status', 1)->firstOrFail();
+        $blog = Blog::where('slug', $slug)->where('status', 1)->firstOrFail();
+        $blog->increment('visit_count');
         return view('page.blog-detail', compact('blog'));
     }
 

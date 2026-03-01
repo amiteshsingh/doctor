@@ -28,6 +28,7 @@
                                 <th>Title</th>
                                 <th>Category</th>
                                 <th>Status</th>
+                                <th>Visits</th>
                                 <th>Date</th>
                                 <th class="text-right">Actions</th>
                             </tr>
@@ -45,6 +46,7 @@
                                     <span class="custom-badge status-red">Inactive</span>
                                     @endif
                                 </td>
+                                <td>{{ $blog->visit_count ?? 0 }}</td>
                                 <td>{{ $blog->created_at->format('d M Y') }}</td>
                                 <td class="text-right">
                                     <div class="dropdown dropdown-action">
@@ -62,7 +64,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center">No blogs found</td>
+                                <td colspan="7" class="text-center">No blogs found</td>
                             </tr>
                             @endforelse
                         </tbody>
