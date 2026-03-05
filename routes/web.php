@@ -20,7 +20,9 @@ use App\Http\Controllers\Doctor\PrescriptionInvoiceController;
 //     return view('welcome');
 // });
 
-
+Route::get('/blog-detail/{any?}', function () {
+    return redirect('/blog', 301);
+})->where('any', '.*');
 
 Route::get('/', [PageController::class, 'index'])->name('/');
 Route::get('about', [PageController::class, 'about'])->name('about');
