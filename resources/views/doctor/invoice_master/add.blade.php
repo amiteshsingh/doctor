@@ -98,6 +98,18 @@
                             </div>
 
                             <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Booking Mode</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <select name="booking_mode" class="form-control">
+                                            <option value="OFFLINE" {{ (isset($invoice->booking_mode) && $invoice->booking_mode == 'OFFLINE') ? 'selected' : '' }}>OFFLINE</option>
+                                            <option value="ONLINE" {{ (isset($invoice->booking_mode) && $invoice->booking_mode == 'ONLINE') ? 'selected' : '' }}>ONLINE</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
                                 <div class="col-lg-12 text-right">
                                     <button type="submit" id="save_invoice" class="btn btn-success">Save</button>
                                     <a href="{{ url('doctor/invoice-master') }}" class="btn btn-secondary">Back</a>

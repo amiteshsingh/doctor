@@ -9,6 +9,8 @@ use App\Models\Doctor;
 use App\Models\Hospital;
 use App\Models\Specialization;
 use App\Models\Blog;
+use App\Models\PrescriptionInvoice;
+use App\Models\InvoiceMaster;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -270,8 +272,11 @@ class PageController extends Controller
         ->findOrFail($id);
 
         $doctor->increment('visit_count');
+
+        $invoiceMaster = InvoiceMaster::where('doctor_id', $id)->first();
+        $isOnlineBooking = $invoiceMaster && $invoiceMaster->booking_mode === 'ONLINE';
         
-        return view('page.doctor-profile', ['doctor' => $doctor]);
+        return view('page.doctor-profile', ['doctor' => $doctor, 'isOnlineBooking' => $isOnlineBooking]);
     }
 
     public function hospital_details(Request $request, $id = null, $name=null)
@@ -293,6 +298,52 @@ class PageController extends Controller
             ->paginate(30); // 10 doctors per page
 
         return view('page.professional-doctors', compact('doctors'));
+    }
+
+    public function bookedSlots(Request $request)
+    {
+        $doctorId = $request->doctor_id;
+        $date     = $request->date;
+
+        $bookedTimes = PrescriptionInvoice::whereHas('invoiceMaster', function($q) use ($doctorId) {
+                $q->where('doctor_id', $doctorId);
+            })
+            ->where('booking_date', $date)
+            ->pluck('booking_time')
+            ->toArray();
+
+        return response()->json($bookedTimes);
+    }
+
+    public function bookAppointment(Request $request)
+    {
+        $request->validate([
+            'doctor_id'        => 'required|integer',
+            'patient_name'     => 'required|string|max:255',
+            'age'              => 'required|integer',
+            'gender'           => 'required|in:Male,Female,Other',
+            'patient_phone_no' => 'required|string|max:20',
+            'booking_date'     => 'required',
+            'booking_time'     => 'required',
+        ]);
+
+        $invoiceMaster = InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
+
+        $invoice = new PrescriptionInvoice;
+        $invoice->invoice_master_id = $invoiceMaster->id ?? null;
+        $invoice->invoice_number    = 'INV-' . now()->format('YmdHis');
+        $invoice->patient_name      = $request->patient_name;
+        $invoice->age               = $request->age;
+        $invoice->gender            = $request->gender;
+        $invoice->patient_address   = $request->patient_address;
+        $invoice->patient_phone_no  = $request->patient_phone_no;
+        $invoice->booking_date      = $request->booking_date;
+        $invoice->booking_time      = $request->booking_time;
+        $invoice->created_at        = now();
+        $invoice->updated_at        = now();
+        $invoice->save();
+
+        return response()->json(['status' => 200, 'msg' => 'Appointment booked successfully!']);
     }
 
     public function specializationSuggest(Request $request)

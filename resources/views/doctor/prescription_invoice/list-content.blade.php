@@ -16,6 +16,8 @@ if(isset($res) && count($res) > 0){
                     <td>{{ $row->gender }}</td>
                     <td>{{ $row->patient_address }}</td>
                     <td>{{ $row->patient_phone_no }}</td>
+                    <td>{{ $row->booking_date }}</td>
+                    <td>{{ $row->booking_time }}</td>
                     <td>{{ $row->created_at }}</td>
                     <td>
                         <a href="{{ url('doctor/prescription-invoice/add?id='.$row->id) }}" class="btn btn-warning btn-sm">Edit</a>

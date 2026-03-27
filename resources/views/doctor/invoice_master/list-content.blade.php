@@ -6,6 +6,7 @@
             <th>Hospital/Clinic</th>
             <th>Phone No.</th>
             <th>Consultation Fee</th>
+            <th>Booking Mode</th>
             <th>Created At</th>
             <th>Action</th>
         </tr>
@@ -20,6 +21,11 @@
                 <td>{{ $invoice->hospital_clinic_name }}</td>
                 <td>+91-{{ $invoice->phone_no }}</td>
                 <td>₹ {{ number_format($invoice->consultation_fee, 2) }}</td>
+                <td>
+                    <span class="badge badge-{{ $invoice->booking_mode == 'ONLINE' ? 'success' : 'secondary' }}">
+                        {{ $invoice->booking_mode }}
+                    </span>
+                </td>
                 <td>{{ $invoice->created_at }}</td>
                 <td>
                     <a href="{{ url('doctor/invoice-master/add?id='.$invoice->id) }}" class="btn btn-warning btn-sm">Edit</a>

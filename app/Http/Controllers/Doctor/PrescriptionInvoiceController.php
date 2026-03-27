@@ -106,12 +106,13 @@ class PrescriptionInvoiceController extends Controller
                     // Update
                     $update = [
                         'invoice_master_id' => $data['invoice_master_id'],
-                        // 'invoice_number' => $data['invoice_number'],
                         'patient_name' => $data['patient_name'],
                         'patient_address' => $data['patient_address'] ?? '',
                         'patient_phone_no' => $data['patient_phone_no'] ?? '',
                         'age' => $data['age'] ?? '',
                         'gender' => $data['gender'] ?? '',
+                        'booking_date' => $data['booking_date'] ?? null,
+                        'booking_time' => $data['booking_time'] ?? null,
                         'updated_at' => now(),
                     ];
 
@@ -132,6 +133,8 @@ class PrescriptionInvoiceController extends Controller
                     $invoice->patient_phone_no = $data['patient_phone_no'] ?? '';
                     $invoice->age = $data['age'] ?? '';
                     $invoice->gender = $data['gender'] ?? '';
+                    $invoice->booking_date = $data['booking_date'] ?? null;
+                    $invoice->booking_time = $data['booking_time'] ?? null;
                     $invoice->created_at = now();
                     $invoice->updated_at = now();
 

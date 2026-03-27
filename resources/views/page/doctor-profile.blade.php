@@ -72,7 +72,14 @@
             <div class="col-lg-8">
                 <!-- Practice Locations -->
                 <div class="card shadow border-0 rounded-4 p-4 mb-4 bg-white">
-                    <h4 class="text-danger fw-bold border-bottom pb-2">📍 Practice Location</h4>
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                        <h4 class="text-danger fw-bold mb-0">📍 Practice Location</h4>
+                        @if($isOnlineBooking)
+                        <a href="#" class="btn btn-danger btn-sm" onclick="openBookingModal(); return false;">
+                            <i class="fa fa-calendar-check me-1"></i> Book Appointment
+                        </a>
+                        @endif
+                    </div>
                     @forelse($doctor->locations as $loc)
                         <div class="mb-3 p-3 rounded bg-light">
                             <h6 class="fw-bold text-primary">{{ $loc->practice_name ?? 'N/A' }}</h6>
@@ -176,4 +183,223 @@
         <p class="text-danger text-center fw-bold">❌ Doctor not found</p>
     @endif
 </div>
+
+<!-- Booking Modal -->
+<div id="bookingModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1050; overflow-y:auto;">
+    <div class="d-flex align-items-center justify-content-center" style="min-height:100%; padding:15px;">
+        <div class="w-100" style="max-width:650px;">
+
+            <!-- Header -->
+            <div class="text-white p-4" style="background:linear-gradient(135deg,#13C5DD,#354F8E); border-radius:16px 16px 0 0;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center mr-3" style="width:48px;height:48px;min-width:48px;">
+                            <i class="fa fa-stethoscope" style="color:#13C5DD;font-size:20px;"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 font-weight-bold">Book Appointment</h5>
+                            <small style="opacity:0.8;"><i class="fa fa-user-md mr-1"></i>Dr. {{ $doctor->name }}</small>
+                        </div>
+                    </div>
+                    <button onclick="closeBookingModal()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:50%;width:34px;height:34px;font-size:20px;line-height:1;cursor:pointer;">&times;</button>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="bg-white p-4" style="border-radius:0 0 16px 16px; box-shadow:0 10px 40px rgba(0,0,0,0.15);">
+                <form id="bookingForm">
+                    @csrf
+                    <input type="hidden" name="doctor_id" value="{{ $doctor->id }}">
+
+                    <!-- Patient Name -->
+                    <div class="form-group">
+                        <label class="small font-weight-bold" style="color:#555;">Patient Name <span class="text-danger">*</span></label>
+                        <input type="text" name="patient_name" class="form-control" placeholder="Enter full name" required style="border-radius:8px;">
+                    </div>
+
+                    <!-- Age & Gender -->
+                    <div class="form-row d-flex">
+                        <div class="form-group col-6">
+                            <label class="small font-weight-bold" style="color:#555;">Age <span class="text-danger">*</span></label>
+                            <input type="number" name="age" class="form-control" placeholder="Age" min="0" required style="border-radius:8px;">
+                        </div>
+                        <div class="form-group col-6">
+                            <label class="small font-weight-bold" style="color:#555;">Gender <span class="text-danger">*</span></label>
+                            <select name="gender" class="form-control" required style="border-radius:8px;">
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="form-group">
+                        <label class="small font-weight-bold" style="color:#555;">Phone No <span class="text-danger">*</span></label>
+                        <input type="text" name="patient_phone_no" class="form-control" placeholder="Enter phone number" required style="border-radius:8px;">
+                    </div>
+
+                    <!-- Address -->
+                    <div class="form-group">
+                        <label class="small font-weight-bold" style="color:#555;">Address</label>
+                        <textarea name="patient_address" class="form-control" rows="2" placeholder="Enter address (optional)" style="border-radius:8px;"></textarea>
+                    </div>
+
+                    <!-- Booking Date -->
+                    <div class="form-group">
+                        <label class="small font-weight-bold" style="color:#555;">Booking Date <span class="text-danger">*</span></label>
+                        <input type="date" name="booking_date" id="booking_date" class="form-control" required min="{{ date('Y-m-d') }}" onchange="loadTimeSlots(this.value)" style="border-radius:8px;">
+                    </div>
+
+                    <!-- Time Slots -->
+                    <div class="form-group" id="time_slot_section" style="display:none;">
+                        <label class="small font-weight-bold" style="color:#555;"><i class="fa fa-clock mr-1" style="color:#1a73e8;"></i>Select Time Slot <span class="text-danger">*</span></label>
+                        <input type="hidden" name="booking_time" id="booking_time" required>
+                        <div id="time_slots" class="p-2 border rounded" style="background:#f8f9fa; border-radius:8px !important;"></div>
+                    </div>
+
+                    <div id="booking_msg"></div>
+
+                    <!-- Buttons -->
+                    <div class="row mt-3">
+                        <div class="col-8">
+                            <button type="submit" class="btn btn-block font-weight-bold text-white" style="background:linear-gradient(135deg,#13C5DD,#354F8E);border:none;border-radius:8px;height:44px;">
+                                <i class="fa fa-check-circle mr-1"></i> Confirm Appointment
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" onclick="closeBookingModal()" class="btn btn-block btn-outline-secondary font-weight-bold" style="border-radius:8px;height:44px;">Cancel</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="bookingBackdrop" onclick="closeBookingModal()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1049;"></div>
+
+<script>
+function loadTimeSlots(date) {
+    if (!date) return;
+    var now = new Date();
+    var today = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    var isToday = (date === today);
+    var currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    fetch('{{ route("booked.slots") }}?doctor_id={{ $doctor->id }}&date=' + date)
+    .then(function(r) { return r.json(); })
+    .then(function(booked) {
+        var slots = [];
+        var start = 10 * 60;
+        var end   = 18 * 60;
+        for (var m = start; m < end; m += 30) {
+            var h    = Math.floor(m / 60);
+            var min  = m % 60;
+            var ampm = h >= 12 ? 'PM' : 'AM';
+            var h12  = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+            var label = (h12 < 10 ? '0' : '') + h12 + ':' + (min === 0 ? '00' : min) + ' ' + ampm;
+            var value = (h < 10 ? '0' : '') + h + ':' + (min === 0 ? '00' : min);
+            var isPast    = isToday && m <= currentMinutes;
+            var isBooked  = booked.indexOf(value) !== -1;
+            slots.push({ label: label, value: value, isPast: isPast, isBooked: isBooked });
+        }
+
+        var html = '';
+        slots.forEach(function(s) {
+            if (s.isBooked) {
+                html += '<span class="time-slot booked" title="The slot is booked, please book another slot.">' + s.label + '</span>';
+            } else if (s.isPast) {
+                html += '<span class="time-slot disabled" title="Time nikal gaya">' + s.label + '</span>';
+            } else {
+                html += '<span class="time-slot" onclick="selectSlot(this, \'' + s.value + '\')">' + s.label + '</span>';
+            }
+        });
+
+        document.getElementById('time_slots').innerHTML = html;
+        document.getElementById('time_slot_section').style.display = 'block';
+        document.getElementById('booking_time').value = '';
+    });
+}
+function selectSlot(el, val) {
+    document.querySelectorAll('.time-slot').forEach(function(s) { s.classList.remove('active'); });
+    el.classList.add('active');
+    document.getElementById('booking_time').value = val;
+}
+</script>
+
+<style>
+.time-slot {
+    display: inline-block;
+    padding: 5px 12px;
+    margin: 3px;
+    border: 1px solid #13C5DD;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #13C5DD;
+    background: #fff;
+    transition: all 0.2s;
+}
+.time-slot:hover, .time-slot.active {
+    background: #13C5DD;
+    color: #fff;
+}
+.time-slot.disabled {
+    border-color: #ccc;
+    color: #aaa;
+    background: #f0f0f0;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+.time-slot.booked {
+    border-color: #dc3545;
+    color: #dc3545;
+    background: #fff5f5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+</style>
+
+<script>
+function openBookingModal() {
+    document.getElementById('bookingModal').style.display = 'block';
+    document.getElementById('bookingModal').style.zIndex = '1050';
+    document.getElementById('bookingBackdrop').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+function closeBookingModal() {
+    document.getElementById('bookingModal').style.display = 'none';
+    document.getElementById('bookingBackdrop').style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.getElementById('bookingBackdrop').addEventListener('click', closeBookingModal);
+
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var form = this;
+    var btn = form.querySelector('button[type=submit]');
+    btn.disabled = true;
+    document.getElementById('booking_msg').innerHTML = '';
+
+    var formData = new FormData(form);
+
+    fetch('{{ route("book.appointment") }}', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+        body: formData
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+        document.getElementById('booking_msg').innerHTML =
+            '<div class="alert alert-' + (res.status === 200 ? 'success' : 'danger') + ' mt-2">' + res.msg + '</div>';
+        if (res.status === 200) { form.reset(); }
+        btn.disabled = false;
+    })
+    .catch(function() { btn.disabled = false; });
+});
+</script>
+
 @endsection

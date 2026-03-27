@@ -33,18 +33,20 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="table-responsive">
-                    <table class="table">
+                <div class="table-responsive" style="overflow-x:scroll">
+                    <table class="table table-bordered" style="min-width:1200px;">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Invoice Master <i class="fas ajaxSorting fa-sort" data-type="prescription" data-sort_by="invoice_master_id" data-sort_order="asc"></i></th>
-                                <th>Invoice Number <i class="fas ajaxSorting fa-sort" data-type="prescription" data-sort_by="invoice_number" data-sort_order="asc"></i></th>
-                                <th>Patient Name <i class="fas ajaxSorting fa-sort" data-type="prescription" data-sort_by="patient_name" data-sort_order="asc"></i></th>
-                                <th>Age <i class="fas ajaxSorting fa-sort" data-type="prescription" data-sort_by="age" data-sort_order="asc"></i></th>
-                                <th>Gender <i class="fas ajaxSorting fa-sort" data-type="prescription" data-sort_by="gender" data-sort_order="asc"></i></th>
-                                <th>Patient Phone <i class="fas ajaxSorting fa-sort" data-type="prescription" data-sort_by="patient_phone_no" data-sort_order="asc"></i></th>
-                                <th>Created At <i class="fas ajaxSorting fa-sort" data-type="prescription" data-sort_by="created_at" data-sort_order="asc"></i></th>
+                                <th>Invoice Master <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="invoice_master_id" data-sort_order="asc"></i></th>
+                                <th>Invoice Number <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="invoice_number" data-sort_order="asc"></i></th>
+                                <th>Patient Name <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="patient_name" data-sort_order="asc"></i></th>
+                                <th>Age <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="age" data-sort_order="asc"></i></th>
+                                <th>Gender <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="gender" data-sort_order="asc"></i></th>
+                                <th>Patient Phone <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="patient_phone_no" data-sort_order="asc"></i></th>
+                                <th>Booking Date</th>
+                                <th>Booking Time</th>
+                                <th>Created At <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="created_at" data-sort_order="asc"></i></th>
                                 <th class="text-right">Actions</th>
                             </tr>
                         </thead>

@@ -117,6 +117,7 @@ class InvoiceMasterController extends Controller
                     $update['address'] = $data['address'];
                     $update['phone_no'] = $data['phone_no'];
                     $update['email'] = $data['email'];
+                    $update['booking_mode'] = $data['booking_mode'] ?? 'OFFLINE';
                     $update['updated_at'] = now();
                     $update['updated_by'] = Session::get('user_id');
 
@@ -134,6 +135,7 @@ class InvoiceMasterController extends Controller
                     $invoice->address = $data['address'];
                     $invoice->phone_no = $data['phone_no'];
                     $invoice->email = $data['email'];
+                    $invoice->booking_mode = $data['booking_mode'] ?? 'OFFLINE';
                     $invoice->created_at = now();
                     $invoice->updated_at = now();
                     $invoice->added_by = Session::get('user_id');

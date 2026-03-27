@@ -99,6 +99,26 @@
                                 </div>
                             </div>
 
+                            <!-- Booking Date -->
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Booking Date</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="date" name="booking_date" value="{{ $prescription->booking_date ?? '' }}" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Booking Time -->
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Booking Time</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="time" name="booking_time" value="{{ $prescription->booking_time ?? '' }}" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Submit -->
                             <div class="form-group row">
                                 <div class="col-lg-12 text-right">

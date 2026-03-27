@@ -13,6 +13,7 @@ class InvoiceMaster extends Model
         'doctor_id',
         'hospital_clinic_name',
         'consultation_fee',
+        'booking_mode',
     ];
 
     public function prescriptionInvoices()
