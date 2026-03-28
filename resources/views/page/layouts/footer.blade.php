@@ -30,6 +30,7 @@
                         <a class="text-light mb-1" href="{{ route('disclaimer') }}"><i class="fa fa-angle-right me-2"></i>Disclaimer</a>
                         <a class="text-light mb-1" href="{{ route('faq') }}"><i class="fa fa-angle-right me-2"></i>FAQ</a>
                         <a class="text-light mb-1" href="{{ route('about') }}"><i class="fa fa-angle-right me-2"></i>About RogiSewa</a>
+                        <a class="text-light mb-1" href="{{ route('sitemap') }}"><i class="fa fa-angle-right me-2"></i>Sitemap</a>
                     </div>
                 </div>
                 <!-- <div class="col-lg-3 col-md-6">
