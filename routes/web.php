@@ -42,6 +42,7 @@ Route::get('/specializations/suggest', [PageController::class, 'specializationSu
 Route::get('terms', [PageController::class, 'terms'])->name('terms');
 Route::get('disclaimer', [PageController::class, 'disclaimer'])->name('disclaimer');
 Route::get('privacy-policy', [PageController::class, 'privacy_policy'])->name('privacy-policy');
+Route::get('sitemap.xml', [PageController::class, 'sitemap'])->name('sitemap');
 
 
 Route::get('/test-mail', function() {

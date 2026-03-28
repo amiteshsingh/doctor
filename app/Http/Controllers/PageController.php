@@ -253,6 +253,15 @@ class PageController extends Controller
     {
         return view('page.disclaimer');
     }
+    public function sitemap()
+    {
+        $blogs = Blog::where('status', 1)->latest()->get(['slug', 'updated_at']);
+
+        return response()
+            ->view('page.sitemap', compact('blogs'))
+            ->header('Content-Type', 'application/xml');
+    }
+
     public function privacy_policy()
     {
         return view('page.privacy_policy');
