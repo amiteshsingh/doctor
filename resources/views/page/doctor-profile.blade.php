@@ -198,7 +198,7 @@
                         </div>
                         <div>
                             <h5 class="mb-0 font-weight-bold">Book Appointment</h5>
-                            <small style="opacity:0.8;"><i class="fa fa-user-md mr-1"></i>Dr. {{ $doctor->name }}</small>
+                            <small style="opacity:0.8;"><i class="fa fa-user-md mr-1"></i> {{ $doctor->name }}</small>
                         </div>
                     </div>
                     <button onclick="closeBookingModal()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:50%;width:34px;height:34px;font-size:20px;line-height:1;cursor:pointer;">&times;</button>
