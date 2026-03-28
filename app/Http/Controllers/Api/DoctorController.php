@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
 use App\Models\Specialization;
+use App\Models\PrescriptionInvoice;
+use App\Models\InvoiceMaster;
 use Illuminate\Http\Request;
 
 class DoctorController extends Controller
@@ -87,6 +89,59 @@ class DoctorController extends Controller
         return response()->json([
             'status' => 200,
             'data'   => Specialization::where('status', 1)->orderBy('name')->get(['id', 'name'])
+        ]);
+    }
+
+    public function bookedSlots(Request $request)
+    {
+        $request->validate([
+            'doctor_id' => 'required|integer',
+            'date'      => 'required|date',
+        ]);
+
+        $bookedTimes = PrescriptionInvoice::whereHas('invoiceMaster', function ($q) use ($request) {
+                $q->where('doctor_id', $request->doctor_id);
+            })
+            ->where('booking_date', $request->date)
+            ->pluck('booking_time');
+
+        return response()->json([
+            'status' => 200,
+            'data'   => $bookedTimes
+        ]);
+    }
+
+    public function bookAppointment(Request $request)
+    {
+        $request->validate([
+            'doctor_id'        => 'required|integer',
+            'patient_name'     => 'required|string|max:255',
+            'age'              => 'required|integer',
+            'gender'           => 'required|in:Male,Female,Other',
+            'patient_phone_no' => 'required|string|max:20',
+            'booking_date'     => 'required|date',
+            'booking_time'     => 'required',
+        ]);
+
+        $invoiceMaster = InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
+
+        $invoice = new PrescriptionInvoice;
+        $invoice->invoice_master_id = $invoiceMaster->id ?? null;
+        $invoice->invoice_number    = 'INV-' . now()->format('YmdHis');
+        $invoice->patient_name      = $request->patient_name;
+        $invoice->age               = $request->age;
+        $invoice->gender            = $request->gender;
+        $invoice->patient_address   = $request->patient_address;
+        $invoice->patient_phone_no  = $request->patient_phone_no;
+        $invoice->booking_date      = $request->booking_date;
+        $invoice->booking_time      = $request->booking_time;
+        $invoice->created_at        = now();
+        $invoice->updated_at        = now();
+        $invoice->save();
+
+        return response()->json([
+            'status' => 200,
+            'msg'    => 'Appointment booked successfully!'
         ]);
     }
 }
