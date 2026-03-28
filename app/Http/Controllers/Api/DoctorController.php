@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
+use App\Models\Specialization;
 use Illuminate\Http\Request;
 
 class DoctorController extends Controller
@@ -78,6 +79,14 @@ class DoctorController extends Controller
         return response()->json([
             'status' => 200,
             'data'   => $doctor
+        ]);
+    }
+
+    public function specializations()
+    {
+        return response()->json([
+            'status' => 200,
+            'data'   => Specialization::where('status', 1)->orderBy('name')->get(['id', 'name'])
         ]);
     }
 }
