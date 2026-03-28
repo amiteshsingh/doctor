@@ -374,6 +374,10 @@ function closeBookingModal() {
     document.getElementById('bookingModal').style.display = 'none';
     document.getElementById('bookingBackdrop').style.display = 'none';
     document.body.style.overflow = '';
+    document.getElementById('booking_msg').innerHTML = '';
+    document.getElementById('time_slot_section').style.display = 'none';
+    document.getElementById('time_slots').innerHTML = '';
+    document.getElementById('booking_time').value = '';
 }
 document.getElementById('bookingBackdrop').addEventListener('click', closeBookingModal);
 
