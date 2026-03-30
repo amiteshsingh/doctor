@@ -14,7 +14,7 @@ use App\Http\Controllers\Doctor\MyHospitalController;
 use App\Http\Controllers\Doctor\InvoiceMasterController;
 use Illuminate\Support\Facades\Auth;
 
-use App\Http\Controllers\Doctor\PrescriptionInvoiceController;
+use App\Http\Controllers\User\UserAuthController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -150,6 +150,19 @@ Route::middleware(['doctor'])->prefix('doctor')->group(function () {
 
 // Auth Routes
 Auth::routes();
+
+// User Routes
+Route::get('user/register', [UserAuthController::class, 'showRegister'])->name('user.register');
+Route::post('user/register', [UserAuthController::class, 'register']);
+Route::get('user/login', [UserAuthController::class, 'showLogin'])->name('user.login');
+Route::post('user/login', [UserAuthController::class, 'login']);
+Route::get('user/logout', [UserAuthController::class, 'logout'])->name('user.logout');
+
+Route::middleware(['user'])->group(function () {
+    Route::get('user/profile', [UserAuthController::class, 'profile'])->name('user.profile');
+    Route::put('user/profile', [UserAuthController::class, 'updateProfile'])->name('user.profile.update');
+    Route::get('user/bookings', [UserAuthController::class, 'myBookings'])->name('user.bookings');
+});
 
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -59,12 +59,16 @@
                             <a class="nav-item nav-link" target="_blank" href="{{ route('admin.dashboard') }}">
                             Click to Dashboard
                             </a>
-                        @elseif (isset(Auth::user()->role->role) && Auth::user()->role->role ==  'doctor')
-                            <a class=" nav-item nav-link" target="_blank" href="{{ route('doctor.dashboard') }}">
+                        @elseif (isset(Auth::user()->role->role) && Auth::user()->role->role == 'doctor')
+                            <a class="nav-item nav-link" target="_blank" href="{{ route('doctor.dashboard') }}">
                             Click to Dashboard
                             </a>
+                        @elseif (isset(Auth::user()->role->role) && Auth::user()->role->role == 'user')
+                            <a class="nav-item nav-link {{ Request::is('user/profile') ? 'active' : '' }}" href="{{ route('user.profile') }}">
+                                <i class="fa fa-user-circle me-1"></i>{{ Auth::user()->name }}
+                            </a>
                         @else
-                            <a class="nav-item nav-link" target="_blank" href="{{ route('login') }}">
+                            <a class="nav-item nav-link" href="{{ route('user.login') }}">
                                 Login
                             </a>
                         @endif

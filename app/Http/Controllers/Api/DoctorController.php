@@ -8,6 +8,7 @@ use App\Models\Specialization;
 use App\Models\PrescriptionInvoice;
 use App\Models\InvoiceMaster;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DoctorController extends Controller
 {
@@ -127,6 +128,7 @@ class DoctorController extends Controller
 
         $invoice = new PrescriptionInvoice;
         $invoice->invoice_master_id = $invoiceMaster->id ?? null;
+        $invoice->user_id           = Auth::id();
         $invoice->invoice_number    = 'INV-' . now()->format('YmdHis');
         $invoice->patient_name      = $request->patient_name;
         $invoice->age               = $request->age;

@@ -365,6 +365,10 @@ function selectSlot(el, val) {
 
 <script>
 function openBookingModal() {
+    @guest
+    window.location.href = '{{ route('user.login') }}?redirect={{ urlencode(url()->current()) }}&book=1';
+    return;
+    @endguest
     document.getElementById('bookingModal').style.display = 'block';
     document.getElementById('bookingModal').style.zIndex = '1050';
     document.getElementById('bookingBackdrop').style.display = 'block';
@@ -380,6 +384,10 @@ function closeBookingModal() {
     document.getElementById('booking_time').value = '';
 }
 document.getElementById('bookingBackdrop').addEventListener('click', closeBookingModal);
+
+@if(request('book') == '1' && auth()->check())
+openBookingModal();
+@endif
 
 document.getElementById('bookingForm').addEventListener('submit', function(e) {
     e.preventDefault();

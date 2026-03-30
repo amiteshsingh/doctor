@@ -12,6 +12,7 @@ use App\Models\Blog;
 use App\Models\PrescriptionInvoice;
 use App\Models\InvoiceMaster;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 
 class PageController extends Controller
@@ -340,6 +341,7 @@ class PageController extends Controller
 
         $invoice = new PrescriptionInvoice;
         $invoice->invoice_master_id = $invoiceMaster->id ?? null;
+        $invoice->user_id           = Auth::id();
         $invoice->invoice_number    = 'INV-' . now()->format('YmdHis');
         $invoice->patient_name      = $request->patient_name;
         $invoice->age               = $request->age;
