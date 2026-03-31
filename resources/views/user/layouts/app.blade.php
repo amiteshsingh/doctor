@@ -2,10 +2,10 @@
 
 @section('content')
 @php
-    $sidePic = auth()->user()->profile_pic
+    $sidePic = auth()->user()->profile_image
         ? (app()->environment('local')
-            ? asset('uploads/profile_images/' . auth()->user()->profile_pic)
-            : asset('storage/uploads/profile_images/' . auth()->user()->profile_pic))
+            ? asset('uploads/profile_images/' . auth()->user()->profile_image)
+            : asset('storage/uploads/profile_images/' . auth()->user()->profile_image))
         : asset('img/user.jpg');
 @endphp
 <div class="container py-5">

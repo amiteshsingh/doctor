@@ -3,10 +3,10 @@
 
 @section('user_content')
 @php
-    $pic = $user->profile_pic
+    $pic = $user->profile_image
         ? (app()->environment('local')
-            ? asset('uploads/profile_images/' . $user->profile_pic)
-            : asset('storage/uploads/profile_images/' . $user->profile_pic))
+            ? asset('uploads/profile_images/' . $user->profile_image)
+            : asset('storage/uploads/profile_images/' . $user->profile_image))
         : asset('img/user.jpg');
 @endphp
 
@@ -61,8 +61,8 @@
 
         <div class="mb-3">
             <label class="form-label fw-bold">Profile Picture</label>
-            <input type="file" name="profile_pic" class="form-control @error('profile_pic') is-invalid @enderror" accept="image/*">
-            @error('profile_pic') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            <input type="file" name="profile_image" class="form-control @error('profile_image') is-invalid @enderror" accept="image/*">
+            @error('profile_image') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
         <button type="submit" class="btn btn-primary fw-bold px-4">Update Profile</button>

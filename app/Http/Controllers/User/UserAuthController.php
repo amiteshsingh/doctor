@@ -87,25 +87,25 @@ class UserAuthController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'name'        => 'required|string|max:100',
-            'email'       => 'nullable|email|unique:users,email,' . $user->id,
-            'address'     => 'nullable|string|max:255',
-            'gender'      => 'nullable|in:Male,Female,Other',
-            'dob'         => 'nullable|date',
-            'profile_pic' => 'nullable|image|max:2048',
+            'name'          => 'required|string|max:100',
+            'email'         => 'nullable|email|unique:users,email,' . $user->id,
+            'address'       => 'nullable|string|max:255',
+            'gender'        => 'nullable|in:Male,Female,Other',
+            'dob'           => 'nullable|date',
+            'profile_image' => 'nullable|image|max:2048',
         ]);
 
         $data = $request->only(['name', 'email', 'address', 'gender', 'dob']);
 
-        if ($request->hasFile('profile_pic')) {
-            $file = $request->file('profile_pic');
+        if ($request->hasFile('profile_image')) {
+            $file = $request->file('profile_image');
             $filename = time() . '.' . $file->getClientOriginalExtension();
             if (app()->environment('local')) {
                 $file->move(public_path('uploads/profile_images'), $filename);
             } else {
                 $file->storeAs('uploads/profile_images', $filename, 'public');
             }
-            $data['profile_pic'] = $filename;
+            $data['profile_image'] = $filename;
         }
 
         $user->update($data);
