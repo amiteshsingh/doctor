@@ -158,6 +158,7 @@ Route::post('user/register', [UserAuthController::class, 'register']);
 Route::get('user/login', [UserAuthController::class, 'showLogin'])->name('user.login');
 Route::post('user/login', [UserAuthController::class, 'login']);
 Route::get('user/logout', [UserAuthController::class, 'logout'])->name('user.logout');
+Route::get('choose-login', fn() => view('page.choose-login'))->name('choose.login');
 
 Route::middleware(['user'])->group(function () {
     Route::get('user/profile', [UserAuthController::class, 'profile'])->name('user.profile');

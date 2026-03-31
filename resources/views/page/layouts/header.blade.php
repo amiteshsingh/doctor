@@ -68,7 +68,7 @@
                                 <i class="fa fa-user-circle me-1"></i>{{ Auth::user()->name }}
                             </a>
                         @else
-                            <a class="nav-item nav-link" href="{{ route('user.login') }}">
+                            <a class="nav-item nav-link" href="{{ route('choose.login') }}">
                                 Login
                             </a>
                         @endif
