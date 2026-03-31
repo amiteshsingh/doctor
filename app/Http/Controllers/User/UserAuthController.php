@@ -21,12 +21,14 @@ class UserAuthController extends Controller
     {
         $request->validate([
             'name'     => 'required|string|max:100',
+            'email'    => 'required|email|unique:users,email',
             'phone_no' => 'required|digits_between:10,15|unique:users,phone_no',
             'password' => 'required|min:6|confirmed',
         ]);
 
         $user = User::create([
             'name'     => $request->name,
+            'email'    => $request->email,
             'phone_no' => $request->phone_no,
             'password' => Hash::make($request->password),
         ]);
@@ -46,14 +48,14 @@ class UserAuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'phone_no' => 'required|digits_between:10,15',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        $user = User::where('phone_no', $request->phone_no)->first();
+        $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->with('error', 'Invalid mobile number or password.');
+            return back()->with('error', 'Invalid email or password.');
         }
 
         if ($user->role?->role !== 'user') {

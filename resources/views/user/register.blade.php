@@ -20,6 +20,12 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
+                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                        @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label fw-bold">Mobile Number <span class="text-danger">*</span></label>
                         <input type="text" name="phone_no" class="form-control @error('phone_no') is-invalid @enderror" value="{{ old('phone_no') }}" required>
                         @error('phone_no') <div class="invalid-feedback">{{ $message }}</div> @enderror
