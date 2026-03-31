@@ -100,7 +100,11 @@ class UserAuthController extends Controller
         if ($request->hasFile('profile_pic')) {
             $file = $request->file('profile_pic');
             $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/profile_images'), $filename);
+            if (app()->environment('local')) {
+                $file->move(public_path('uploads/profile_images'), $filename);
+            } else {
+                $file->storeAs('uploads/profile_images', $filename, 'public');
+            }
             $data['profile_pic'] = $filename;
         }
 

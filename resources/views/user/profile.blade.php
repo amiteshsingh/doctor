@@ -2,12 +2,25 @@
 @section('title', 'RogiSewa - My Profile')
 
 @section('user_content')
+@php
+    $pic = $user->profile_pic
+        ? (app()->environment('local')
+            ? asset('uploads/profile_images/' . $user->profile_pic)
+            : asset('storage/uploads/profile_images/' . $user->profile_pic))
+        : asset('img/user.jpg');
+@endphp
+
 <div class="card shadow border-0 rounded-4 p-4 bg-white">
     <h5 class="fw-bold border-bottom pb-2 mb-4"><i class="fa fa-user me-2 text-primary"></i>My Profile</h5>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+
+    <div class="text-center mb-4">
+        <img src="{{ $pic }}" class="rounded-circle border border-3 border-primary"
+             style="width:100px;height:100px;object-fit:cover;">
+    </div>
 
     <form method="POST" action="{{ route('user.profile.update') }}" enctype="multipart/form-data">
         @csrf

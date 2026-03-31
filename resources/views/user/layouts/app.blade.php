@@ -1,6 +1,13 @@
 @extends('page.layouts.app')
 
 @section('content')
+@php
+    $sidePic = auth()->user()->profile_pic
+        ? (app()->environment('local')
+            ? asset('uploads/profile_images/' . auth()->user()->profile_pic)
+            : asset('storage/uploads/profile_images/' . auth()->user()->profile_pic))
+        : asset('img/user.jpg');
+@endphp
 <div class="container py-5">
     <div class="row g-4">
 
@@ -8,7 +15,7 @@
         <div class="col-lg-3">
             <div class="card shadow border-0 rounded-4 p-3 bg-white">
                 <div class="text-center mb-3 pb-3 border-bottom">
-                    <img src="{{ auth()->user()->profile_pic ? asset('uploads/profile_images/' . auth()->user()->profile_pic) : asset('img/user.jpg') }}"
+                    <img src="{{ $sidePic }}"
                          class="rounded-circle border border-3 border-primary mb-2"
                          style="width:80px;height:80px;object-fit:cover;">
                     <h6 class="fw-bold mb-0">{{ auth()->user()->name }}</h6>
