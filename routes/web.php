@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Doctor\DoctorController as DoctorPanelController;
 use App\Http\Controllers\Doctor\MyHospitalController;
 use App\Http\Controllers\Doctor\InvoiceMasterController;
+use App\Http\Controllers\Doctor\PrescriptionInvoiceController;
 use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\User\UserAuthController;
