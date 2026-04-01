@@ -18,7 +18,7 @@ foreach($res as $specialization){
 
         @php
             $image = isset($specialization->image) && !empty($specialization->image)
-                ? asset('uploads/specialization/'.$specialization->image) 
+                ? asset('storage/uploads/specialization/'.$specialization->image) 
                 : asset('storage/uploads/specialization/default.jpg');                    
         @endphp
 

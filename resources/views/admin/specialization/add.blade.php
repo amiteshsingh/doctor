@@ -36,7 +36,7 @@
                             <div class="col-md-9">
                                 @php
                                     $image = isset($specialization->image) && !empty($specialization->image)
-                                        ? asset('uploads/specialization/'.$specialization->image) 
+                                        ? asset('storage/uploads/specialization/'.$specialization->image) 
                                         : asset('storage/uploads/specialization/default.jpg');                    
                                 @endphp
                                 @if(!empty($image))`
