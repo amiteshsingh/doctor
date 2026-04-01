@@ -89,7 +89,7 @@ class DoctorController extends Controller
     {
         return response()->json([
             'status' => 200,
-            'data'   => Specialization::where('status', 1)->orderBy('name')->get(['id', 'name', 'icon_name', 'image'])
+            'data'   => Specialization::where('status', 1)->orderBy('name')->get(['id', 'name', 'icon_name'])
         ]);
     }
 
