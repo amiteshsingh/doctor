@@ -50,7 +50,9 @@
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Image <i class="fas ajaxSorting fa-sort " data-type="specialization" data-sort_by="image" data-sort_order="asc"></i> </th>
                                 <th>Name <i class="fas ajaxSorting fa-sort " data-type="specialization" data-sort_by="name" data-sort_order="asc"></i> </th>
+                                <th>Icon <i class="fas ajaxSorting fa-sort " data-type="specialization" data-sort_by="icon_name" data-sort_order="asc"></i> </th>
                                 <th >Status <i class="fas ajaxSorting fa-sort" data-type="specialization" data-sort_by="status" data-sort_order="asc"></i></th>
                           <th class="text-right">Actions</th>
 

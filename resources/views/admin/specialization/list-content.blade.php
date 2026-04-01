@@ -14,7 +14,29 @@ foreach($res as $specialization){
 <tr>
     
     <td>{{ ++$i }}</td>
+    <td>
+
+        @php
+            $image = isset($specialization->image) && !empty($specialization->image)
+                ? asset('uploads/specialization/'.$specialization->image) 
+                : asset('storage/uploads/specialization/default.jpg');                    
+        @endphp
+
+        @if(!empty($image))
+            <img src="{{ $image }}"
+                style="height:40px; width:40px; object-fit:cover; border-radius:4px;">
+        @else
+            <span class="text-muted">—</span>
+        @endif
+    </td>
     <td>{{$specialization->name}}</td>
+    <td>
+        @if(!empty($specialization->icon_name))
+            <i class="{{ $specialization->icon_name }} fa-2x text-success" ></i>
+        @else
+            <span class="text-muted">—</span>
+        @endif
+    </td>
 
     <td>
     @if ($specialization->status == 1)

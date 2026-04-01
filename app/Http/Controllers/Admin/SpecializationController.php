@@ -56,14 +56,27 @@ class SpecializationController extends Controller
         if($request->isMethod('post') && $request->ajax()){
             try{
                 $request->validate([
-                    'name' => 'required',
+                    'name'   => 'required',
                     'status' => 'required',
+                    'image'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
                 ]);
                 
                 if(isset($data['id']) && $data['id'] !=""){
-                    //Update specialization
-                    $update['name'] = $data['name'];
+                    $update['name']   = $data['name'];
                     $update['status'] = $data['status'];
+                    $update['icon_name'] = $data['icon_name'];
+
+                    if($request->hasFile('image')){
+                        $file     = $request->file('image');
+                        $filename = time() . '.' . $file->getClientOriginalExtension();
+
+                        if (app()->environment('local')) {
+                                $file->move(public_path('uploads/specialization'), $filename);
+                        } else {
+                            $file->storeAs('uploads/specialization', $filename, 'public');
+                        }
+                        $update['image'] = $filename;
+                    }
                    
                     if(DB::table('specializations')->where('id', $data['id'])->update($update)){
                         return response()->json(["status"=>200,"msg"=>"Specializations updated successfully."]);
@@ -71,10 +84,22 @@ class SpecializationController extends Controller
                         return response()->json(["status"=>403,"msg"=>'Specializations not updated.']);
                     }
                 }else{
-                    //Save specialization 
-                    $specialization = new Specialization;
-                    $specialization->name = isset($data['name'])?$data['name']:'';
-                    $specialization->status = isset($data['status'])?$data['status']:'';
+                    $specialization         = new Specialization;
+                    $specialization->name   = $data['name'] ?? '';
+                    $specialization->status = $data['status'] ?? '';
+                    $specialization->icon_name = $data['icon_name'] ?? '';
+
+                    if($request->hasFile('image')){
+                        $file     = $request->file('image');
+                        $filename = time() . '.' . $file->getClientOriginalExtension();
+                       
+                        if (app()->environment('local')) {
+                                $file->move(public_path('uploads/specialization'), $filename);
+                        } else {
+                            $file->storeAs('uploads/specialization', $filename, 'public');
+                        }
+                        $specialization->image = $filename;
+                    }
 
                     if($specialization->save()){
                         return response()->json(["status"=>200,"msg"=>"Specialization saved successfully."]);
