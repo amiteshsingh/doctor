@@ -16,6 +16,7 @@ use App\Http\Controllers\Doctor\PrescriptionInvoiceController;
 use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\User\UserAuthController;
+use App\Http\Controllers\User\FavouriteController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -164,6 +165,8 @@ Route::middleware(['user'])->group(function () {
     Route::get('user/profile', [UserAuthController::class, 'profile'])->name('user.profile');
     Route::put('user/profile', [UserAuthController::class, 'updateProfile'])->name('user.profile.update');
     Route::get('user/bookings', [UserAuthController::class, 'myBookings'])->name('user.bookings');
+    Route::get('user/favourites', [UserAuthController::class, 'myFavourites'])->name('user.favourites');
+    Route::post('user/favourite/toggle', [FavouriteController::class, 'toggle'])->name('user.favourite.toggle');
 });
 
 

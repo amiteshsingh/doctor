@@ -285,8 +285,14 @@ class PageController extends Controller
 
         $invoiceMaster = InvoiceMaster::where('doctor_id', $id)->first();
         $isOnlineBooking = $invoiceMaster && $invoiceMaster->booking_mode === 'ONLINE';
-        
-        return view('page.doctor-profile', ['doctor' => $doctor, 'isOnlineBooking' => $isOnlineBooking]);
+
+        $isFavourite = false;
+        if (Auth::check() && Auth::user()->role?->role === 'user') {
+            $isFavourite = \App\Models\MyFavourite::where('user_id', Auth::id())
+                ->where('doctor_id', $id)->exists();
+        }
+
+        return view('page.doctor-profile', ['doctor' => $doctor, 'isOnlineBooking' => $isOnlineBooking, 'isFavourite' => $isFavourite]);
     }
 
     public function hospital_details(Request $request, $id = null, $name=null)

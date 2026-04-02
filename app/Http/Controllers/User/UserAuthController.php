@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserRole;
 use App\Models\PrescriptionInvoice;
+use App\Models\MyFavourite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -111,6 +112,16 @@ class UserAuthController extends Controller
         $user->update($data);
 
         return back()->with('success', 'Profile updated successfully!');
+    }
+
+    public function myFavourites()
+    {
+        $favourites = MyFavourite::with(['doctor.specializations.specialization'])
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
+
+        return view('user.favourites', compact('favourites'));
     }
 
     public function myBookings()

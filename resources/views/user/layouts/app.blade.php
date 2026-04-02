@@ -34,6 +34,12 @@
                             <i class="fa fa-calendar-check me-2"></i> My Bookings
                         </a>
                     </li>
+                    <li class="mb-1">
+                        <a href="{{ route('user.favourites') }}"
+                           class="d-flex align-items-center px-3 py-2 rounded-3 text-decoration-none {{ Request::is('user/favourites') ? 'bg-primary text-white' : 'text-dark' }}">
+                            <i class="fa fa-heart me-2 text-danger"></i> My Favourites
+                        </a>
+                    </li>
                     <li class="mt-3">
                         <a href="{{ route('user.logout') }}"
                            class="d-flex align-items-center px-3 py-2 rounded-3 text-decoration-none text-danger">

@@ -38,6 +38,17 @@
                             {{ $doctor->experience ? now()->year - $doctor->experience : 'N/A' }}+ Years Experience
                         </span>
                     </div>
+
+                    @auth
+                        @if(auth()->user()->role?->role === 'user')
+                        <div class="mt-3">
+                            <button id="favBtn" onclick="toggleFavourite()" class="btn btn-sm {{ $isFavourite ? 'btn-danger' : 'btn-outline-danger' }}" style="border-radius:20px;">
+                                <i class="fa fa-heart me-1"></i>
+                                <span id="favText">{{ $isFavourite ? 'Saved' : 'Add to Favourite' }}</span>
+                            </button>
+                        </div>
+                        @endif
+                    @endauth
                 </div>
 
                 <!-- Specializations -->
@@ -412,6 +423,33 @@ document.getElementById('bookingForm').addEventListener('submit', function(e) {
     })
     .catch(function() { btn.disabled = false; });
 });
+</script>
+
+<script>
+function toggleFavourite() {
+    var btn = document.getElementById('favBtn');
+    var text = document.getElementById('favText');
+    btn.disabled = true;
+    fetch('{{ route("user.favourite.toggle") }}', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ doctor_id: {{ $doctor->id }} })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+        if (res.action === 'added') {
+            btn.classList.remove('btn-outline-danger');
+            btn.classList.add('btn-danger');
+            text.innerText = 'Saved';
+        } else {
+            btn.classList.remove('btn-danger');
+            btn.classList.add('btn-outline-danger');
+            text.innerText = 'Add to Favourite';
+        }
+        btn.disabled = false;
+    })
+    .catch(function() { btn.disabled = false; });
+}
 </script>
 
 @endsection
