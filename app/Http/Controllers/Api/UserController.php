@@ -134,7 +134,7 @@ class UserController extends Controller
                 'address'     => $user->address,
                 'gender'      => $user->gender,
                 'dob'         => $user->dob,
-                'profile_pic' => $this->profilePicUrl($user->profile_pic),
+                'profile_image' => $this->profilePicUrl($user->profile_pic),
             ],
         ]);
     }
