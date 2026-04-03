@@ -131,7 +131,7 @@ class UserController extends Controller
                 'gender'      => $user->gender,
                 'dob'         => $user->dob,
                 'profile_pic' => $user->profile_pic
-                    ? asset('uploads/profile_images/' . $user->profile_pic)
+                    ? asset('storage/uploads/profile_images/' . $user->profile_pic)
                     : null,
             ],
         ]);
