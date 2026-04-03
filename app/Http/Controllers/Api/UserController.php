@@ -92,7 +92,7 @@ class UserController extends Controller
                 'address'     => $user->address,
                 'gender'      => $user->gender,
                 'dob'         => $user->dob,
-                'profile_pic' => $this->profilePicUrl($user->profile_pic),
+                'profile_image' => $this->profilePicUrl($user->profile_image),
             ],
         ]);
     }
@@ -108,16 +108,16 @@ class UserController extends Controller
             'address'     => 'nullable|string|max:255',
             'gender'      => 'nullable|in:Male,Female,Other',
             'dob'         => 'nullable|date',
-            'profile_pic' => 'nullable|image|max:2048',
+            'profile_image' => 'nullable|image|max:2048',
         ]);
 
         $data = $request->only(['name', 'email', 'phone_no', 'address', 'gender', 'dob']);
 
-        if ($request->hasFile('profile_pic')) {
-            $file     = $request->file('profile_pic');
+        if ($request->hasFile('profile_image')) {
+            $file     = $request->file('profile_image');
             $filename = time() . '.' . $file->getClientOriginalExtension();
             $file->storeAs('uploads/profile_images', $filename, 'public');
-            $data['profile_pic'] = $filename;
+            $data['profile_image'] = $filename;
         }
 
         $user->update($data);
@@ -134,7 +134,7 @@ class UserController extends Controller
                 'address'     => $user->address,
                 'gender'      => $user->gender,
                 'dob'         => $user->dob,
-                'profile_image' => $this->profilePicUrl($user->profile_pic),
+                'profile_image' => $this->profilePicUrl($user->profile_image),
             ],
         ]);
     }
