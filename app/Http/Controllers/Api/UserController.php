@@ -12,6 +12,11 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    private function profilePicUrl($filename)
+    {
+        return $filename ? asset('storage/uploads/profile_images/' . $filename) : null;
+    }
+
     public function register(Request $request)
     {
         $request->validate([
@@ -87,9 +92,7 @@ class UserController extends Controller
                 'address'     => $user->address,
                 'gender'      => $user->gender,
                 'dob'         => $user->dob,
-                'profile_pic' => $user->profile_pic
-                    ? asset('uploads/profile_images/' . $user->profile_pic)
-                    : null,
+                'profile_pic' => $this->profilePicUrl($user->profile_pic),
             ],
         ]);
     }
@@ -113,11 +116,12 @@ class UserController extends Controller
         if ($request->hasFile('profile_pic')) {
             $file     = $request->file('profile_pic');
             $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/profile_images'), $filename);
+            $file->storeAs('uploads/profile_images', $filename, 'public');
             $data['profile_pic'] = $filename;
         }
 
         $user->update($data);
+        $user->refresh();
 
         return response()->json([
             'status'  => 200,
@@ -130,9 +134,7 @@ class UserController extends Controller
                 'address'     => $user->address,
                 'gender'      => $user->gender,
                 'dob'         => $user->dob,
-                'profile_pic' => $user->profile_pic
-                    ? asset('storage/uploads/profile_images/' . $user->profile_pic)
-                    : null,
+                'profile_pic' => $this->profilePicUrl($user->profile_pic),
             ],
         ]);
     }
@@ -160,8 +162,8 @@ class UserController extends Controller
                             'name' => $booking->invoiceMaster->doctor->name,
                         ]
                         : null,
-                    'clinic'         => $booking->invoiceMaster?->hospital_clinic_name,
-                    'fee'            => $booking->invoiceMaster?->consultation_fee,
+                    'clinic' => $booking->invoiceMaster?->hospital_clinic_name,
+                    'fee'    => $booking->invoiceMaster?->consultation_fee,
                 ];
             });
 
