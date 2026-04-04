@@ -128,7 +128,7 @@ class DoctorController extends Controller
 
         $invoice = new PrescriptionInvoice;
         $invoice->invoice_master_id = $invoiceMaster->id ?? null;
-        $invoice->user_id           = Auth::id();
+        $invoice->user_id           = auth('api')->id() ?? $request->user_id;
         $invoice->invoice_number    = 'INV-' . now()->format('YmdHis');
         $invoice->patient_name      = $request->patient_name;
         $invoice->age               = $request->age;
