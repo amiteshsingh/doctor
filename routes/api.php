@@ -17,6 +17,10 @@ Route::prefix('v1')->group(function () {
     Route::get('/specializations',   [DoctorController::class, 'specializations']);
     Route::get('/booked-slots',      [DoctorController::class, 'bookedSlots']);
 
+    // Hospitals (public)
+    Route::get('/hospitals',         [HospitalController::class, 'index']);
+    Route::get('/hospitals/{id}',    [HospitalController::class, 'show']);
+
     // Protected routes (token required)
     Route::middleware(ApiTokenMiddleware::class)->group(function () {
         Route::get('/profile',              [UserController::class, 'profile']);
