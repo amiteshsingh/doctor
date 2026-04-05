@@ -125,7 +125,7 @@ class DoctorController extends Controller
             ->toArray();
 
         // Generate all slots
-        $now         = now();
+        $now         = now('Asia/Kolkata');
         $isToday     = ($request->date === $now->format('Y-m-d'));
         $currentMins = $now->hour * 60 + $now->minute;
 
