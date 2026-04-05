@@ -100,15 +100,61 @@ class DoctorController extends Controller
             'date'      => 'required|date',
         ]);
 
+        $invoiceMaster = InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
+
+        if (!$invoiceMaster) {
+            return response()->json(['status' => 404, 'message' => 'No slot configuration found for this doctor.'], 404);
+        }
+
+        $startTime    = $invoiceMaster->start_time       ?? '10:00';
+        $endTime      = $invoiceMaster->end_time_slot    ?? '18:00';
+        $duration     = (int)($invoiceMaster->duration_time_slot ?? 30);
+
+        // Parse start/end into minutes
+        [$sh, $sm] = explode(':', $startTime);
+        [$eh, $em] = explode(':', $endTime);
+        $startMins = (int)$sh * 60 + (int)$sm;
+        $endMins   = (int)$eh * 60 + (int)$em;
+
+        // Already booked times for this date
         $bookedTimes = PrescriptionInvoice::whereHas('invoiceMaster', function ($q) use ($request) {
                 $q->where('doctor_id', $request->doctor_id);
             })
             ->where('booking_date', $request->date)
-            ->pluck('booking_time');
+            ->pluck('booking_time')
+            ->toArray();
+
+        // Generate all slots
+        $now         = now();
+        $isToday     = ($request->date === $now->format('Y-m-d'));
+        $currentMins = $now->hour * 60 + $now->minute;
+
+        $slots = [];
+        for ($m = $startMins; $m < $endMins; $m += $duration) {
+            $h     = intdiv($m, 60);
+            $min   = $m % 60;
+            $value = sprintf('%02d:%02d', $h, $min);
+            $ampm  = $h >= 12 ? 'PM' : 'AM';
+            $h12   = $h > 12 ? $h - 12 : ($h === 0 ? 12 : $h);
+            $label = sprintf('%02d:%02d %s', $h12, $min, $ampm);
+
+            $slots[] = [
+                'value'     => $value,
+                'label'     => $label,
+                'is_booked' => in_array($value, $bookedTimes),
+                'is_past'   => $isToday && $m <= $currentMins,
+            ];
+        }
 
         return response()->json([
             'status' => 200,
-            'data'   => $bookedTimes
+            'date'   => $request->date,
+            'config' => [
+                'start_time'    => $startTime,
+                'end_time'      => $endTime,
+                'duration_mins' => $duration,
+            ],
+            'slots'  => $slots,
         ]);
     }
 
