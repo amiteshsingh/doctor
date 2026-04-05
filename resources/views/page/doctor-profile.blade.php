@@ -292,6 +292,10 @@
 <div id="bookingBackdrop" onclick="closeBookingModal()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1049;"></div>
 
 <script>
+var slotStart    = '{{ $slotStart }}';
+var slotEnd      = '{{ $slotEnd }}';
+var slotDuration = {{ (int)$slotDuration }};
+
 function loadTimeSlots(date) {
     if (!date) return;
     var now = new Date();
@@ -299,30 +303,43 @@ function loadTimeSlots(date) {
     var isToday = (date === today);
     var currentMinutes = now.getHours() * 60 + now.getMinutes();
 
+    // Parse start/end from invoice_master
+    var startParts = slotStart.split(':');
+    var endParts   = slotEnd.split(':');
+    var startMins  = parseInt(startParts[0]) * 60 + parseInt(startParts[1]);
+    var endMins    = parseInt(endParts[0])   * 60 + parseInt(endParts[1]);
+
     fetch('{{ route("booked.slots") }}?doctor_id={{ $doctor->id }}&date=' + date)
     .then(function(r) { return r.json(); })
     .then(function(booked) {
         var slots = [];
-        var start = 10 * 60;
-        var end   = 18 * 60;
-        for (var m = start; m < end; m += 30) {
+        for (var m = startMins; m < endMins; m += slotDuration) {
             var h    = Math.floor(m / 60);
             var min  = m % 60;
             var ampm = h >= 12 ? 'PM' : 'AM';
             var h12  = h > 12 ? h - 12 : (h === 0 ? 12 : h);
-            var label = (h12 < 10 ? '0' : '') + h12 + ':' + (min === 0 ? '00' : min) + ' ' + ampm;
-            var value = (h < 10 ? '0' : '') + h + ':' + (min === 0 ? '00' : min);
-            var isPast    = isToday && m <= currentMinutes;
-            var isBooked  = booked.indexOf(value) !== -1;
-            slots.push({ label: label, value: value, isPast: isPast, isBooked: isBooked });
+            var label = (h12 < 10 ? '0' : '') + h12 + ':' + (min < 10 ? '0' : '') + min + ' ' + ampm;
+            var value = (h < 10 ? '0' : '') + h + ':' + (min < 10 ? '0' : '') + min;
+            slots.push({
+                label:    label,
+                value:    value,
+                isPast:   isToday && m <= currentMinutes,
+                isBooked: booked.indexOf(value) !== -1
+            });
+        }
+
+        if (slots.length === 0) {
+            document.getElementById('time_slots').innerHTML = '<p class="text-muted small mb-0">No slots available.</p>';
+            document.getElementById('time_slot_section').style.display = 'block';
+            return;
         }
 
         var html = '';
         slots.forEach(function(s) {
             if (s.isBooked) {
-                html += '<span class="time-slot booked" title="The slot is booked, please book another slot.">' + s.label + '</span>';
+                html += '<span class="time-slot booked" title="Already booked">' + s.label + '</span>';
             } else if (s.isPast) {
-                html += '<span class="time-slot disabled" title="Time nikal gaya">' + s.label + '</span>';
+                html += '<span class="time-slot disabled" title="Time passed">' + s.label + '</span>';
             } else {
                 html += '<span class="time-slot" onclick="selectSlot(this, \'' + s.value + '\')">' + s.label + '</span>';
             }

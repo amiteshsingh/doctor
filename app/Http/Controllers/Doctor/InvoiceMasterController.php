@@ -104,22 +104,28 @@ class InvoiceMasterController extends Controller
         if ($request->isMethod('post') && $request->ajax()) {
             try {
                 $request->validate([
-                    'doctor_id' => 'required|integer',
+                    'doctor_id'            => 'required|integer',
                     'hospital_clinic_name' => 'required|string|max:255',
-                    'consultation_fee' => 'required|numeric',
+                    'consultation_fee'     => 'required|numeric',
+                    'start_time'           => 'nullable|date_format:H:i',
+                    'end_time_slot'        => 'nullable|date_format:H:i',
+                    'duration_time_slot'   => 'nullable|integer|min:1',
                 ]);
 
                 // Update
                 if (isset($data['id']) && $data['id'] != "") {
-                    $update['doctor_id'] = $data['doctor_id'];
+                    $update['doctor_id']            = $data['doctor_id'];
                     $update['hospital_clinic_name'] = $data['hospital_clinic_name'];
-                    $update['consultation_fee'] = $data['consultation_fee'];
-                    $update['address'] = $data['address'];
-                    $update['phone_no'] = $data['phone_no'];
-                    $update['email'] = $data['email'];
-                    $update['booking_mode'] = $data['booking_mode'] ?? 'OFFLINE';
-                    $update['updated_at'] = now();
-                    $update['updated_by'] = Session::get('user_id');
+                    $update['consultation_fee']     = $data['consultation_fee'];
+                    $update['address']              = $data['address'];
+                    $update['phone_no']             = $data['phone_no'];
+                    $update['email']                = $data['email'];
+                    $update['booking_mode']         = $data['booking_mode'] ?? 'OFFLINE';
+                    $update['start_time']           = $data['start_time'] ?? null;
+                    $update['end_time_slot']        = $data['end_time_slot'] ?? null;
+                    $update['duration_time_slot']   = $data['duration_time_slot'] ?? null;
+                    $update['updated_at']           = now();
+                    $update['updated_by']           = Session::get('user_id');
 
                     if (DB::table('invoice_master')->where('id', $data['id'])->update($update)) {
                         return response()->json(["status" => 200, "msg" => "Invoice updated successfully."]);
@@ -129,17 +135,20 @@ class InvoiceMasterController extends Controller
                 } else {
                     // Insert
                     $invoice = new InvoiceMaster;
-                    $invoice->doctor_id = $data['doctor_id'];
+                    $invoice->doctor_id            = $data['doctor_id'];
                     $invoice->hospital_clinic_name = $data['hospital_clinic_name'];
-                    $invoice->consultation_fee = $data['consultation_fee'];
-                    $invoice->address = $data['address'];
-                    $invoice->phone_no = $data['phone_no'];
-                    $invoice->email = $data['email'];
-                    $invoice->booking_mode = $data['booking_mode'] ?? 'OFFLINE';
-                    $invoice->created_at = now();
-                    $invoice->updated_at = now();
-                    $invoice->added_by = Session::get('user_id');
-                    $invoice->updated_by = Session::get('user_id');
+                    $invoice->consultation_fee     = $data['consultation_fee'];
+                    $invoice->address              = $data['address'];
+                    $invoice->phone_no             = $data['phone_no'];
+                    $invoice->email                = $data['email'];
+                    $invoice->booking_mode         = $data['booking_mode'] ?? 'OFFLINE';
+                    $invoice->start_time           = $data['start_time'] ?? null;
+                    $invoice->end_time_slot        = $data['end_time_slot'] ?? null;
+                    $invoice->duration_time_slot   = $data['duration_time_slot'] ?? null;
+                    $invoice->created_at           = now();
+                    $invoice->updated_at           = now();
+                    $invoice->added_by             = Session::get('user_id');
+                    $invoice->updated_by           = Session::get('user_id');
 
                     if ($invoice->save()) {
                         return response()->json(["status" => 200, "msg" => "Invoice saved successfully."]);

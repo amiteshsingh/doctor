@@ -7,6 +7,8 @@
             <th>Phone No.</th>
             <th>Consultation Fee</th>
             <th>Booking Mode</th>
+            <th>Slot Time</th>
+            <th>Duration</th>
             <th>Created At</th>
             <th>Action</th>
         </tr>
@@ -25,6 +27,16 @@
                     <span class="badge badge-{{ $invoice->booking_mode == 'ONLINE' ? 'success' : 'secondary' }}">
                         {{ $invoice->booking_mode }}
                     </span>
+                </td>
+                <td>
+                    @if($invoice->start_time && $invoice->end_time_slot)
+                        {{ $invoice->start_time }} - {{ $invoice->end_time_slot }}
+                    @else
+                        <span class="text-muted">—</span>
+                    @endif
+                </td>
+                <td>
+                    {{ $invoice->duration_time_slot ? $invoice->duration_time_slot.' min' : '—' }}
                 </td>
                 <td>{{ $invoice->created_at }}</td>
                 <td>

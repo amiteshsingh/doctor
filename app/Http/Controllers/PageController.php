@@ -292,7 +292,14 @@ class PageController extends Controller
                 ->where('doctor_id', $id)->exists();
         }
 
-        return view('page.doctor-profile', ['doctor' => $doctor, 'isOnlineBooking' => $isOnlineBooking, 'isFavourite' => $isFavourite]);
+        return view('page.doctor-profile', [
+            'doctor'          => $doctor,
+            'isOnlineBooking' => $isOnlineBooking,
+            'isFavourite'     => $isFavourite,
+            'slotStart'       => $invoiceMaster->start_time ?? '10:00',
+            'slotEnd'         => $invoiceMaster->end_time_slot ?? '18:00',
+            'slotDuration'    => $invoiceMaster->duration_time_slot ?? 30,
+        ]);
     }
 
     public function hospital_details(Request $request, $id = null, $name=null)

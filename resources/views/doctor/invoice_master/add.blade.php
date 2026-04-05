@@ -110,6 +110,34 @@
                             </div>
 
                             <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Start Time</label>
+                                <div class="col-md-9">
+                                    <input type="time" name="start_time" class="form-control"
+                                        value="{{ $invoice->start_time ?? '' }}">
+                                    <small class="text-muted">Clinic opening / slot start time</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-3">End Time</label>
+                                <div class="col-md-9">
+                                    <input type="time" name="end_time_slot" class="form-control"
+                                        value="{{ $invoice->end_time_slot ?? '' }}">
+                                    <small class="text-muted">Clinic closing / slot end time</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-3">Slot Duration (minutes)</label>
+                                <div class="col-md-9">
+                                    <input type="number" name="duration_time_slot" class="form-control"
+                                        min="1" placeholder="e.g. 15, 30, 60"
+                                        value="{{ $invoice->duration_time_slot ?? '' }}">
+                                    <small class="text-muted">Each appointment slot duration in minutes</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
                                 <div class="col-lg-12 text-right">
                                     <button type="submit" id="save_invoice" class="btn btn-success">Save</button>
                                     <a href="{{ url('doctor/invoice-master') }}" class="btn btn-secondary">Back</a>
