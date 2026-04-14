@@ -25,13 +25,18 @@ class PrescriptionInvoiceController extends Controller
                 $filter = $request->all();
                 $page = isset($filter['page']) ? $filter['page'] : $page;
 
-                $records = PrescriptionInvoice::with('master')
+                $records = PrescriptionInvoice::with('invoiceMaster.doctor')
+                    ->whereHas('invoiceMaster', function($q) use ($request) {
+                        $q->where('added_by', $request->session()->get('user_id'));
+                    })
                     ->orderBy('id', 'DESC')
                     ->skip(($page - 1) * $page_size)
                     ->take($page_size)
                     ->get();
 
-                $total = PrescriptionInvoice::count();
+                $total = PrescriptionInvoice::whereHas('invoiceMaster', function($q) use ($request) {
+                        $q->where('added_by', $request->session()->get('user_id'));
+                    })->count();
 
                 $content_html = view('doctor.prescription_invoice.list-content')
                     ->with(['res' => $records, 'page' => $page, 'page_size' => $page_size])
@@ -54,13 +59,18 @@ class PrescriptionInvoiceController extends Controller
 
                 return response()->json($result);
             } else {
-                $records = PrescriptionInvoice::with('master')
+                $records = PrescriptionInvoice::with('invoiceMaster.doctor')
+                    ->whereHas('invoiceMaster', function($q) use ($request) {
+                        $q->where('added_by', $request->session()->get('user_id'));
+                    })
                     ->orderBy('id', 'DESC')
                     ->skip(($page - 1) * $page_size)
                     ->take($page_size)
                     ->get();
 
-                $result['total_count'] = PrescriptionInvoice::count();
+                $result['total_count'] = PrescriptionInvoice::whereHas('invoiceMaster', function($q) use ($request) {
+                        $q->where('added_by', $request->session()->get('user_id'));
+                    })->count();
                 $result['page'] = $page;
                 $result['page_size'] = $page_size;
 

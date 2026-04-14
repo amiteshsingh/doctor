@@ -40,6 +40,7 @@
                                 <th>#</th>
                                 <!-- <th>Invoice Master <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="invoice_master_id" data-sort_order="asc"></i></th> -->
                                 <th>Invoice Number <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="invoice_number" data-sort_order="asc"></i></th>
+                                <th>Doctor Name</th>
                                 <th>Patient Name <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="patient_name" data-sort_order="asc"></i></th>
                                 <th>Age <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="age" data-sort_order="asc"></i></th>
                                 <th>Gender <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="gender" data-sort_order="asc"></i></th>
