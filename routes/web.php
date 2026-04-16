@@ -109,6 +109,11 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::put('/blog/update/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'update'])->name('admin.blog.update');
     Route::delete('/blog/delete/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'delete'])->name('admin.blog.delete');
 
+    // Gallery Routes
+    Route::post('/gallery/upload',  [\App\Http\Controllers\Admin\GalleryController::class, 'upload'])->name('gallery.upload');
+    Route::post('/gallery/delete',  [\App\Http\Controllers\Admin\GalleryController::class, 'delete'])->name('gallery.delete');
+    Route::get('/gallery/images',   [\App\Http\Controllers\Admin\GalleryController::class, 'images'])->name('gallery.images');
+
 
 
 
@@ -129,6 +134,11 @@ Route::middleware(['doctor'])->prefix('doctor')->group(function () {
     Route::any('/mydoctor/doctor_location', [DoctorPanelController::class, 'doctorLocation'])->name('doctor.mydoctor.doctor_location');
     Route::post('/mydoctor/doctor_availability', [DoctorPanelController::class, 'doctorAvailability'])->name('doctor.mydoctor.doctor_availability');
     Route::get('/mydoctor/profile/{id}', [DoctorPanelController::class, 'profile'])->name('doctor.mydoctor.profile');
+
+    // Gallery Routes (Doctor Panel)
+    Route::post('/gallery/upload',  [\App\Http\Controllers\Admin\GalleryController::class, 'upload'])->name('doctor.gallery.upload');
+    Route::post('/gallery/delete',  [\App\Http\Controllers\Admin\GalleryController::class, 'delete'])->name('doctor.gallery.delete');
+    Route::get('/gallery/images',   [\App\Http\Controllers\Admin\GalleryController::class, 'images'])->name('doctor.gallery.images');
 
     Route::any('/myhospital', [MyHospitalController::class, 'index'])->name('doctor.myhospital');
     Route::any('/myhospital/add', [MyHospitalController::class, 'add'])->name('doctor.myhospital.add');

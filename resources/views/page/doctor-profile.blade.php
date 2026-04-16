@@ -188,6 +188,12 @@
                         @endforelse
                     </ul>
                 </div>
+
+                <!-- Portfolio Gallery -->
+                <div class="card shadow border-0 rounded-4 p-4 mb-4 bg-white" id="publicGallerySection" style="display:none;">
+                    <h4 class="text-secondary fw-bold border-bottom pb-2">🖼️ Portfolio Gallery</h4>
+                    <div id="publicGalleryGrid" class="row mt-2"></div>
+                </div>
             </div>
         </div>
     @else
@@ -466,6 +472,42 @@ function toggleFavourite() {
         btn.disabled = false;
     })
     .catch(function() { btn.disabled = false; });
+}
+</script>
+
+<script>
+window.addEventListener('load', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '{{ route("doctor.gallery.images") }}?id={{ $doctor->id }}&type=doctor', true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.onload = function() {
+        var grid = document.getElementById('publicGalleryGrid');
+        if (xhr.status === 200) {
+            var res = JSON.parse(xhr.responseText);
+            if (!res.images || res.images.length === 0) {
+                return;
+            }
+            var html = '';
+            res.images.forEach(function(img) {
+                html += '<div class="col-md-3 col-sm-4 col-6 mb-3">' +
+                    '<img src="' + img.url + '" class="img-fluid rounded shadow-sm" ' +
+                    'style="height:130px;width:100%;object-fit:cover;cursor:pointer;" ' +
+                    'onclick="openLightbox(\'' + img.url + '\')">' +
+                    '</div>';
+            });
+            grid.innerHTML = html;
+            document.getElementById('publicGallerySection').style.display = 'block';
+        }
+    };
+    xhr.send();
+});
+
+function openLightbox(url) {
+    var lb = document.createElement('div');
+    lb.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;';
+    lb.innerHTML = '<img src="' + url + '" style="max-width:90%;max-height:90%;border-radius:8px;box-shadow:0 0 30px rgba(0,0,0,0.5);">';
+    lb.onclick = function() { document.body.removeChild(lb); };
+    document.body.appendChild(lb);
 }
 </script>
 

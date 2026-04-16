@@ -30,6 +30,7 @@
                         <li class="nav-item"><a class="nav-link active" href="#basictab1" data-toggle="tab">Hospital Details</a></li>
                         <?php if(isset($hospital->id) && $hospital->id != ''){ ?>
                         <li class="nav-item"><a class="nav-link" href="#basictab2" data-toggle="tab">Hospital Specialization</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#basictab3" data-toggle="tab">Gallery</a></li>
                         <?php } ?>
                     </ul>
 
@@ -181,6 +182,20 @@
                             </form>
                                 
                           </div>
+
+                        @if(isset($hospital->id))
+                        <div class="tab-pane" id="basictab3">
+                            <div class="p-3">
+                                @include('components.gallery-tab', [
+                                    'entityId'    => $hospital->id,
+                                    'entityType'  => 'hospital',
+                                    'uploadRoute' => route('gallery.upload'),
+                                    'deleteRoute' => route('gallery.delete'),
+                                    'imagesRoute' => route('gallery.images'),
+                                ])
+                            </div>
+                        </div>
+                        @endif
 
                     </div>
                     

@@ -32,6 +32,7 @@
                         <li class="nav-item"><a class="nav-link" href="#basictab2" data-toggle="tab">Doctor's Specialization</a></li>
                         <li class="nav-item"><a class="nav-link" href="#basictab3" data-toggle="tab">Personal Information</a></li>
                         <li class="nav-item"><a class="nav-link" href="#basictab4" data-toggle="tab">Availability</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#basictab5" data-toggle="tab">Gallery</a></li>
                         <?php } ?>
                     </ul>
 
@@ -385,7 +386,19 @@
                             </form>
                         </div>
 
-
+                        @if(isset($doctor->id))
+                        <div class="tab-pane" id="basictab5">
+                            <div class="p-3">
+                                @include('components.gallery-tab', [
+                                    'entityId'    => $doctor->id,
+                                    'entityType'  => 'doctor',
+                                    'uploadRoute' => route('gallery.upload'),
+                                    'deleteRoute' => route('gallery.delete'),
+                                    'imagesRoute' => route('gallery.images'),
+                                ])
+                            </div>
+                        </div>
+                        @endif
 
                     
                     </div>
