@@ -59,9 +59,18 @@ class HospitalController extends Controller
             ->where('approval_status', 1)
             ->findOrFail($id);
 
+        $gallery = \DB::table('hospital_images')
+            ->where('hospital_id', $id)
+            ->get()
+            ->map(fn($img) => [
+                'id'  => $img->id,
+                'url' => asset('uploads/hospital_gallery/' . $img->image),
+            ]);
+
         return response()->json([
-            'status' => 200,
-            'data'   => $hospital
+            'status'  => 200,
+            'data'    => $hospital,
+            'gallery' => $gallery,
         ]);
     }
 }
