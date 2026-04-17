@@ -43,7 +43,7 @@
                         <a href="{{ route('/') }}" class="nav-item nav-link {{ Request::is('/') ? 'active' : '' }}">Home</a>
                         <a href="{{ route('about') }}" class="nav-item nav-link {{ Request::is('about') ? 'active' : '' }}">About</a>
                         <a href="{{ route('doctors') }}" class="nav-item nav-link {{ Request::is('doctors') ? 'active' : '' }}">Doctor</a>
-                        <a href="{{ route('hospitals') }}" class="nav-item nav-link {{ Request::is('hospitals') ? 'active' : '' }}">Hostpital</a>
+                        <a href="{{ route('hospitals') }}" class="nav-item nav-link {{ Request::is('hospitals') ? 'active' : '' }}">hospital</a>
 
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle {{ Request::is('professional.doctors') ? 'active' : '' }}" data-bs-toggle="dropdown">Pages</a>
