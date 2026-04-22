@@ -18,9 +18,7 @@
     })->latest()->take(5)->get();
     $u = Auth::user();
     $dashPic = $u->profile_image
-        ? (app()->environment('local')
-            ? asset('uploads/profile_images/' . $u->profile_image)
-            : asset('storage/uploads/profile_images/' . $u->profile_image))
+        ? asset('storage/upload/profile_images/' . $u->profile_image)
         : asset('admin/assets/img/user.jpg');
 @endphp
 

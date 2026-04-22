@@ -86,9 +86,7 @@
     @php
         $user = Auth::user();
         $headerPic = $user->profile_image
-            ? (app()->environment('local')
-                ? asset('uploads/profile_images/' . $user->profile_image)
-                : asset('storage/uploads/profile_images/' . $user->profile_image))
+            ? asset('storage/upload/profile_images/' . $user->profile_image)
             : asset('admin/assets/img/user.jpg');
     @endphp
     <div class="header-left">
