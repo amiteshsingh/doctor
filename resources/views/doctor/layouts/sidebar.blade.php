@@ -27,6 +27,14 @@
                             </ul>
                         </li>
 
+                        <li class="{{ request()->routeIs('doctor.medicine.*') ? 'active' : '' }}">
+                            <a href="{{ route('doctor.medicine.index') }}"><i class="fa fa-pills"></i> <span>Medicine</span></a>
+                        </li>
+
+                        <li class="{{ request()->routeIs('doctor.staff.*') ? 'active' : '' }}">
+                            <a href="{{ route('doctor.staff.index') }}"><i class="fa fa-users"></i> <span>Staff</span></a>
+                        </li>
+
                         <!-- <li>
                             <a href="patients.html"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
