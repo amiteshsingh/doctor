@@ -16,6 +16,12 @@
     $recent = \App\Models\PrescriptionInvoice::whereHas('invoiceMaster', function($q) {
         $q->where('added_by', Auth::id());
     })->latest()->take(5)->get();
+    $u = Auth::user();
+    $dashPic = $u->profile_image
+        ? (app()->environment('local')
+            ? asset('uploads/profile_images/' . $u->profile_image)
+            : asset('storage/uploads/profile_images/' . $u->profile_image))
+        : asset('admin/assets/img/user.jpg');
 @endphp
 
 <style>
@@ -215,8 +221,7 @@
         <div class="col-lg-4">
             <div class="welcome-card h-100">
                 <div class="d-flex align-items-center mb-3 avatar-wrap">
-                    <img src="{{ asset('storage/upload/doctor/' . (Auth::user()->profile_pic ?? 'default.jpg')) }}"
-                         class="mr-3" alt="Profile">
+                    <img src="{{ $dashPic }}" class="mr-3" alt="{{ Auth::user()->name }}">
                     <div>
                         <h6 class="mb-0 fw-bold">{{ Auth::user()->name }}</h6>
                         <small style="opacity:.7;">{{ Auth::user()->email }}</small>
@@ -290,7 +295,7 @@
         <div class="table-responsive">
             <table class="table table-hover mb-0 dash-table">
                 <thead>
-                    <tr><th>#</th><th>Patient</th><th>Phone</th><th>Date</th><th>Time</th><th>Invoice</th></tr>
+                    <tr><th>#</th><th>Patient</th><th>Phone</th><th>Date</th><th>Time</th><th>Invoice</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                     @forelse($recent as $i => $inv)
@@ -301,9 +306,20 @@
                         <td>{{ $inv->booking_date }}</td>
                         <td>{{ $inv->booking_time }}</td>
                         <td><span class="inv-badge">{{ $inv->invoice_number }}</span></td>
+                        <td style="white-space:nowrap;">
+                            <a href="{{ url('doctor/prescription-invoice/add?id='.$inv->id) }}"
+                               title="Edit" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:#eef2ff;color:#667eea;margin-right:4px;">
+                                <i class="fa fa-pencil" style="font-size:12px;"></i>
+                            </a>
+                            <a href="{{ route('prescription-invoice.pdf', $inv->id) }}"
+                               target="_blank" title="Download PDF"
+                               style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:#fff0f0;color:#e53e3e;">
+                                <i class="fa fa-file-pdf-o" style="font-size:12px;"></i>
+                            </a>
+                        </td>
                     </tr>
                     @empty
-                    <tr><td colspan="6" class="text-center text-muted py-4">No appointments yet.</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted py-4">No appointments yet.</td></tr>
                     @endforelse
                 </tbody>
             </table>

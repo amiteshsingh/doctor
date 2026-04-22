@@ -83,6 +83,14 @@
 <div class="main-wrapper">
 
 <div class="header">
+    @php
+        $user = Auth::user();
+        $headerPic = $user->profile_image
+            ? (app()->environment('local')
+                ? asset('uploads/profile_images/' . $user->profile_image)
+                : asset('storage/uploads/profile_images/' . $user->profile_image))
+            : asset('admin/assets/img/user.jpg');
+    @endphp
     <div class="header-left">
         <a href="{{ route('doctor.dashboard') }}" class="logo">
             <img src="{{ asset('admin/assets/img/logo.png') }}" width="35" height="35" alt=""> <span>RogiSewa</span>
@@ -169,7 +177,7 @@
         <li class="nav-item dropdown has-arrow">
             <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
                 <span class="user-img">
-                    <img class="rounded-circle" src="{{ asset('admin/assets/img/user.jpg') }}" width="24" alt="Admin">
+                    <img class="rounded-circle" src="{{ $headerPic }}" width="24" alt="{{ $user->name }}">
                     <span class="status online"></span>
                 </span>
                 <span>{{ Auth::user()->name }}</span>
