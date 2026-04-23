@@ -65,7 +65,50 @@ class User extends Authenticatable
         return $this->role && $this->role->role === 'doctor';
     }
 
-        public static function getResult($page = 1, $page_size = 10, $filter = []){
+        public static function getUserResult($page = 1, $page_size = 10, $filter = []){
+        $offset = ($page - 1) * $page_size;
+        $query = DB::table('users')
+            ->leftJoin('user_roles', 'users.id', '=', 'user_roles.user_id')
+            ->select('users.*', 'user_roles.role')
+            ->where(function($q){
+                $q->where('user_roles.role', 'doctor')->orWhereNull('user_roles.role');
+            })
+            ->offset($offset)->limit($page_size);
+
+        if (!empty($filter['sortBy']) && !empty($filter['orderBy'])) {
+            $query->orderBy($filter['sortBy'], $filter['orderBy']);
+        } else {
+            $query->orderBy('users.id', 'desc');
+        }
+        if (!empty($filter['search'])) {
+            $s = $filter['search'];
+            $query->where(function($q) use ($s) {
+                $q->where('users.name', 'LIKE', "%$s%")
+                  ->orWhere('users.phone_no', 'LIKE', "%$s%")
+                  ->orWhere('users.email', 'LIKE', "%$s%");
+            });
+        }
+        return $query->get()->toArray();
+    }
+
+    public static function getUserTotalResult($filter = []){
+        $query = DB::table('users')
+            ->leftJoin('user_roles', 'users.id', '=', 'user_roles.user_id')
+            ->where(function($q){
+                $q->where('user_roles.role', 'doctor')->orWhereNull('user_roles.role');
+            });
+        if (!empty($filter['search'])) {
+            $s = $filter['search'];
+            $query->where(function($q) use ($s) {
+                $q->where('users.name', 'LIKE', "%$s%")
+                  ->orWhere('users.phone_no', 'LIKE', "%$s%")
+                  ->orWhere('users.email', 'LIKE', "%$s%");
+            });
+        }
+        return $query->count();
+    }
+
+    public static function getResult($page = 1, $page_size = 10, $filter = []){
         $offset = ($page - 1) * $page_size;
         $query = DB::table('users')
                 ->join('user_roles', 'users.id', '=', 'user_roles.user_id')

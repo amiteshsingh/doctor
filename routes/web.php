@@ -100,6 +100,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::post('/doctor/doctor_availability', [DoctorController::class, 'doctorAvailability'])->name('admin.doctor_availability');
 
     Route::any('/user', [UserController::class, 'index'])->name('admin.user');
+    Route::any('/user/add', [UserController::class, 'add'])->name('admin.user.add');
+    Route::get('/user/view/{id}', [UserController::class, 'view'])->name('admin.user.view');
+    Route::any('/user/delete/{id}', [UserController::class, 'delete'])->name('admin.user.delete');
 
     // Blog Routes
     Route::get('/blog', [\App\Http\Controllers\Admin\BlogController::class, 'index'])->name('admin.blog.index');
