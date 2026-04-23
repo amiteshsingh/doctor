@@ -2,11 +2,12 @@
 
 @section('content')
 
+
 @php
     $startYear = $doctor->experience ?? null;
     $expYears  = $startYear ? (date('Y') - $startYear) : null;
     $profilePic = isset($doctor->profile_pic) && $doctor->profile_pic
-        ? asset('uploads/doctor/' . $doctor->profile_pic)
+        ? asset('storage/upload/doctor/' . $doctor->profile_pic)
         : asset('admin/assets/img/user.jpg');
     $specs = $specializations->pluck('specialization_name')->join(', ') ?: 'N/A';
     $langs = $languages->pluck('language_name')->join(', ') ?: 'N/A';
