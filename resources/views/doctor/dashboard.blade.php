@@ -20,6 +20,15 @@
     $dashPic = $u->profile_image
         ? asset('storage/upload/profile_images/' . $u->profile_image)
         : asset('admin/assets/img/user.jpg');
+
+    $today       = \Carbon\Carbon::today();
+    $memStatus   = 'none';
+    $memExpired  = false;
+    if ($membership) {
+        $memEnd     = \Carbon\Carbon::parse($membership->membership_subscription_end_date);
+        $memStatus  = $memEnd->gte($today) ? 'active' : 'expired';
+        $memExpired = $memStatus === 'expired';
+    }
 @endphp
 
 <style>
@@ -212,6 +221,72 @@
         </div>
     </div>
 
+    <!-- Membership Status Card -->
+    @if($memStatus === 'none' || $memExpired)
+    <div class="row mb-3">
+        <div class="col-12">
+            <div style="
+                background:linear-gradient(135deg,#fff8e6,#fffbf0);
+                border:2px solid #fde68a; border-radius:16px;
+                padding:18px 24px; display:flex; align-items:center;
+                gap:16px; flex-wrap:wrap;
+                animation:fadeInUp .5s ease .4s both; opacity:0;
+            ">
+                <div style="font-size:36px;">{{ $memExpired ? '⚠️' : '🔒' }}</div>
+                <div style="flex:1;">
+                    <div style="font-size:15px;font-weight:700;color:#1a1a2e;">
+                        {{ $memExpired ? 'Membership Expired!' : 'No Active Membership' }}
+                    </div>
+                    <div style="font-size:13px;color:#666;margin-top:2px;">
+                        {{ $memExpired
+                            ? 'Your membership expired on ' . \Carbon\Carbon::parse($membership->membership_subscription_end_date)->format('d M Y') . '. Please renew to continue.'
+                            : 'You have not purchased a membership yet. Get listed on RogiSewa!' }}
+                    </div>
+                </div>
+                <button data-toggle="modal" data-target="#noteModal"
+                    style="background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#fff;border:none;
+                           border-radius:10px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
+                    <i class="fa fa-star mr-1"></i> Get Membership
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($memStatus === 'active')
+    <div class="row mb-3">
+        <div class="col-12">
+            <div style="
+                background:linear-gradient(135deg,#e6fff5,#f0fff8);
+                border:2px solid #b3f0d8; border-radius:16px;
+                padding:18px 24px; display:flex; align-items:center;
+                gap:16px; flex-wrap:wrap;
+                animation:fadeInUp .5s ease .4s both; opacity:0;
+            ">
+                <div style="font-size:36px;">✅</div>
+                <div style="flex:1;">
+                    <div style="font-size:15px;font-weight:700;color:#1a1a2e;">Active Membership</div>
+                    <div style="font-size:13px;color:#555;margin-top:2px;">
+                        <strong style="color:#00b074;">₹{{ number_format($membership->membership_amount, 2) }}</strong>
+                        &nbsp;|&nbsp;
+                        <i class="fa fa-calendar"></i>
+                        {{ \Carbon\Carbon::parse($membership->membership_subscription_date)->format('d M Y') }}
+                        →
+                        {{ \Carbon\Carbon::parse($membership->membership_subscription_end_date)->format('d M Y') }}
+                        &nbsp;|&nbsp;
+                        <strong style="color:#00b074;">
+                            {{ \Carbon\Carbon::today()->diffInDays(\Carbon\Carbon::parse($membership->membership_subscription_end_date)) }} days left
+                        </strong>
+                    </div>
+                </div>
+                <span style="background:#00b074;color:#fff;border-radius:20px;padding:5px 16px;font-size:12px;font-weight:700;">
+                    Active
+                </span>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Middle Row -->
     <div class="row mb-4" style="row-gap:16px;">
 
@@ -329,22 +404,89 @@
 
 <!-- Note Modal -->
 <div class="modal fade" id="noteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 rounded-4 shadow">
             <div class="modal-header" style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:16px 16px 0 0;">
-                <h5 class="modal-title text-white"><i class="fa fa-bell mr-2"></i>Important Note</h5>
+                <h5 class="modal-title text-white">
+                    <i class="fa fa-{{ $memStatus === 'active' ? 'check-circle' : 'star' }} mr-2"></i>
+                    {{ $memStatus === 'active' ? 'Important Note' : 'Get Membership' }}
+                </h5>
                 <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
             </div>
-            <div class="modal-body">
-                <p><strong>✅ English:</strong><br>
-                    If you want to get a doctor's or hospital's profile approved, edit it and copy the URL, then send it via email — rogisewa25@gmail.com
-                </p>
-                <p class="mb-0"><strong>✅ Hindi:</strong><br>
-                    अगर आप डॉक्टर या अस्पताल का प्रोफ़ाइल अप्रूव कराना चाहते हैं, तो उसे एडिट कीजिए और URL कॉपी करके मेल कर दीजिए — rogisewa25@gmail.com
-                </p>
+            <div class="modal-body p-4">
+
+                @if($memStatus === 'active')
+                    {{-- Already has membership --}}
+                    <div style="background:#e6fff5;border:1.5px solid #b3f0d8;border-radius:12px;padding:16px 20px;margin-bottom:16px;">
+                        <div style="font-size:15px;font-weight:700;color:#00b074;">✅ Your Membership is Active</div>
+                        <div style="font-size:13px;color:#555;margin-top:6px;">
+                            <strong>Amount:</strong> ₹{{ number_format($membership->membership_amount, 2) }}<br>
+                            <strong>Valid:</strong>
+                            {{ \Carbon\Carbon::parse($membership->membership_subscription_date)->format('d M Y') }}
+                            →
+                            {{ \Carbon\Carbon::parse($membership->membership_subscription_end_date)->format('d M Y') }}<br>
+                            <strong>Days Left:</strong>
+                            {{ \Carbon\Carbon::today()->diffInDays(\Carbon\Carbon::parse($membership->membership_subscription_end_date)) }} days
+                        </div>
+                    </div>
+                    <p><strong>✅ English:</strong><br>
+                        If you want to get a doctor's or hospital's profile approved, edit it and copy the URL, then send it via email — rogisewa25@gmail.com
+                    </p>
+                    <p class="mb-0"><strong>✅ Hindi:</strong><br>
+                        अगर आप डॉक्टर या अस्पताल का प्रोफ़ाइल अप्रूव कराना चाहते हैं, तो उसे एडिट कीजिए और URL कॉपी करके मेल कर दीजिए — rogisewa25@gmail.com
+                    </p>
+
+                @else
+                    {{-- No membership / expired --}}
+                    @if($memExpired)
+                    <div style="background:#fff8e6;border:1.5px solid #fde68a;border-radius:12px;padding:14px 18px;margin-bottom:20px;">
+                        <strong style="color:#f59e0b;">⚠️ Your membership expired on {{ \Carbon\Carbon::parse($membership->membership_subscription_end_date)->format('d M Y') }}.</strong><br>
+                        <span style="font-size:13px;color:#666;">Please renew to keep your profile active on RogiSewa.</span>
+                    </div>
+                    @endif
+
+                    <h6 style="font-weight:700;color:#1a1a2e;margin-bottom:16px;">🌟 Membership Plan</h6>
+
+                    <div style="border:2px solid #00b074;border-radius:14px;padding:24px;text-align:center;background:linear-gradient(135deg,#f0fff8,#e6fff5);">
+                        <div style="font-size:13px;font-weight:700;color:#00b074;text-transform:uppercase;letter-spacing:1px;">Annual Plan</div>
+                        <div style="font-size:42px;font-weight:800;color:#1a1a2e;margin:10px 0 4px;">₹1,000</div>
+                        <div style="font-size:12px;color:#888;margin-bottom:18px;">per year</div>
+                        <ul style="list-style:none;padding:0;margin:0 0 20px;font-size:13px;color:#444;text-align:left;">
+                            <li style="padding:6px 0;border-bottom:1px solid #d0f0e0;">✅ Doctor profile listing</li>
+                            <li style="padding:6px 0;border-bottom:1px solid #d0f0e0;">✅ Hospital profile listing</li>
+                            <li style="padding:6px 0;border-bottom:1px solid #d0f0e0;">✅ Prescription invoices</li>
+                            <li style="padding:6px 0;border-bottom:1px solid #d0f0e0;">✅ Priority profile approval</li>
+                            <li style="padding:6px 0;">✅ Support via call & email</li>
+                        </ul>
+                        <a href="https://wa.me/919650657691?text=Hi, I want to buy Annual Membership Plan ₹1000"
+                           target="_blank"
+                           style="display:block;background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border-radius:10px;padding:11px;font-weight:700;font-size:13px;text-decoration:none;">
+                            <i class="fa fa-whatsapp mr-1"></i> Buy Now — WhatsApp
+                        </a>
+                    </div>
+
+                    <div style="background:#f8fbff;border-radius:10px;padding:14px 16px;margin-top:18px;font-size:13px;color:#555;">
+                        <i class="fa fa-info-circle" style="color:#0a6ebd;"></i>
+                        <strong>How to buy?</strong> Call/WhatsApp
+                        <a href="tel:+919650657691" style="color:#00b074;font-weight:700;"><i class="fa fa-phone"></i> +91 9650657691</a>
+                        &nbsp;or email
+                        <a href="mailto:rogisewa25@gmail.com">rogisewa25@gmail.com</a>
+                        — We will activate your membership within 24 hours.
+                    </div>
+                @endif
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                @if($memStatus !== 'active')
+                <a href="https://wa.me/919650657691?text=Hi, I want to buy Membership Plan"
+                   target="_blank" class="btn btn-success" style="font-weight:700;">
+                    <i class="fa fa-whatsapp mr-1"></i> +91 9650657691
+                </a>
+                <a href="mailto:rogisewa25@gmail.com?subject=Membership Enquiry"
+                   class="btn btn-warning" style="font-weight:700;">
+                    <i class="fa fa-envelope mr-1"></i> Email Us
+                </a>
+                @endif
             </div>
         </div>
     </div>

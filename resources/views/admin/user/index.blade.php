@@ -39,13 +39,11 @@
                                 <th>Name
                                     <i class="fas ajaxSorting fa-sort" data-type="user" data-sort_by="name" data-sort_order="asc"></i>
                                 </th>
-                                <th>Phone
-                                    <i class="fas ajaxSorting fa-sort" data-type="user" data-sort_by="phone_no" data-sort_order="asc"></i>
-                                </th>
-                                <th>Email
-                                    <i class="fas ajaxSorting fa-sort" data-type="user" data-sort_by="email" data-sort_order="asc"></i>
-                                </th>
-                                <th>Gender</th>
+                                <th>Email</th>
+                                <th>Membership</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Updated</th>
                                 <th class="text-right">Actions</th>
                             </tr>
                         </thead>

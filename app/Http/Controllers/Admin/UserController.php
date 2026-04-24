@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserRole;
+use App\Models\UserDoctorRoleMembership;
 use DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -110,17 +111,52 @@ class UserController extends Controller
         }
 
         $user = (object)[];
+        $membership = null;
         if (!empty($data['id'])) {
             $user = User::find($data['id']);
+            $membership = UserDoctorRoleMembership::where('user_id', $data['id'])->first();
         }
-        return view('admin.user.add', compact('user'));
+        return view('admin.user.add', compact('user', 'membership'));
+    }
+
+    public function membership(Request $request)
+    {
+        $data = $request->all();
+
+        if ($request->isMethod('post')) {
+            try {
+                $validator = \Validator::make($data, [
+                    'user_id'                          => 'required|integer|exists:users,id',
+                    'membership_amount'                => 'required|numeric|min:0',
+                    'membership_subscription_date'     => 'required|date',
+                    'membership_subscription_end_date' => 'required|date|after_or_equal:membership_subscription_date',
+                ]);
+                if ($validator->fails()) {
+                    return response()->json(['status' => 422, 'msg' => $validator->errors()->first()]);
+                }
+
+                UserDoctorRoleMembership::updateOrCreate(
+                    ['user_id' => $data['user_id']],
+                    [
+                        'membership_amount'                => $data['membership_amount'],
+                        'membership_subscription_date'     => $data['membership_subscription_date'],
+                        'membership_subscription_end_date' => $data['membership_subscription_end_date'],
+                    ]
+                );
+
+                return response()->json(['status' => 200, 'msg' => 'Membership saved successfully.']);
+            } catch (\Exception $e) {
+                return response()->json(['status' => 500, 'msg' => $e->getMessage()]);
+            }
+        }
     }
 
     public function view($id)
     {
         $user = User::find($id);
         if (!$user) return redirect()->route('admin.user')->with('msg', 'User not found.');
-        return view('admin.user.view', compact('user'));
+        $membership = UserDoctorRoleMembership::where('user_id', $id)->first();
+        return view('admin.user.view', compact('user', 'membership'));
     }
 
     public function delete(Request $request, $id)

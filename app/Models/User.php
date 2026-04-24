@@ -69,7 +69,14 @@ class User extends Authenticatable
         $offset = ($page - 1) * $page_size;
         $query = DB::table('users')
             ->leftJoin('user_roles', 'users.id', '=', 'user_roles.user_id')
-            ->select('users.*', 'user_roles.role')
+            ->leftJoin('user_doctor_role_membership', 'users.id', '=', 'user_doctor_role_membership.user_id')
+            ->select(
+                'users.*',
+                'user_roles.role',
+                'user_doctor_role_membership.membership_amount',
+                'user_doctor_role_membership.membership_subscription_date',
+                'user_doctor_role_membership.membership_subscription_end_date'
+            )
             ->where(function($q){
                 $q->where('user_roles.role', 'doctor')->orWhereNull('user_roles.role');
             })

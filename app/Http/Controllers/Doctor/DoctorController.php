@@ -25,8 +25,10 @@ class DoctorController extends Controller
 		if (!$user || !$userRole || $userRole->role !== 'doctor') {
 			return redirect('/');
 		}
+
+		$membership = \App\Models\UserDoctorRoleMembership::where('user_id', $user->id)->first();
 		
-		return view('doctor.dashboard');
+		return view('doctor.dashboard', compact('membership'));
 	}
 
     public function index(Request $request){
