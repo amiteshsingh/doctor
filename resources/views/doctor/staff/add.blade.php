@@ -66,17 +66,31 @@
 </div>
 
 <script>
-$('#staff_form').on('submit', function(e) {
-    e.preventDefault();
-    $.ajax({
-        url: '{{ route('doctor.staff.add') }}',
-        type: 'POST',
-        data: $(this).serialize(),
-        success: function(res) {
-            $('#form_msg').html('<div class="alert alert-' + (res.status == 200 ? 'success' : 'danger') + '">' + res.msg + '</div>');
-            if (res.status == 200) setTimeout(() => window.location = '{{ route('doctor.staff.index') }}', 1000);
-        }
+var interval = setInterval(function () {
+    if (typeof $ === 'undefined') return;
+    clearInterval(interval);
+    $('#staff_form').off('submit').on('submit', function (e) {
+        e.preventDefault();
+        var btn = $(this).find('button[type=submit]');
+        btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+        $('#form_msg').html('');
+        $.ajax({
+            url: '{{ route("doctor.staff.add") }}',
+            type: 'POST',
+            data: $(this).serialize(),
+            dataType: 'json',
+            success: function (res) {
+                btn.prop('disabled', false).html('Save');
+                $('#form_msg').html('<div class="alert alert-' + (res.status == 200 ? 'success' : 'danger') + '">' + res.msg + '</div>');
+                if (res.status == 200) setTimeout(function () { window.location = '{{ route("doctor.staff.index") }}'; }, 1000);
+            },
+            error: function (xhr) {
+                btn.prop('disabled', false).html('Save');
+                var msg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Something went wrong.';
+                $('#form_msg').html('<div class="alert alert-danger">' + msg + '</div>');
+            }
+        });
     });
-});
+}, 100);
 </script>
 @endsection

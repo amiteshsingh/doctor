@@ -5,6 +5,7 @@
         <div class="row mb-3">
             <div class="col-sm-8"><h4 class="page-title">Staff Management</h4></div>
             <div class="col-sm-4 text-right">
+                <a href="{{ route('doctor.staff.attendance') }}" class="btn btn-success btn-rounded mr-1"><i class="fa fa-calendar-check-o"></i> Attendance</a>
                 <a href="{{ route('doctor.staff.add') }}" class="btn btn-primary btn-rounded"><i class="fa fa-plus"></i> Add Staff</a>
             </div>
         </div>

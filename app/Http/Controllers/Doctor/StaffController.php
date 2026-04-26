@@ -21,11 +21,14 @@ class StaffController extends Controller
 
     public function add(Request $request)
     {
-        if ($request->isMethod('post') && $request->ajax()) {
-            $request->validate([
+        if ($request->isMethod('post')) {
+            $validator = \Validator::make($request->all(), [
                 'name'   => 'required|string|max:255',
                 'status' => 'required',
             ]);
+            if ($validator->fails()) {
+                return response()->json(['status' => 422, 'msg' => $validator->errors()->first()]);
+            }
 
             $data = [
                 'added_by'     => Auth::id(),

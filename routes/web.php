@@ -153,6 +153,9 @@ Route::middleware(['doctor'])->prefix('doctor')->group(function () {
     Route::get('/staff',             [\App\Http\Controllers\Doctor\StaffController::class, 'index'])->name('doctor.staff.index');
     Route::any('/staff/add',         [\App\Http\Controllers\Doctor\StaffController::class, 'add'])->name('doctor.staff.add');
     Route::get('/staff/delete/{id}', [\App\Http\Controllers\Doctor\StaffController::class, 'delete'])->name('doctor.staff.delete');
+    Route::get('/staff/attendance',        [\App\Http\Controllers\Doctor\StaffAttendanceController::class, 'index'])->name('doctor.staff.attendance');
+    Route::post('/staff/attendance/save',  [\App\Http\Controllers\Doctor\StaffAttendanceController::class, 'save'])->name('doctor.staff.attendance.save');
+    Route::get('/staff/attendance/report', [\App\Http\Controllers\Doctor\StaffAttendanceController::class, 'report'])->name('doctor.staff.attendance.report');
 
     Route::any('/myhospital', [MyHospitalController::class, 'index'])->name('doctor.myhospital');
     Route::any('/myhospital/add', [MyHospitalController::class, 'add'])->name('doctor.myhospital.add');
