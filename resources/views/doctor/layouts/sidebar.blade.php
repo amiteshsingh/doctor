@@ -35,6 +35,10 @@
                             <a href="{{ route('doctor.staff.index') }}"><i class="fa fa-users"></i> <span>Staff</span></a>
                         </li>
 
+                        <li class="{{ request()->routeIs('doctor.staff.attendance') || request()->routeIs('doctor.staff.attendance.*') ? 'active' : '' }}">
+                            <a href="{{ route('doctor.staff.attendance') }}"><i class="fa fa-calendar-check-o"></i> <span>Attendance</span></a>
+                        </li>
+
                         <!-- <li>
                             <a href="patients.html"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>

@@ -338,16 +338,19 @@
                 <h6 class="fw-bold mb-3" style="color:#667eea;"><i class="fa fa-bolt mr-2"></i>Quick Actions</h6>
                 <div class="row" style="row-gap:12px;">
                     @foreach([
-                        ['url'=>'doctor/mydoctor/add',          'icon'=>'fa-user-plus',      'label'=>'Add Doctor',     'bg'=>'linear-gradient(135deg,#667eea,#764ba2)', 'delay'=>'.05s'],
-                        ['url'=>'doctor/myhospital/add',         'icon'=>'fa-plus-square',    'label'=>'Add Hospital',   'bg'=>'linear-gradient(135deg,#f093fb,#f5576c)', 'delay'=>'.10s'],
-                        ['url'=>'doctor/prescription-invoice/add','icon'=>'fa-file-text',     'label'=>'New Invoice',    'bg'=>'linear-gradient(135deg,#4facfe,#00f2fe)', 'delay'=>'.15s'],
-                        ['url'=>'doctor/mydoctor',               'icon'=>'fa-list',           'label'=>'My Doctors',     'bg'=>'linear-gradient(135deg,#43e97b,#38f9d7)', 'delay'=>'.20s'],
-                        ['url'=>'doctor/prescription-invoice',   'icon'=>'fa-calendar',       'label'=>'Appointments',   'bg'=>'linear-gradient(135deg,#fa709a,#fee140)', 'delay'=>'.25s'],
-                        ['url'=>'doctor/medicine',               'icon'=>'fa-medkit',         'label'=>'Medicines',      'bg'=>'linear-gradient(135deg,#f7971e,#ffd200)', 'delay'=>'.30s'],
-                        ['url'=>'doctor/staff',                  'icon'=>'fa-users',          'label'=>'Staff',          'bg'=>'linear-gradient(135deg,#a18cd1,#fbc2eb)', 'delay'=>'.35s'],
-                        ['url'=>'doctor/edit-profile',           'icon'=>'fa-user-circle',    'label'=>'My Profile',     'bg'=>'linear-gradient(135deg,#0f2027,#203a43,#2c5364)', 'delay'=>'.40s'],
+                        ['url'=>'doctor/mydoctor/add',                'icon'=>'fa-user-plus',         'label'=>'Add Doctor',        'bg'=>'linear-gradient(135deg,#667eea,#764ba2)', 'delay'=>'.05s'],
+                        ['url'=>'doctor/myhospital/add',              'icon'=>'fa-plus-square',       'label'=>'Add Hospital',      'bg'=>'linear-gradient(135deg,#f093fb,#f5576c)', 'delay'=>'.10s'],
+                        ['url'=>'doctor/prescription-invoice/add',    'icon'=>'fa-file-text',         'label'=>'New Invoice',       'bg'=>'linear-gradient(135deg,#4facfe,#00f2fe)', 'delay'=>'.15s'],
+                        ['url'=>'doctor/mydoctor',                    'icon'=>'fa-list',              'label'=>'My Doctors',        'bg'=>'linear-gradient(135deg,#43e97b,#38f9d7)', 'delay'=>'.20s'],
+                        ['url'=>'doctor/prescription-invoice',        'icon'=>'fa-calendar',          'label'=>'Appointments',      'bg'=>'linear-gradient(135deg,#fa709a,#fee140)', 'delay'=>'.25s'],
+                        ['url'=>'doctor/medicine',                    'icon'=>'fa-medkit',            'label'=>'Medicines',         'bg'=>'linear-gradient(135deg,#f7971e,#ffd200)', 'delay'=>'.30s'],
+                        ['url'=>'doctor/staff',                       'icon'=>'fa-users',             'label'=>'Staff',             'bg'=>'linear-gradient(135deg,#a18cd1,#fbc2eb)', 'delay'=>'.35s'],
+                        ['url'=>'doctor/staff/attendance',            'icon'=>'fa-calendar-check-o',  'label'=>'Attendance',        'bg'=>'linear-gradient(135deg,#0a6ebd,#00b074)',  'delay'=>'.40s'],
+                        ['url'=>'doctor/staff/attendance/report',     'icon'=>'fa-bar-chart',         'label'=>'Att. Report',       'bg'=>'linear-gradient(135deg,#11998e,#38ef7d)',  'delay'=>'.45s'],
+                        ['url'=>'doctor/invoice-master',              'icon'=>'fa-cog',               'label'=>'Invoice Settings',  'bg'=>'linear-gradient(135deg,#373b44,#4286f4)',  'delay'=>'.50s'],
+                        ['url'=>'doctor/edit-profile',                'icon'=>'fa-user-circle',       'label'=>'My Profile',        'bg'=>'linear-gradient(135deg,#0f2027,#203a43,#2c5364)', 'delay'=>'.55s'],
                     ] as $ql)
-                    <div class="col-3 col-sm-3">
+                    <div class="col-2 col-sm-2">
                         <a href="{{ url($ql['url']) }}" class="ql-card" style="animation-delay:{{ $ql['delay'] }};">
                             <div class="ql-icon" style="background:{{ $ql['bg'] }};"><i class="fa {{ $ql['icon'] }}"></i></div>
                             <small class="fw-bold" style="font-size:11px;">{{ $ql['label'] }}</small>
