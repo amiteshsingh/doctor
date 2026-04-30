@@ -59,6 +59,10 @@ class UserAuthController extends Controller
             return back()->with('error', 'Invalid email or password.');
         }
 
+        if ($user->is_delete == 1) {
+            return back()->with('error', 'This account has been deleted. Please contact support.');
+        }
+
         if ($user->role?->role !== 'user') {
             return back()->with('error', 'Unauthorized access.');
         }

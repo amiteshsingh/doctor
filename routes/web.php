@@ -22,6 +22,9 @@ use App\Http\Controllers\User\FavouriteController;
 //     return view('welcome');
 // });
 
+Route::get('delete-user', [\App\Http\Controllers\DeleteUserController::class, 'show'])->name('delete.user');
+Route::post('delete-user', [\App\Http\Controllers\DeleteUserController::class, 'delete'])->name('delete.user.post');
+
 Route::get('/', [PageController::class, 'index'])->name('/');
 Route::get('about', [PageController::class, 'about'])->name('about');
 Route::get('doctors', [PageController::class, 'doctor'])->name('doctors');
