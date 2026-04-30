@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/logo.png') }}">
-    <title>RogiSewa — Login</title>
+    <title>RogiSewa — Doctor Login</title>
     <link rel="stylesheet" href="{{ asset('admin/assets/css/font-awesome.min.css') }}">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -218,20 +218,20 @@
         <div class="brand">
             <img src="{{ asset('img/logo.png') }}" alt="RogiSewa">
             <h1>RogiSewa</h1>
-            <p>Your trusted platform to find doctors, hospitals and book appointments easily.</p>
+            <p>Doctor & Admin portal — manage your hospitals, prescriptions, staff and more.</p>
         </div>
         <div class="features">
             <div class="feat-item">
-                <div class="feat-icon" style="background:rgba(102,126,234,.25);">🏥</div>
-                <span>Find verified doctors & hospitals near you</span>
+                <div class="feat-icon" style="background:rgba(102,126,234,.25);">🩺</div>
+                <span>Manage your doctor & hospital profiles</span>
             </div>
             <div class="feat-item">
                 <div class="feat-icon" style="background:rgba(0,176,116,.2);">📋</div>
-                <span>Manage prescriptions & invoices easily</span>
+                <span>Create prescriptions & invoices digitally</span>
             </div>
             <div class="feat-item">
-                <div class="feat-icon" style="background:rgba(251,191,36,.2);">⭐</div>
-                <span>Save your favourite doctors & clinics</span>
+                <div class="feat-icon" style="background:rgba(251,191,36,.2);">👥</div>
+                <span>Track staff attendance & manage medicines</span>
             </div>
         </div>
     </div>
@@ -241,8 +241,8 @@
         <div class="login-card">
 
             <div class="card-head">
-                <h2>Welcome Back 👋</h2>
-                <p>Sign in to your RogiSewa account</p>
+                <h2>Doctor Login 🩺</h2>
+                <p>Sign in to your RogiSewa doctor panel</p>
             </div>
 
             {{-- Error --}}
@@ -306,15 +306,15 @@
             <div class="divider">or</div>
 
             <div class="reg-link">
-                Don't have an account? <a href="{{ url('register') }}">Register Now</a>
+                New doctor? <a href="{{ url('register') }}">Register Here</a>
             </div>
 
             <div class="other-logins">
                 <a href="{{ url('user/login') }}" class="other-btn">
-                    👤 User Login
+                    👤 Patient Login
                 </a>
-                <a href="{{ url('choose-login') }}" class="other-btn">
-                    🏥 Doctor / Admin
+                <a href="{{ url('/') }}" class="other-btn">
+                    🏠 Back to Home
                 </a>
             </div>
 
