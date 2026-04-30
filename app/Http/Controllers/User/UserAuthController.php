@@ -133,7 +133,7 @@ class UserAuthController extends Controller
         $bookings = PrescriptionInvoice::with('invoiceMaster.doctor')
             ->where('user_id', Auth::id())
             ->latest()
-            ->get();
+            ->paginate(10);
 
         return view('user.bookings', compact('bookings'));
     }

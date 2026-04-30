@@ -42,7 +42,53 @@
             @endforelse
 
             <div class="mt-4">
-                {{ $blogs->links() }}
+                @if($blogs->hasPages())
+                <style>
+                .blog-pagi { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:16px 0; }
+                .blog-pagi .pagi-info { font-size:13px; color:#888; }
+                .blog-pagi .pagi-links { display:flex; gap:6px; flex-wrap:wrap; }
+                .blog-pagi .pagi-links a,
+                .blog-pagi .pagi-links span {
+                    display:inline-flex; align-items:center; justify-content:center;
+                    min-width:36px; height:36px; padding:0 10px;
+                    border-radius:9px; font-size:13px; font-weight:600;
+                    text-decoration:none; transition:all .2s;
+                    border:1.5px solid #e2e8f0; color:#555; background:#fff;
+                }
+                .blog-pagi .pagi-links a:hover { background:#f0f7ff; border-color:#009efb; color:#009efb; }
+                .blog-pagi .pagi-links .pagi-active { background:linear-gradient(135deg,#009efb,#00b074); color:#fff; border-color:transparent; box-shadow:0 4px 12px rgba(0,158,251,.3); }
+                .blog-pagi .pagi-links .pagi-disabled { opacity:.4; cursor:not-allowed; pointer-events:none; }
+                </style>
+                <div class="blog-pagi">
+                    <div class="pagi-info">
+                        Showing {{ $blogs->firstItem() }}&ndash;{{ $blogs->lastItem() }} of {{ $blogs->total() }} blogs
+                    </div>
+                    <div class="pagi-links">
+                        {{-- Prev --}}
+                        @if($blogs->onFirstPage())
+                            <span class="pagi-disabled"><i class="fa fa-chevron-left"></i></span>
+                        @else
+                            <a href="{{ $blogs->previousPageUrl() }}"><i class="fa fa-chevron-left"></i></a>
+                        @endif
+
+                        {{-- Page numbers --}}
+                        @foreach($blogs->getUrlRange(1, $blogs->lastPage()) as $page => $url)
+                            @if($page == $blogs->currentPage())
+                                <span class="pagi-active">{{ $page }}</span>
+                            @else
+                                <a href="{{ $url }}">{{ $page }}</a>
+                            @endif
+                        @endforeach
+
+                        {{-- Next --}}
+                        @if($blogs->hasMorePages())
+                            <a href="{{ $blogs->nextPageUrl() }}"><i class="fa fa-chevron-right"></i></a>
+                        @else
+                            <span class="pagi-disabled"><i class="fa fa-chevron-right"></i></span>
+                        @endif
+                    </div>
+                </div>
+                @endif
             </div>
 
         </div>
