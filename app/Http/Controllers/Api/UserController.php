@@ -19,11 +19,21 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
+        $validator = \Validator::make($request->all(), [
             'name'     => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|min:6',
+        ], [
+            'email.unique' => 'This email is already registered. Please use a different email or login.',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 422,
+                'message' => $validator->errors()->first(),
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
 
         $user = User::create([
             'name'      => $request->name,
@@ -57,6 +67,10 @@ class UserController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['status' => 401, 'message' => 'Invalid email or password.'], 401);
+        }
+
+        if ($user->is_delete == 1) {
+            return response()->json(['status' => 403, 'message' => 'This account has been deleted. Please contact support.'], 403);
         }
 
         if ($user->role?->role !== 'user') {
