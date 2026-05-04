@@ -1,6 +1,13 @@
 @extends('admin.layout.app')
 
 @section('content')
+<style>
+@keyframes onlinePulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,176,116,.5); }
+    50%      { box-shadow: 0 0 0 5px rgba(0,176,116,0); }
+}
+</style>
+
 <div class="page-wrapper">
     <div class="content">
         <div class="row">

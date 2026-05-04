@@ -10,8 +10,26 @@ if (isset($res) && count($res) > 0) {
 <tr>
     <td><?= ++$i ?></td>
     <td>
-        <strong><?= htmlspecialchars($user->name) ?></strong><br>
-        <small style="color:#888;"><?= htmlspecialchars($user->phone_no ?? '—') ?></small>
+        <?php
+            $isOnline = !empty($user->last_seen) && (new DateTime($user->last_seen) >= (new DateTime())->modify('-5 minutes'));
+        ?>
+        <div style="display:flex;align-items:center;gap:7px;">
+            <?php if ($isOnline): ?>
+                <span title="Online" style="
+                    width:9px;height:9px;border-radius:50%;flex-shrink:0;
+                    background:#00b074;
+                    box-shadow:0 0 0 2px rgba(0,176,116,.3);
+                    animation:onlinePulse 1.8s infinite;
+                    display:inline-block;
+                "></span>
+            <?php else: ?>
+                <span style="width:9px;height:9px;border-radius:50%;flex-shrink:0;background:#d1d5db;display:inline-block;"></span>
+            <?php endif; ?>
+            <div>
+                <strong><?= htmlspecialchars($user->name) ?></strong><br>
+                <small style="color:#888;"><?= htmlspecialchars($user->phone_no ?? '—') ?></small>
+            </div>
+        </div>
     </td>
     <td style="font-size:13px;"><?= htmlspecialchars($user->email) ?></td>
 

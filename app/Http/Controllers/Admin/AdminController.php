@@ -30,7 +30,31 @@ class AdminController extends Controller
 			return redirect('/');
 		}
 
-		return view('admin.dashboard');
+		$totalDoctors         = DB::table('doctors')->count();
+		$totalHospitals       = DB::table('hospitals')->count();
+		$totalUsers           = DB::table('users')->join('user_roles','users.id','=','user_roles.user_id')->where('user_roles.role','doctor')->count();
+		$totalSpecializations = DB::table('specializations')->count();
+		$recentDoctors        = DB::table('doctors')->orderByDesc('id')->limit(5)->get();
+		$recentUsers          = DB::table('users')->join('user_roles','users.id','=','user_roles.user_id')->where('user_roles.role','doctor')->orderByDesc('users.id')->limit(5)->get();
+		$activeMemberships    = DB::table('user_doctor_role_membership')->where('membership_subscription_end_date','>=',now()->toDateString())->count();
+		$onlineDoctors        = DB::table('users')
+			->join('user_roles','users.id','=','user_roles.user_id')
+			->where('user_roles.role','doctor')
+			->where('users.last_seen','>=',now()->subMinutes(5))
+			->count();
+		$onlineDoctorsList    = DB::table('users')
+			->join('user_roles','users.id','=','user_roles.user_id')
+			->where('user_roles.role','doctor')
+			->where('users.last_seen','>=',now()->subMinutes(5))
+			->select('users.id','users.name','users.email','users.profile_image','users.last_seen')
+			->orderByDesc('users.last_seen')
+			->get();
+
+		return view('admin.dashboard', compact(
+			'totalDoctors','totalHospitals','totalUsers',
+			'totalSpecializations','recentDoctors','recentUsers',
+			'activeMemberships','onlineDoctors','onlineDoctorsList'
+		));
 	}
 
       

@@ -12,13 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //$app->router->aliasMiddleware('admin', \App\Http\Middleware\AdminMiddleware::class);
+        $middleware->append(\App\Http\Middleware\UpdateLastSeen::class);
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'admin'  => \App\Http\Middleware\AdminMiddleware::class,
             'doctor' => \App\Http\Middleware\DoctorMiddleware::class,
-            'user' => \App\Http\Middleware\UserMiddleware::class,
+            'user'   => \App\Http\Middleware\UserMiddleware::class,
         ]);
-        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
