@@ -19,7 +19,7 @@
                             <a href="#"><i class="fa fa-pencil-square-o"></i> <span> Invoice Settings </span> <span class="menu-arrow"></span></a>
                             <ul style="display: {{ request()->routeIs('prescription-invoice.*') || request()->routeIs('invoice-master.*') ? 'block' : 'none' }};">
                                 <li class="{{ request()->routeIs('prescription-invoice.*') ? 'active' : '' }}">
-                                    <a href="{{ route('prescription-invoice.index') }}">पर्चा इनवॉइस/Prescription Invoice</a>
+                                    <a href="{{ route('prescription-invoice.index') }}">Appointments</a>
                                 </li>
                                 <li class="{{ request()->routeIs('invoice-master.*') ? 'active' : '' }}">
                                     <a href="{{ route('invoice-master.index') }}">Invoice Settings</a>
