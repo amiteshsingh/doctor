@@ -452,7 +452,20 @@
 
                     <div style="border:2px solid #00b074;border-radius:14px;padding:24px;text-align:center;background:linear-gradient(135deg,#f0fff8,#e6fff5);">
                         <div style="font-size:13px;font-weight:700;color:#00b074;text-transform:uppercase;letter-spacing:1px;">Annual Plan</div>
-                        <div style="font-size:42px;font-weight:800;color:#1a1a2e;margin:10px 0 4px;">₹1,000</div>
+                        <div style="margin:10px 0 4px;">
+                            <span style="font-size:18px;color:#888;text-decoration:line-through;font-weight:700;">
+                                ₹2,000
+                            </span>
+
+                            <span style="font-size:13px;background:#ff4d4d;color:#fff;padding:4px 10px;border-radius:20px;margin-left:10px;font-weight:700;">
+                                50% OFF
+                            </span>
+
+                            <div style="font-size:42px;font-weight:800;color:#1a1a2e;margin-top:8px;">
+                                ₹1,000
+                            </div>
+                        </div>
+
                         <div style="font-size:12px;color:#888;margin-bottom:18px;">per year</div>
                         <ul style="list-style:none;padding:0;margin:0 0 20px;font-size:13px;color:#444;text-align:left;">
                             <li style="padding:6px 0;border-bottom:1px solid #d0f0e0;">✅ Doctor profile listing</li>
@@ -461,7 +474,7 @@
                             <li style="padding:6px 0;border-bottom:1px solid #d0f0e0;">✅ Priority profile approval</li>
                             <li style="padding:6px 0;">✅ Support via call & email</li>
                         </ul>
-                        <a href="https://wa.me/919650657691?text=Hi, I want to buy Annual Membership Plan ₹1000"
+                        <a href="https://wa.me/919650657691?text=Hi, I want to buy Annual Membership Plan (Original ₹2000, Offer Price ₹1000 - 50% OFF)"
                            target="_blank"
                            style="display:block;background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border-radius:10px;padding:11px;font-weight:700;font-size:13px;text-decoration:none;">
                             <i class="fa fa-whatsapp mr-1"></i> Buy Now — WhatsApp
