@@ -73,7 +73,7 @@ class DoctorController extends Controller
             'educations',
             'languages.language',
             'specializations.specialization',
-            'locations'
+            'locations',
         ])
         ->where('status', 1)
         ->where('approval_status', 1)
@@ -87,10 +87,18 @@ class DoctorController extends Controller
                 'url' => asset('uploads/doctor_gallery/' . $img->image),
             ]);
 
+        $invoice_master = \DB::table('invoice_master')
+            ->select('hospital_clinic_name','consultation_fee', 'start_time',
+             'end_time_slot', 'duration_time_slot','booking_mode','address','phone_no')
+            ->where('doctor_id', $id)
+            ->get();
+            
+
         return response()->json([
             'status' => 200,
             'data'   => $doctor,
             'gallery'=> $gallery,
+            'invoice_master' => $invoice_master,
         ]);
     }
 
