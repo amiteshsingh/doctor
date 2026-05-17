@@ -1,46 +1,94 @@
 @extends('page.layouts.app')
 
-@section('title', 'RogiSewa - Home')
+@section('title', 'RogiSewa - Find Doctors & Hospitals Near You | Book Appointments Online')
 
 @section('content')
 
-<!-- Hero Start -->
+{{-- Schema Markup for SEO --}}
+@verbatim
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalOrganization",
+  "name": "RogiSewa",
+  "url": "https://rogisewa.com",
+  "description": "RogiSewa helps patients find verified doctors and hospitals across India. Search by specialization, city, and book appointments easily.",
+  "areaServed": "India",
+  "serviceType": "Healthcare Discovery Platform"
+}
+</script>
+@endverbatim
+
+<!-- ── HERO ── -->
 <div class="container-fluid bg-primary py-5 mb-5 hero-header">
     <div class="container py-5">
         <div class="row justify-content-start">
             <div class="col-lg-8 text-center text-lg-start">
                 <h5 class="d-inline-block text-white text-uppercase border-bottom border-5"
-                    style="border-color: rgba(256,256,256,.3)!important;">
+                    style="border-color:rgba(256,256,256,.3)!important;">
                     Welcome To RogiSewa
                 </h5>
                 <h1 class="display-1 text-white mb-md-4">
-                    Best Healthcare Solution In Your City
+                    Find Trusted Doctors & Hospitals Near You
                 </h1>
+                <p class="text-white mb-4" style="font-size:16px;opacity:.9;">
+                    Search verified doctors by specialization, compare clinics, and book appointments — all in one place. Serving patients across India.
+                </p>
                 <div class="pt-2">
                     <a href="{{ url('doctors') }}" class="btn btn-light rounded-pill py-md-3 px-md-5 mx-2">
-                        Find Doctor
+                        <i class="fa fa-search me-2"></i> Find Doctor
                     </a>
-                    <a href="{{ url('hospitals') }}" class="btn btn-light rounded-pill py-md-3 px-md-5 mx-2">
-                        Find Hospital
+                    <a href="{{ url('hospitals') }}" class="btn btn-outline-light rounded-pill py-md-3 px-md-5 mx-2">
+                        <i class="fa fa-hospital-o me-2"></i> Find Hospital
                     </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Hero End -->
 
-<!-- Doctors Start -->
+<!-- ── STATS BAR ── -->
+<div class="container mb-5">
+    <div class="row text-center g-4">
+        <div class="col-6 col-md-3">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100">
+                <i class="fa fa-user-md fa-2x text-primary mb-2"></i>
+                <h3 class="fw-bold text-primary mb-0">{{ $totalDoctors }}+</h3>
+                <p class="text-muted mb-0" style="font-size:13px;">Verified Doctors</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100">
+                <i class="fa fa-hospital-o fa-2x text-primary mb-2"></i>
+                <h3 class="fw-bold text-primary mb-0">{{ $totalHospitals }}+</h3>
+                <p class="text-muted mb-0" style="font-size:13px;">Hospitals &amp; Clinics</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100">
+                <i class="fa fa-stethoscope fa-2x text-primary mb-2"></i>
+                <h3 class="fw-bold text-primary mb-0">{{ $totalSpecializations }}+</h3>
+                <p class="text-muted mb-0" style="font-size:13px;">Specializations</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100">
+                <i class="fa fa-users fa-2x text-primary mb-2"></i>
+                <h3 class="fw-bold text-primary mb-0">Free</h3>
+                <p class="text-muted mb-0" style="font-size:13px;">Prescription Invoice</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── DOCTORS CAROUSEL ── -->
 <div class="container-fluid py-5">
     <div class="container">
         <div class="text-center mx-auto mb-5" style="max-width:600px;">
-            <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">
-                Our Doctors
-            </h5>
-            <h2 class="display-7">Qualified Healthcare Professionals</h2>
+            <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Our Doctors</h5>
+            <h2 class="display-7">Meet Our Qualified Healthcare Professionals</h2>
             <p class="text-muted mt-3">
-                RogiSewa connects patients with experienced doctors from various medical specialties,
-                helping them access reliable healthcare services with ease.
+                Browse experienced doctors from various medical specialties. Each profile includes qualifications, location, and specialization details to help you choose the right doctor.
             </p>
         </div>
 
@@ -55,7 +103,8 @@
                             <a href="{{ url('doctor-profile/'.$doctor->id.'/'.Str::slug($practiceName)) }}">
                                 <img class="img-fluid h-100"
                                      src="{{ $doctor->profile_pic ? asset('storage/upload/doctor/'.$doctor->profile_pic) : asset('storage/upload/doctor/user.jpg') }}"
-                                     alt="{{ $practiceName }}" style="object-fit:cover;">
+                                     alt="Dr. {{ $practiceName }} - {{ $doctor->specializations->first()->specialization->name ?? 'Doctor' }} in India"
+                                     style="object-fit:cover;">
                             </a>
                         </div>
                         <div class="col-12 col-sm-7 h-100 d-flex flex-column">
@@ -65,12 +114,13 @@
                                     {{ $doctor->specializations->first()->specialization->name ?? 'General Specialist' }}
                                 </h6>
                                 <p>{{ $doctor->educations->first()->degree ?? 'Experienced Healthcare Professional' }}</p>
-
                                 @php $location = $doctor->locations->first(); @endphp
                                 <p class="text-muted small">
                                     <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                    {{ $location ? $location->city.', '.$location->state : 'Location not available' }}
+                                    {{ $location ? $location->city.', '.$location->state : 'India' }}
                                 </p>
+                                <a href="{{ url('doctor-profile/'.$doctor->id.'/'.Str::slug($practiceName)) }}"
+                                   class="btn btn-primary btn-sm rounded-pill">View Profile</a>
                             </div>
                         </div>
                     </div>
@@ -80,335 +130,244 @@
 
         <div class="text-end mt-3">
             <a href="{{ route('professional.doctors') }}" class="btn btn-light btn-sm">
-                View More <i class="fa fa-arrow-right ms-2"></i>
+                View All Doctors <i class="fa fa-arrow-right ms-2"></i>
             </a>
         </div>
     </div>
 </div>
-<!-- Doctors End -->
 
-<!-- Informational Section -->
-<div class="container-fluid bg-primary py-5">
-    <div class="container py-5">
-        <div class="text-center mx-auto" style="max-width:800px;">
-            <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">
-                Find a Doctor
-            </h5>
-            <h2 class="text-white mb-4">
-                Trusted Healthcare Information & Medical Discovery Platform
-            </h2>
-
-            <p class="text-white">
-                RogiSewa is designed to simplify the process of finding reliable healthcare services.
-                Patients can explore doctors, hospitals, and clinics based on location, specialization,
-                and healthcare needs.
-            </p>
-
-            <p class="text-white">
-                We understand that timely medical care is essential. Our platform ensures that patients
-                can access accurate and structured healthcare information to make informed decisions.
-            </p>
-
-            <p class="text-white">
-                RogiSewa focuses on improving healthcare awareness and accessibility by connecting
-                patients with verified healthcare professionals across India.
-            </p>
-        </div>
-    </div>
-</div>
-
-<!-- Extra Content Section -->
+<!-- ── HOW IT WORKS ── -->
 <div class="container py-5">
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <h3>Why Healthcare Awareness Matters</h3>
-            <p>
-                Healthcare awareness helps individuals recognize symptoms early and seek timely medical
-                attention. Understanding healthcare options enables patients to choose the right doctor
-                or hospital and avoid unnecessary delays in treatment.
-            </p>
-        </div>
-        <div class="col-md-6 mb-4">
-            <h3>How RogiSewa Supports Patients</h3>
-            <p>
-                RogiSewa provides organized healthcare data that helps patients compare doctors and
-                healthcare facilities. Our platform promotes transparency, convenience, and informed
-                healthcare decisions.
-            </p>
-        </div>
+    <div class="text-center mb-5">
+        <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Simple Steps</h5>
+        <h2 class="display-7">How RogiSewa Works</h2>
     </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Our Vision for Better Healthcare Access</h3>
-            <p>
-                Our vision is to create a trusted healthcare discovery ecosystem where patients can
-                easily find medical professionals and healthcare services. RogiSewa aims to reduce
-                healthcare information gaps and improve patient outcomes through awareness and access.
-            </p>
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100">
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;font-size:22px;">
+                    <i class="fa fa-search"></i>
+                </div>
+                <div class="badge bg-primary rounded-pill mb-2">Step 1</div>
+                <h5 class="fw-bold">Search</h5>
+                <p class="text-muted" style="font-size:14px;">Search doctors by name, specialization, or city. Filter results to find the most relevant healthcare professional for your needs.</p>
+            </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <h3>How to Choose the Right Doctor</h3>
-            <p> Choosing the right doctor is one of the most important steps toward better health. Patients should always consider the doctor’s specialization, years of experience, and qualifications before booking an appointment. A doctor who specializes in your specific health concern can provide more accurate diagnosis and effective treatment.
-
-Location and availability are also important factors. Selecting a doctor near your home or workplace helps in easy follow-ups and timely medical care. Patient reviews and ratings can give valuable insight into the doctor’s approach, behavior, and treatment success.
-
-RogiSewa makes this process simple by allowing patients to search and compare doctors based on specialization, location, and experience. Our platform helps patients make confident healthcare decisions without confusion or unnecessary delays.
-            </p>
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100">
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;font-size:22px;">
+                    <i class="fa fa-user-md"></i>
+                </div>
+                <div class="badge bg-primary rounded-pill mb-2">Step 2</div>
+                <h5 class="fw-bold">Compare Profiles</h5>
+                <p class="text-muted" style="font-size:14px;">View detailed doctor profiles including qualifications, experience, clinic location, and available specializations.</p>
+            </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Benefits of Online Doctor Search</h3>
-            <p>
-               Online doctor search platforms have transformed the way patients access healthcare services. Instead of visiting multiple clinics or relying on limited local information, patients can explore a wide range of doctors and hospitals from a single platform.
-
-One of the biggest advantages is time savings. Patients can search, compare, and choose healthcare professionals without long waiting hours. Online platforms also improve transparency by providing verified doctor profiles, clinic details, and healthcare information.
-
-RogiSewa helps patients discover trusted doctors and hospitals across India. By offering structured and reliable healthcare data, we ensure that patients receive the right medical support at the right time.
-            </p>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Healthcare in India – Challenges & Solutions</h3>
-            <p>
-              India’s healthcare system faces several challenges, including lack of awareness, uneven access to medical facilities, and difficulty in finding trusted healthcare professionals. Many patients struggle to identify the right doctor or hospital for their medical needs.
-
-Digital healthcare platforms play a key role in bridging this gap. By organizing healthcare information and improving accessibility, online platforms empower patients to make informed choices. Easy access to healthcare data reduces delays in treatment and improves overall health outcomes.
-
-RogiSewa aims to address these challenges by creating a transparent and reliable healthcare discovery platform. Our goal is to support patients with accurate information and connect them with verified medical professionals across India.
-            </p>
-        </div>
-    </div>
-
-</div>
-
-
-
-
-<!-- ================= SEO + AdSense Support Section ================= -->
-
-<div class="container py-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h3>How RogiSewa Helps Patients Across India</h3>
-            <p>
-                Finding the right healthcare professional can be challenging,
-                especially when patients do not have access to structured and
-                reliable information. RogiSewa simplifies this process by
-                organizing doctor and hospital data in a user-friendly format.
-            </p>
-
-            <p>
-                Patients can explore doctors based on specialization,
-                location, education, and practice details. This structured
-                approach reduces confusion and helps individuals make
-                informed healthcare decisions.
-            </p>
-
-            <p>
-                Our goal is to improve healthcare accessibility and
-                awareness by connecting patients with verified medical
-                professionals across India.
-            </p>
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100">
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;font-size:22px;">
+                    <i class="fa fa-calendar-check-o"></i>
+                </div>
+                <div class="badge bg-primary rounded-pill mb-2">Step 3</div>
+                <h5 class="fw-bold">Book Appointment</h5>
+                <p class="text-muted" style="font-size:14px;">Contact the doctor directly or book an appointment through the platform. Get the care you need without unnecessary delays.</p>
+            </div>
         </div>
     </div>
 </div>
 
-
-<!-- ================= Detailed Healthcare Information ================= -->
-
+<!-- ── WHY ROGISEWA ── -->
 <div class="container-fluid bg-primary py-5">
     <div class="container">
-        <h3 class="mb-4 text-center text-white">Understanding Healthcare Access in India</h3>
-
-        <p class="text-white">
-            India has a diverse healthcare ecosystem that includes government
-            hospitals, private clinics, multi-specialty hospitals, and
-            independent medical practitioners. However, many patients face
-            challenges when trying to identify the right healthcare provider.
-        </p>
-
-        <p class="text-white">
-            Digital healthcare platforms like RogiSewa help bridge this gap
-            by offering centralized access to medical professionals and
-            healthcare facilities. Easy search functionality ensures that
-            patients can quickly find relevant doctors in their city.
-        </p>
-
-        <p class="text-white">
-            Access to reliable healthcare information empowers patients,
-            reduces treatment delays, and promotes better health outcomes.
-        </p>
-    </div>
-</div>
-
-
-<!-- ================= Trust & Transparency Section ================= -->
-
-<div class="container py-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Commitment to Transparency</h3>
-
-            <p>
-                RogiSewa does not provide medical advice or treatment.
-                The information displayed on this platform is for
-                informational purposes only.
-            </p>
-
-            <p>
-                Patients are encouraged to directly consult qualified
-                healthcare professionals for diagnosis and treatment.
-                In case of emergency, please contact your nearest hospital.
-            </p>
-
-            <p>
-                We aim to maintain transparency by displaying structured
-                and organized healthcare data to support informed decision-making.
-            </p>
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">Why Choose Us</h5>
+                <h2 class="text-white mt-3 mb-4">Why Patients Trust RogiSewa</h2>
+                <p class="text-white">
+                    RogiSewa was built to solve a real problem — patients in India often struggle to find the right doctor quickly. We provide a structured, transparent, and easy-to-use platform that puts verified healthcare information at your fingertips.
+                </p>
+                <div class="row g-3 mt-2">
+                    <div class="col-6"><div class="d-flex align-items-center gap-2 text-white"><i class="fa fa-check-circle text-warning"></i><span style="font-size:13.5px;">Verified doctor &amp; hospital profiles</span></div></div>
+                    <div class="col-6"><div class="d-flex align-items-center gap-2 text-white"><i class="fa fa-check-circle text-warning"></i><span style="font-size:13.5px;">Search by specialization &amp; location</span></div></div>
+                    <div class="col-6"><div class="d-flex align-items-center gap-2 text-white"><i class="fa fa-check-circle text-warning"></i><span style="font-size:13.5px;">Free prescription invoice generation</span></div></div>
+                    <div class="col-6"><div class="d-flex align-items-center gap-2 text-white"><i class="fa fa-check-circle text-warning"></i><span style="font-size:13.5px;">Transparent healthcare information</span></div></div>
+                    <div class="col-6"><div class="d-flex align-items-center gap-2 text-white"><i class="fa fa-check-circle text-warning"></i><span style="font-size:13.5px;">No hidden fees or charges</span></div></div>
+                    <div class="col-6"><div class="d-flex align-items-center gap-2 text-white"><i class="fa fa-check-circle text-warning"></i><span style="font-size:13.5px;">Available across India</span></div></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="bg-white rounded-4 p-4 shadow">
+                    <h5 class="fw-bold text-primary mb-4">Search Doctors by Specialization</h5>
+                    <div class="row g-2">
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> General Medicine</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Cardiology</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Pediatrics</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Orthopedics</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Gynecology</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Dermatology</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Neurology</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> ENT</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Ophthalmology</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Dentistry</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Psychiatry</a></div>
+                        <div class="col-6"><a href="{{ url('doctors') }}" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none" style="background:#f0f7ff;color:#0a6ebd;font-size:13px;font-weight:600;"><i class="fa fa-stethoscope" style="font-size:11px;"></i> Urology</a></div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url('doctors') }}" class="btn btn-primary btn-sm rounded-pill px-4">
+                            View All Specializations
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-
-<!-- ================= Why Trust RogiSewa ================= -->
-
+<!-- ── HEALTH TIPS ── -->
 <div class="container py-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Why Patients Trust RogiSewa</h3>
+    <div class="text-center mb-5">
+        <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Health Tips</h5>
+        <h2 class="display-7">Important Healthcare Tips for Patients</h2>
+        <p class="text-muted mt-2">Simple but effective health practices that every patient should know.</p>
+    </div>
+    <div class="row g-4">
 
-            <p>
-                RogiSewa is built with a mission to simplify healthcare discovery in India.
-                Our platform focuses on structured, location-based, and specialization-based
-                doctor listings to help patients quickly identify relevant healthcare professionals.
-            </p>
-
-            <p>
-                We continuously work to maintain updated profiles, organized clinic information,
-                and transparent healthcare data. Our goal is not to replace medical consultation,
-                but to assist patients in finding the right healthcare provider efficiently.
-            </p>
-
-            <p>
-                By prioritizing accessibility, transparency, and user-friendly navigation,
-                RogiSewa aims to become a trusted healthcare discovery partner for individuals
-                and families across India.
-            </p>
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100 d-flex gap-3">
+                <div class="flex-shrink-0">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:46px;height:46px;background:rgba(239,68,68,.1);">
+                        <i class="fa fa-heartbeat" style="color:#ef4444;font-size:18px;"></i>
+                    </div>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-2">Regular Health Checkups</h6>
+                    <p class="text-muted mb-0" style="font-size:13px;line-height:1.6;">Schedule routine health checkups at least once a year. Early detection of health conditions significantly improves treatment outcomes and reduces long-term medical costs.</p>
+                </div>
+            </div>
         </div>
+
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100 d-flex gap-3">
+                <div class="flex-shrink-0">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:46px;height:46px;background:rgba(10,110,189,.1);">
+                        <i class="fa fa-user-md" style="color:#0a6ebd;font-size:18px;"></i>
+                    </div>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-2">Choose the Right Specialist</h6>
+                    <p class="text-muted mb-0" style="font-size:13px;line-height:1.6;">Always consult a specialist relevant to your health concern. A cardiologist for heart issues, an orthopedic for bone problems — the right specialist ensures accurate diagnosis.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100 d-flex gap-3">
+                <div class="flex-shrink-0">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:46px;height:46px;background:rgba(0,176,116,.1);">
+                        <i class="fa fa-file-text-o" style="color:#00b074;font-size:18px;"></i>
+                    </div>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-2">Maintain Medical Records</h6>
+                    <p class="text-muted mb-0" style="font-size:13px;line-height:1.6;">Keep a record of your prescriptions, test reports, and medical history. Organized health records help doctors provide better and faster treatment during consultations.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100 d-flex gap-3">
+                <div class="flex-shrink-0">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:46px;height:46px;background:rgba(245,158,11,.1);">
+                        <i class="fa fa-map-marker" style="color:#f59e0b;font-size:18px;"></i>
+                    </div>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-2">Find Nearby Healthcare</h6>
+                    <p class="text-muted mb-0" style="font-size:13px;line-height:1.6;">Choosing a doctor or hospital close to your location ensures timely access to care, easier follow-up visits, and faster emergency response when needed.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100 d-flex gap-3">
+                <div class="flex-shrink-0">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:46px;height:46px;background:rgba(124,58,237,.1);">
+                        <i class="fa fa-shield" style="color:#7c3aed;font-size:18px;"></i>
+                    </div>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-2">Verify Doctor Credentials</h6>
+                    <p class="text-muted mb-0" style="font-size:13px;line-height:1.6;">Always check a doctor qualifications, registration, and specialization before booking an appointment. Verified credentials ensure you receive safe and professional medical care.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 shadow-sm bg-white h-100 d-flex gap-3">
+                <div class="flex-shrink-0">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:46px;height:46px;background:rgba(240,147,251,.1);">
+                        <i class="fa fa-comments" style="color:#f093fb;font-size:18px;"></i>
+                    </div>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-2">Communicate Openly</h6>
+                    <p class="text-muted mb-0" style="font-size:13px;line-height:1.6;">Share your complete medical history, current medications, and symptoms clearly with your doctor. Open communication leads to more accurate diagnosis and effective treatment plans.</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
-
-
-<!-- ================= Healthcare Specializations Section ================= -->
-
+<!-- ── FOR DOCTORS CTA ── -->
 <div class="container-fluid bg-primary py-5">
-    <div class="container">
-        <h3 class="text-center mb-4 text-white">Search Doctors by Specialization</h3>
-
-        <p class="text-white">
-            Patients can explore doctors across multiple medical specializations including
-            General Medicine, Cardiology, Pediatrics, Orthopedics, Gynecology,
-            Dermatology, Neurology, and more.
+    <div class="container text-center">
+        <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">For Doctors</h5>
+        <h2 class="text-white mt-3 mb-3">Are You a Doctor or Hospital?</h2>
+        <p class="text-white mb-4" style="max-width:600px;margin:0 auto 24px;">
+            Register your clinic or hospital on RogiSewa and connect with thousands of patients across India. Get a verified profile, manage prescriptions digitally, and grow your practice online.
         </p>
-
-        <p class="text-white">
-            Searching by specialization ensures that patients connect with the
-            most relevant healthcare professional for their specific health concern.
-            RogiSewa simplifies this process through structured categorization.
-        </p>
-    </div>
-</div>
-
-
-
-<!-- ================= About Our Platform ================= -->
-
-<div class="container py-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h3>About Our Healthcare Platform</h3>
-
-            <p>
-                RogiSewa is an independent healthcare information and discovery platform.
-                We aim to organize publicly available healthcare information in a
-                structured format to improve patient access and awareness.
-            </p>
-
-            <p>
-                We do not provide medical treatment, prescriptions, or clinical advice.
-                Patients must consult qualified healthcare professionals for
-                diagnosis and treatment decisions.
-            </p>
-
-            <p>
-                Our mission is to bridge the gap between patients and healthcare
-                providers through digital accessibility and transparency.
-            </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{{ url('register') }}" class="btn btn-light rounded-pill py-2 px-5 fw-bold">
+                <i class="fa fa-user-plus me-2"></i> Register as Doctor
+            </a>
+            <a href="{{ url('contact') }}" class="btn btn-outline-light rounded-pill py-2 px-5">
+                <i class="fa fa-envelope me-2"></i> Contact Us
+            </a>
+        </div>
+        <div class="mt-4 text-white" style="font-size:13px;opacity:.85;">
+            ✅ Free prescription invoice &nbsp;|&nbsp; ✅ Doctor profile listing &nbsp;|&nbsp; ✅ Hospital management &nbsp;|&nbsp; ✅ Staff attendance tracking
         </div>
     </div>
 </div>
 
-
-
-<!-- ================= Local Presence Section ================= -->
-
-<div class="container-fluid bg-primary text-white py-5">
-    <div class="container">
-        <h3 class="mb-3 text-center" style="color: #ffffff !important;">Serving Patients Across Indian Cities</h3>
-
-        <p style="color: #ffffff !important;">
-            RogiSewa supports patients searching for doctors and hospitals
-            in major cities and growing healthcare hubs across India.
-            Our platform is designed to expand healthcare accessibility
-            in urban and semi-urban regions.
-        </p>
-
-        <p style="color: #ffffff !important;">
-            Whether you are searching for a nearby clinic or a specialized
-            hospital, RogiSewa helps you discover structured healthcare
-            information in one place.
+<!-- ── DISCLAIMER ── -->
+<div class="container py-4">
+    <div class="p-4 rounded-4" style="background:#f8fbff;border:1px solid #e2e8f0;">
+        <h6 class="fw-bold text-primary mb-2"><i class="fa fa-info-circle me-2"></i>Important Disclaimer</h6>
+        <p class="text-muted mb-0" style="font-size:13px;line-height:1.7;">
+            RogiSewa is a healthcare information and discovery platform. We do not provide medical advice, diagnosis, or treatment. The information displayed on this platform is for informational purposes only. Always consult a qualified and registered healthcare professional for medical advice, diagnosis, and treatment. In case of a medical emergency, please contact your nearest hospital or call emergency services immediately.
         </p>
     </div>
 </div>
 
-
-
-<!-- ================= Registration Popup Modal ================= -->
-
-<div class="modal fade" id="registrationPopup" tabindex="-1"
-     aria-labelledby="registrationPopupLabel" aria-hidden="true">
+<!-- Registration Popup Modal -->
+<div class="modal fade" id="registrationPopup" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content rounded-3 shadow">
-
             <div class="modal-header">
-                <h5 class="modal-title text-primary fw-bold" id="registrationPopupLabel">
+                <h5 class="modal-title text-primary fw-bold">
                     📢 Doctor & Hospital Registration / डॉक्टर व हॉस्पिटल रजिस्ट्रेशन
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body">
                 <p class="mb-2">
-                    <b>RogiSewa.com</b> पर अपने क्लिनिक या हॉस्पिटल को रजिस्टर करें और
-                    पूरे <b>भारत</b> में मरीजों तक आसानी से पहुँचें।
+                    <b>RogiSewa.com</b> पर अपने क्लिनिक या हॉस्पिटल को रजिस्टर करें और पूरे <b>भारत</b> में मरीजों तक आसानी से पहुँचें।
                 </p>
-
                 <p class="mb-3">
-                    Register your clinic or hospital on <b>RogiSewa.com</b> and connect with
-                    patients across <b>India</b>. Our platform helps healthcare professionals
-                    build trust, visibility, and patient reach.
+                    Register your clinic or hospital on <b>RogiSewa.com</b> and connect with patients across <b>India</b>.
                 </p>
-
                 <ul class="list-unstyled">
                     <li>✅ पूरे भारत में अपने क्लिनिक और हॉस्पिटल की पहचान बनाएँ</li>
                     <li>✅ मरीज सीधे आपसे संपर्क कर सकेंगे</li>
@@ -416,37 +375,16 @@ RogiSewa aims to address these challenges by creating a transparent and reliable
                     <li>✅ <b>Prescription Invoice Generation सेवा बिल्कुल FREE है</b></li>
                 </ul>
             </div>
-
             <div class="modal-footer d-flex justify-content-between">
-                <a href="https://rogisewa.com/register"
-                   class="btn btn-success fw-bold">
+                <a href="{{ url('register') }}" class="btn btn-success fw-bold">
                     👉 Register Now / अभी रजिस्टर करें
                 </a>
-                <button type="button" class="btn btn-danger fw-bold"
-                        data-bs-dismiss="modal">
+                <button type="button" class="btn btn-danger fw-bold" data-bs-dismiss="modal">
                     ❌ Close / बंद करें
                 </button>
             </div>
-
         </div>
     </div>
 </div>
-
-
-
-
-<script>
-
-// document.addEventListener("DOMContentLoaded", function () {
-//     setTimeout(function () {
-//         var myModal = new bootstrap.Modal(
-//             document.getElementById('registrationPopup')
-//         );
-//         myModal.show();
-//     }, 2000); // 2 seconds delay
-// });
-
-</script>
-
 
 @endsection

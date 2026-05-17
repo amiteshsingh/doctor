@@ -31,8 +31,12 @@ class PageController extends Controller
         ->where('approval_status', 1)
         ->limit(20)
         ->get();
+
+        $totalDoctors       = Doctor::where('status', 1)->where('approval_status', 1)->count();
+        $totalHospitals     = Hospital::where('status', 1)->where('approval_status', 1)->count();
+        $totalSpecializations = Specialization::where('status', 1)->count();
     
-        return View::make('page.index', compact('doctors'));
+        return View::make('page.index', compact('doctors', 'totalDoctors', 'totalHospitals', 'totalSpecializations'));
     }
 
     public function about()
