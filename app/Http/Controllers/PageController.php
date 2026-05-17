@@ -98,10 +98,15 @@ class PageController extends Controller
             });
         }
 
-        // Filter: Address
+        // Filter: Address / City / State
         if ($request->filled('address')) {
             $query->whereHas('locations', function($q) use ($request) {
-                $q->where('address', 'like', '%' . $request->address . '%');
+                $q->where(function($q2) use ($request) {
+                    $q2->where('address', 'like', '%' . $request->address . '%')
+                       ->orWhere('city',    'like', '%' . $request->address . '%')
+                       ->orWhere('state',   'like', '%' . $request->address . '%')
+                       ->orWhere('zip_code','like', '%' . $request->address . '%');
+                });
             });
         }
 
@@ -115,12 +120,15 @@ class PageController extends Controller
             $query->where('gender', $request->gender);
         }
 
-        if ($userState) {
+        $hasFilter = $request->hasAny(['name','specialization','address','zip_code','gender']);
+
+        if ($userState && !$hasFilter) {
             $query->select('doctors.*')
                 ->leftJoin('doctor_locations', 'doctors.id', '=', 'doctor_locations.doctor_id')
-                ->where('status', 1)
-                ->where('approval_status', 1)
-                ->orderByRaw("CASE WHEN doctor_locations.state = ? THEN 0 ELSE 1 END", [$userState]);
+                ->where('doctors.status', 1)
+                ->where('doctors.approval_status', 1)
+                ->orderByRaw("CASE WHEN doctor_locations.state = ? THEN 0 ELSE 1 END", [$userState])
+                ->groupBy('doctors.id');
         } else {
             $query->where('status', 1)->where('approval_status', 1);
         }
