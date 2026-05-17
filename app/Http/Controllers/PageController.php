@@ -123,12 +123,15 @@ class PageController extends Controller
         $hasFilter = $request->hasAny(['name','specialization','address','zip_code','gender']);
 
         if ($userState && !$hasFilter) {
-            $query->select('doctors.*')
-                ->leftJoin('doctor_locations', 'doctors.id', '=', 'doctor_locations.doctor_id')
-                ->where('doctors.status', 1)
+            $query->where('doctors.status', 1)
                 ->where('doctors.approval_status', 1)
-                ->orderByRaw("CASE WHEN doctor_locations.state = ? THEN 0 ELSE 1 END", [$userState])
-                ->groupBy('doctors.id');
+                ->orderByRaw("
+                    CASE WHEN EXISTS (
+                        SELECT 1 FROM doctor_locations
+                        WHERE doctor_locations.doctor_id = doctors.id
+                        AND doctor_locations.state = ?
+                    ) THEN 0 ELSE 1 END
+                ", [$userState]);
         } else {
             $query->where('status', 1)->where('approval_status', 1);
         }
