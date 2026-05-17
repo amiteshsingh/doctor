@@ -81,7 +81,7 @@
                 <!-- Quick Specialty Filter -->
                 <div class="sidebar-card">
                     <h6><i class="fa fa-stethoscope me-2 text-primary"></i>Popular Specialties</h6>
-                    @foreach(['Cardiologist','Dermatologist','Orthopedic','Gynecologist','Neurologist','Pediatrician','Dentist','ENT Specialist','Psychiatrist','General Physician'] as $spec)
+                    @foreach($specializations as $spec)
                         <a href="{{ url('doctors') }}?specialization={{ urlencode($spec) }}"
                            class="filter-btn {{ request('specialization')==$spec ? 'active':'' }}">
                             {{ $spec }}
@@ -89,13 +89,13 @@
                     @endforeach
                 </div>
 
-                <!-- Quick City Filter -->
+                <!-- Quick State Filter -->
                 <div class="sidebar-card">
-                    <h6><i class="fa fa-map-marker-alt me-2 text-primary"></i>Top Cities</h6>
-                    @foreach(['Delhi','Mumbai','Bangalore','Chennai','Hyderabad','Kolkata','Pune','Ahmedabad','Jaipur','Lucknow'] as $city)
-                        <a href="{{ url('doctors') }}?address={{ urlencode($city) }}"
-                           class="filter-btn {{ request('address')==$city ? 'active':'' }}">
-                            {{ $city }}
+                    <h6><i class="fa fa-map-marker-alt me-2 text-primary"></i>Browse by State</h6>
+                    @foreach($states as $state)
+                        <a href="{{ url('doctors') }}?address={{ urlencode($state) }}"
+                           class="filter-btn {{ request('address')==$state ? 'active':'' }}">
+                            {{ $state }}
                         </a>
                     @endforeach
                 </div>
@@ -180,19 +180,19 @@
                     </div>
 
                     <h3 class="h5 mt-3">Popular Doctor Specialties on RogiSewa</h3>
-                    <p>Our platform covers a wide range of medical specialties including <a href="{{ url('doctors') }}?specialization=Cardiologist">Cardiologists</a>, <a href="{{ url('doctors') }}?specialization=Dermatologist">Dermatologists</a>, <a href="{{ url('doctors') }}?specialization=Orthopedic">Orthopedic Surgeons</a>, <a href="{{ url('doctors') }}?specialization=Gynecologist">Gynecologists</a>, <a href="{{ url('doctors') }}?specialization=Neurologist">Neurologists</a>, <a href="{{ url('doctors') }}?specialization=Pediatrician">Pediatricians</a>, <a href="{{ url('doctors') }}?specialization=Dentist">Dentists</a>, and many more. Use the search filters above to find the right specialist for your health needs.</p>
+                    <p>Our platform covers a wide range of medical specialties including
+                        @foreach($specializations->take(8) as $spec)
+                            <a href="{{ url('doctors') }}?specialization={{ urlencode($spec) }}">{{ $spec }}</a>{{ !$loop->last ? ',' : '' }}
+                        @endforeach
+                        and more. Use the search filters above to find the right specialist for your health needs.
+                    </p>
 
-                    <h3 class="h5 mt-3">Find Doctors in Your City</h3>
-                    <p>RogiSewa lists doctors in all major Indian cities including
-                        <a href="{{ url('doctors') }}?address=Delhi">Delhi</a>,
-                        <a href="{{ url('doctors') }}?address=Mumbai">Mumbai</a>,
-                        <a href="{{ url('doctors') }}?address=Bangalore">Bangalore</a>,
-                        <a href="{{ url('doctors') }}?address=Chennai">Chennai</a>,
-                        <a href="{{ url('doctors') }}?address=Hyderabad">Hyderabad</a>,
-                        <a href="{{ url('doctors') }}?address=Kolkata">Kolkata</a>,
-                        <a href="{{ url('doctors') }}?address=Pune">Pune</a>,
-                        <a href="{{ url('doctors') }}?address=Jaipur">Jaipur</a>, and more.
-                        You can also search by PIN code to find doctors in your exact locality.
+                    <h3 class="h5 mt-3">Find Doctors by State</h3>
+                    <p>RogiSewa lists doctors across Indian states including
+                        @foreach($states as $state)
+                            <a href="{{ url('doctors') }}?address={{ urlencode($state) }}">{{ $state }}</a>{{ !$loop->last ? ',' : '' }}
+                        @endforeach.
+                        You can also search by city or PIN code to find doctors in your exact locality.
                     </p>
                 </div>
 

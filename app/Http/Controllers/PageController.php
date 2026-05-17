@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\View;
 use App\Models\Doctor;
 use App\Models\Hospital;
 use App\Models\Specialization;
+use App\Models\DoctorLocation;
 use App\Models\Blog;
 use App\Models\PrescriptionInvoice;
 use App\Models\InvoiceMaster;
@@ -125,16 +126,22 @@ class PageController extends Controller
         }
 
 
-        $doctors = $query->paginate(15); // 15 doctors per page 
+        $doctors = $query->paginate(15);
 
+        $specializations = \App\Models\Specialization::where('status', 1)->orderBy('name')->pluck('name');
+        $states = DoctorLocation::select('state')
+            ->whereNotNull('state')->where('state', '!=', '')
+            ->distinct()->orderBy('state')->pluck('state');
 
         if ($request->ajax()) {
-            return view('page.ajax.doctor_list', compact('doctors'))->render(); 
+            return view('page.ajax.doctor_list', compact('doctors'))->render();
         }
 
         return view('page.doctors', [
-            'doctors' => $doctors,
-            'userState' => $userState
+            'doctors'         => $doctors,
+            'userState'       => $userState,
+            'specializations' => $specializations,
+            'states'          => $states,
         ]);
     }
 
@@ -142,23 +149,22 @@ class PageController extends Controller
     {
         $query = Hospital::with(['specializations.specialization']);
 
-        // Filter: Name + Address +` PIN Code
         if ($request->filled('name') || $request->filled('address') || $request->filled('zip_code')) {
             $query->where(function($q) use ($request) {
                 if ($request->filled('name')) {
                     $q->where('name', 'like', '%' . $request->name . '%');
                 }
                 if ($request->filled('address')) {
-                    $q->where('address', 'like', '%' . $request->address . '%');
+                    $q->orWhere('address', 'like', '%' . $request->address . '%')
+                      ->orWhere('city',    'like', '%' . $request->address . '%')
+                      ->orWhere('state',   'like', '%' . $request->address . '%');
                 }
-
                 if ($request->filled('zip_code')) {
-                    $q->where('zip_code', 'like', '%' . $request->zip_code . '%');
+                    $q->orWhere('zip_code', 'like', '%' . $request->zip_code . '%');
                 }
             });
         }
 
-        // Filter: Specialization
         if ($request->filled('specialization')) {
             $query->whereHas('specializations', function($q) use ($request) {
                 $q->whereHas('specialization', function($sp) use ($request) {
@@ -167,14 +173,25 @@ class PageController extends Controller
             });
         }
 
+        if ($request->filled('state')) {
+            $query->where('state', 'like', '%' . $request->state . '%');
+        }
+
         $hospitals = $query->where('status', 1)
                         ->where('approval_status', 1)
                         ->paginate(10);
 
+        $specializations = Specialization::where('status', 1)->orderBy('name')->pluck('name');
+        $states = Hospital::select('state')
+            ->whereNotNull('state')->where('state', '!=', '')
+            ->where('status', 1)->where('approval_status', 1)
+            ->distinct()->orderBy('state')->pluck('state');
+
         if ($request->ajax()) {
             return view('page.ajax.hospital_list', compact('hospitals'))->render();
         }
-        return view('page.hospitals', ['hospitals' => $hospitals]);
+
+        return view('page.hospitals', compact('hospitals', 'specializations', 'states'));
     }
 
 
@@ -316,15 +333,37 @@ class PageController extends Controller
         return view('page.hospital-details', ['hospital' => $hospital]);
     }
 
-    public function professionalDoctors()
+    public function professionalDoctors(Request $request)
     {
-        $doctors = Doctor::with(['educations', 'specializations.specialization', 'locations'])
+        $query = Doctor::with(['educations', 'specializations.specialization', 'locations'])
             ->where('is_professional', 1)
             ->where('status', 1)
-            ->where('approval_status', 1)
-            ->paginate(30); // 10 doctors per page
+            ->where('approval_status', 1);
 
-        return view('page.professional-doctors', compact('doctors'));
+        if ($request->filled('specialization')) {
+            $query->whereHas('specializations.specialization', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->specialization . '%');
+            });
+        }
+
+        if ($request->filled('state')) {
+            $query->whereHas('locations', function($q) use ($request) {
+                $q->where('state', 'like', '%' . $request->state . '%');
+            });
+        }
+
+        if ($request->filled('gender')) {
+            $query->where('gender', $request->gender);
+        }
+
+        $doctors = $query->paginate(12);
+
+        $specializations = \App\Models\Specialization::where('status', 1)->orderBy('name')->pluck('name');
+        $states = \App\Models\DoctorLocation::select('state')
+            ->whereNotNull('state')->where('state', '!=', '')
+            ->distinct()->orderBy('state')->pluck('state');
+
+        return view('page.professional-doctors', compact('doctors', 'specializations', 'states'));
     }
 
     public function bookedSlots(Request $request)
