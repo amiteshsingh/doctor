@@ -71,9 +71,9 @@
                     <a href="{{ $detailUrl }}" class="btn btn-primary btn-sm px-3">
                         <i class="fa fa-hospital me-1"></i> View Hospital
                     </a>
-                    <a href="{{ $detailUrl }}" class="btn btn-outline-secondary btn-sm px-3">
+                    <!-- <a href="{{ $detailUrl }}" class="btn btn-outline-secondary btn-sm px-3">
                         <i class="fa fa-calendar-check me-1"></i> Book Appointment
-                    </a>
+                    </a> -->
                     @if(!empty($hospital->phone_no))
                         <a href="tel:{{ $hospital->phone_no }}" class="btn btn-outline-success btn-sm px-3">
                             <i class="fa fa-phone me-1"></i> Call Now
