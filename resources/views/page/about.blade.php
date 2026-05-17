@@ -1,7 +1,7 @@
-
 @extends('page.layouts.app')
 
-@section('title', 'RogiSewa - About')
+@section('title', 'About RogiSewa - Online Doctor Booking App | Find Doctors & Hospitals in India')
+@section('meta_description', 'RogiSewa is India trusted healthcare discovery platform. Book doctor appointments online, find hospitals near you, and download our free Android app.')
 
 @section('content')
 
