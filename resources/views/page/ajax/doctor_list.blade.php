@@ -1,82 +1,98 @@
-@forelse($doctors as $doctor)
-<div class="col-12 doctor-item-marker"> {{-- marker AJAX check ke liye --}}
-    <div class="bg-light rounded overflow-hidden p-2 row align-items-center">
-        @php
-            $practiceName = optional($doctor->locations->first())->practice_name ?? $doctor->name;
-        @endphp
+@forelse($doctors as $index => $doctor)
+@php
+    $practiceName = optional($doctor->locations->first())->practice_name ?? $doctor->name;
+    $location     = $doctor->locations->first();
+    $specs        = $doctor->specializations->pluck('specialization.name')->filter();
+    $degree       = $doctor->educations->first()->degree ?? null;
+    $experience   = !empty($doctor->experience) ? (now()->year - $doctor->experience) : null;
+    $profileUrl   = url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName));
+    $profilePic   = $doctor->profile_pic
+                        ? asset('storage/upload/doctor/' . $doctor->profile_pic)
+                        : asset('storage/upload/doctor/user.jpg');
+@endphp
 
-        <!-- Doctor Image -->
-        <div class="col-md-3 mb-3 mb-md-0">
-            <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}">
-                <img class="img-fluid rounded"
-                     src="{{ asset('storage/upload/doctor/' . ($doctor->profile_pic ?? 'user.jpg')) }}"
-                     style="width: 100%; height: 250px; object-fit: cover;" alt="{{ $doctor->name }}">
+<div class="col-12 doctor-item-marker mb-3">
+    <div class="doctor-card rounded-3 p-3 bg-white">
+        <div class="d-flex gap-3 align-items-start">
+
+            <!-- Photo -->
+            <a href="{{ $profileUrl }}" class="flex-shrink-0">
+                <img src="{{ $profilePic }}" alt="{{ $practiceName }}" class="doctor-photo">
             </a>
-        </div>
 
-        <!-- Doctor Details -->
-        <div class="col-md-9">
-            <h3 class="mb-3">
-                <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($practiceName)) }}"
-                   class="text-decoration-none text-dark">
-                   {{ $practiceName }}
-                </a>
-            </h3>
+            <!-- Info -->
+            <div class="flex-grow-1 min-w-0">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div>
+                        <h2 class="h5 mb-1">
+                            <a href="{{ $profileUrl }}" class="text-decoration-none text-dark">
+                                {{ $practiceName }}
+                            </a>
+                        </h2>
 
-            <!-- Specialization -->
-            <p class="mb-1">
-                <strong>Specialization:</strong>
-                @if($doctor->specializations->isNotEmpty())
-                    <span class="text-primary">
-                        {!! $doctor->specializations->pluck('specialization.name')
-                            ->map(function($name) {
-                                return e($name);
-                            })
-                            ->join('<span class="text-danger">,</span> ') !!}
-                    </span>
-                @else
-                    <span class="text-muted">N/A</span>
-                @endif
-            </p>
+                        @if($degree)
+                            <p class="text-muted small mb-1">{{ $degree }}</p>
+                        @endif
 
+                        <!-- Specializations -->
+                        @if($specs->isNotEmpty())
+                            <div class="mb-2">
+                                @foreach($specs as $s)
+                                    <span class="spec-badge">{{ $s }}</span>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
 
-            <!-- Address with Icon -->
-            <p class="mb-1">
-                <i class="fa fa-map-marker-alt text-danger me-1"></i>
-                @if($doctor->locations->isNotEmpty())
-                    {{ $doctor->locations->first()->address }},
-                    {{ $doctor->locations->first()->city }},
-                    {{ $doctor->locations->first()->state }}
-                    {{ $doctor->locations->first()->zip_code }}
-                @else
-                    <span class="text-muted">N/A</span>
-                @endif
-            </p>
+                    <!-- Experience Badge -->
+                    @if($experience)
+                        <span class="badge bg-success bg-opacity-10 border border-success border-opacity-25 px-3 py-2">
+                            {{ $experience }}+ Yrs Exp
+                        </span>
+                    @endif
+                </div>
 
-            <!-- Experience -->
-            @if(!empty($doctor->experience))
-                <p class="mb-3"><strong>Experience:</strong>
-                    {{ now()->year - $doctor->experience }}+ Years
+                <!-- Location -->
+                <p class="mb-2 small text-muted">
+                    <i class="fa fa-map-marker-alt text-danger me-1"></i>
+                    @if($location)
+                        {{ $location->address }}, {{ $location->city }}, {{ $location->state }} – {{ $location->zip_code }}
+                    @else
+                        Location not available
+                    @endif
                 </p>
-            @endif
 
-            <!-- View Doctor Button -->
-            <a href="{{ url('doctor-profile/' . $doctor->id . '/' . Str::slug($doctor->name)) }}"
-               class="btn btn-primary btn-sm mt-2">
-               View Doctor
-            </a>
+                <!-- Gender -->
+                @if(!empty($doctor->gender))
+                    <p class="mb-2 small text-muted">
+                        <i class="fa fa-user me-1 text-primary"></i> {{ $doctor->gender }}
+                    </p>
+                @endif
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 flex-wrap mt-2">
+                    <a href="{{ $profileUrl }}" class="btn btn-primary btn-sm px-3">
+                        <i class="fa fa-calendar-check me-1"></i> Book Appointment
+                    </a>
+                    <a href="{{ $profileUrl }}" class="btn btn-outline-secondary btn-sm px-3">
+                        View Profile
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+
 @empty
-    <div class="col-12">
-        <div class="alert alert-warning text-center">
-            No Doctors Available
-        </div>
+<div class="col-12">
+    <div class="alert alert-warning text-center py-4">
+        <i class="fa fa-2x fa-user-md mb-2 d-block text-muted"></i>
+        No doctors found matching your search. <a href="{{ url('doctors') }}">Clear filters</a> to see all doctors.
     </div>
+</div>
 @endforelse
 
-{{-- marker for "has more" check --}}
 @if($doctors->hasMorePages())
     <div id="hasMore"></div>
 @endif
