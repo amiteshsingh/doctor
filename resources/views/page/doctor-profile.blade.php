@@ -89,6 +89,10 @@
                         <a href="#" class="btn btn-danger btn-sm" onclick="openBookingModal(); return false;">
                             <i class="fa fa-calendar-check me-1"></i> Book Appointment
                         </a>
+                        @else
+                        <a href="#" class="btn btn-warning btn-sm" onclick="openOfflineModal(); return false;">
+                            <i class="fa fa-calendar-check me-1"></i> Book Appointment
+                        </a>
                         @endif
                     </div>
                     @forelse($doctor->locations as $loc)
@@ -508,6 +512,87 @@ function openLightbox(url) {
     lb.innerHTML = '<img src="' + url + '" style="max-width:90%;max-height:90%;border-radius:8px;box-shadow:0 0 30px rgba(0,0,0,0.5);">';
     lb.onclick = function() { document.body.removeChild(lb); };
     document.body.appendChild(lb);
+}
+</script>
+
+<!-- Offline Booking Modal -->
+<div id="offlineModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1050; overflow-y:auto;">
+    <div class="d-flex align-items-center justify-content-center" style="min-height:100%; padding:15px;">
+        <div class="w-100" style="max-width:480px;">
+            <div class="text-white p-4" style="background:linear-gradient(135deg,#f59e0b,#d97706); border-radius:16px 16px 0 0;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;min-width:48px;">
+                            <i class="fa fa-hospital" style="color:#d97706;font-size:20px;"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">Book Appointment</h5>
+                            <small style="opacity:.85;"><i class="fa fa-user-md me-1"></i>{{ $doctor->name }}</small>
+                        </div>
+                    </div>
+                    <button onclick="closeOfflineModal()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:50%;width:34px;height:34px;font-size:20px;line-height:1;cursor:pointer;">&times;</button>
+                </div>
+            </div>
+            <div class="bg-white p-4 text-center" style="border-radius:0 0 16px 16px; box-shadow:0 10px 40px rgba(0,0,0,0.15);">
+                <div class="mb-3">
+                    <div class="rounded-circle bg-warning bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:70px;height:70px;">
+                        <i class="fa fa-info-circle fa-2x text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Offline Booking Only</h5>
+                    <p class="text-muted mb-3">
+                        This doctor is currently providing <strong>offline booking</strong> service only.
+                        Online appointment booking is not available at this time.
+                    </p>
+                    <p class="text-muted mb-4">You can contact the doctor directly to schedule an appointment:</p>
+                </div>
+
+                @php $loc = $doctor->locations->first(); @endphp
+
+                @if(!empty($doctor->phone_no))
+                <a href="tel:{{ $doctor->phone_no }}" class="btn btn-success w-100 mb-2">
+                    <i class="fa fa-phone me-2"></i> Call {{ $doctor->phone_no }}
+                </a>
+                @endif
+
+                @if(!empty($loc->phone))
+                <a href="tel:{{ $loc->phone }}" class="btn btn-outline-success w-100 mb-2">
+                    <i class="fa fa-clinic-medical me-2"></i> Clinic: {{ $loc->phone }}
+                </a>
+                @endif
+
+                @if(empty($doctor->phone_no) && empty($loc->phone))
+                <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    Contact number not available. Please visit the clinic directly.
+                </div>
+                @endif
+
+                @if($loc)
+                <p class="text-muted small mt-3 mb-3">
+                    <i class="fa fa-map-marker-alt text-danger me-1"></i>
+                    {{ implode(', ', array_filter([$loc->address, $loc->city, $loc->state, $loc->zip_code])) }}
+                </p>
+                @endif
+
+                <button onclick="closeOfflineModal()" class="btn btn-outline-secondary w-100">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="offlineBackdrop" onclick="closeOfflineModal()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1049;"></div>
+
+<script>
+function openOfflineModal() {
+    document.getElementById('offlineModal').style.display = 'block';
+    document.getElementById('offlineBackdrop').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+function closeOfflineModal() {
+    document.getElementById('offlineModal').style.display = 'none';
+    document.getElementById('offlineBackdrop').style.display = 'none';
+    document.body.style.overflow = '';
 }
 </script>
 
