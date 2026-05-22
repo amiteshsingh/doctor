@@ -174,7 +174,7 @@
 
             <div class="step-card text-center">
 
-                <img src="{{ asset('doctor/doc_dashboard.png') }}"
+                <img src="{{ asset('doc_dashboard.png') }}"
                      class="img-fluid dashboard-img"
                      alt="Doctor Dashboard">
 
