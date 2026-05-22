@@ -10,7 +10,13 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-md-6 text-center text-lg-end">
+                <div class="col-md-6 text-center text-lg-end" style="display:flex;align-items:center;justify-content:flex-end;gap:10px;">
+                    <a href="{{ route('how-to-use') }}" target="_blank" rel="noopener"
+                       style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#0d6efd,#13C5DD);color:#fff;border-radius:20px;padding:6px 16px;text-decoration:none;font-size:12px;font-weight:600;box-shadow:0 3px 10px rgba(13,110,253,.35);transition:all .2s;"
+                       onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                        <i class="fa fa-question-circle" style="font-size:13px;"></i>
+                        <span>How to Use For Doctors</span>
+                    </a>
                     <a href="https://play.google.com/store/apps/details?id=com.rogisewa"
                        target="_blank" rel="noopener"
                        style="display:inline-flex;align-items:center;gap:8px;background:#000;color:#fff;border-radius:8px;padding:5px 14px;text-decoration:none;font-size:13px;font-weight:600;transition:opacity .2s;"
