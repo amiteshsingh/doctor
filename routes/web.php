@@ -48,6 +48,7 @@ Route::get('terms', [PageController::class, 'terms'])->name('terms');
 Route::get('disclaimer', [PageController::class, 'disclaimer'])->name('disclaimer');
 Route::get('privacy-policy', [PageController::class, 'privacy_policy'])->name('privacy-policy');
 Route::get('sitemap.xml', [PageController::class, 'sitemap'])->name('sitemap');
+Route::get('how-to-use', [PageController::class, 'howToUse'])->name('how-to-use');
 
 
 Route::get('/test-mail', function() {

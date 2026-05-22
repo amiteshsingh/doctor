@@ -278,6 +278,11 @@ class PageController extends Controller
 
 
 
+    public function howToUse()
+    {
+        return view('page.how-to-use');
+    }
+
     public function terms()
     {
         return view('page.terms');

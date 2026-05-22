@@ -59,8 +59,8 @@
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle {{ Request::is('professional.doctors') ? 'active' : '' }}" data-bs-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu m-0">
-                                <a href="{{ route('professional.doctors') }}" class="dropdown-item {{ Request::is('professional.doctors') ? 'active' : '' }}">Professional Doctors</a>
-                                
+                                <a href="{{ route('professional.doctors') }}" class="dropdown-item {{ Request::is('professional-doctors') ? 'active' : '' }}">Professional Doctors</a>
+                                <a href="{{ route('how-to-use') }}" class="dropdown-item {{ Request::is('how-to-use') ? 'active' : '' }}">How To Use</a>
                             </div>
                         </div>
                         <a href="{{ route('blog') }}" class="nav-item nav-link {{ Request::is('blog') ? 'active' : '' }}">Blog</a>
