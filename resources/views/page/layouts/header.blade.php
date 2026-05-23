@@ -38,7 +38,7 @@
         <div class="container">
             <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0">
                 <a href="{{ route('/') }}" class="navbar-brand">
-                    <img src="{{ asset('img/logo.png') }}" alt="Logo" style="width: 173px;">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo" style="width: 90px;">
                 </a>
 
                 {{-- Mobile: App button + Toggler --}}
