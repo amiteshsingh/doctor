@@ -8,11 +8,11 @@
                         </li>
 
                         <li class="{{ request()->routeIs('doctor.myhospital') || request()->routeIs('doctor.myhospital.*') ? 'active' : '' }}">
-                            <a href="{{ route('doctor.myhospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals</span></a>
+                            <a href="{{ route('doctor.myhospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals List</span></a>
                         </li>
 
                         <li class="{{ request()->routeIs('doctor.mydoctor')  || request()->routeIs('doctor.mydoctor.*') ? 'active' : '' }}">
-                            <a href="{{ route('doctor.mydoctor') }}"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
+                            <a href="{{ route('doctor.mydoctor') }}"><i class="fa fa-user-md"></i> <span>Doctors List</span></a>
                         </li>
                 
                         <li class="submenu {{ request()->routeIs('prescription-invoice.*') || request()->routeIs('invoice-master.*') ? 'active' : '' }}">
