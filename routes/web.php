@@ -106,6 +106,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::any('/user', [UserController::class, 'index'])->name('admin.user');
     Route::any('/user/add', [UserController::class, 'add'])->name('admin.user.add');
     Route::post('/user/membership', [UserController::class, 'membership'])->name('admin.user.membership');
+    Route::post('/user/permission', [UserController::class, 'permission'])->name('admin.user.permission');
     Route::get('/user/view/{id}', [UserController::class, 'view'])->name('admin.user.view');
     Route::any('/user/delete/{id}', [UserController::class, 'delete'])->name('admin.user.delete');
 

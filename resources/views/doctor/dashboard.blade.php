@@ -89,6 +89,7 @@
     background:#fff; box-shadow:0 4px 18px rgba(0,0,0,.07);
     transition:all .3s; display:block; text-decoration:none; color:#333;
     animation:fadeInUp .5s ease forwards; opacity:0;
+    position:relative;
 }
 .ql-card:hover{ transform:translateY(-5px); box-shadow:0 14px 30px rgba(0,0,0,.13); color:#333; text-decoration:none; }
 .ql-icon{
@@ -338,17 +339,14 @@
                 <h6 class="fw-bold mb-3" style="color:#667eea;"><i class="fa fa-bolt mr-2"></i>Quick Actions</h6>
                 <div class="row" style="row-gap:12px;">
                     @foreach([
-                        ['url'=>'doctor/mydoctor/add',                'icon'=>'fa-user-plus',         'label'=>'Add Doctor',        'bg'=>'linear-gradient(135deg,#667eea,#764ba2)', 'delay'=>'.05s'],
-                        ['url'=>'doctor/myhospital/add',              'icon'=>'fa-plus-square',       'label'=>'Add Hospital',      'bg'=>'linear-gradient(135deg,#f093fb,#f5576c)', 'delay'=>'.10s'],
-                        ['url'=>'doctor/prescription-invoice/add',    'icon'=>'fa-file-text',         'label'=>'New Invoice',       'bg'=>'linear-gradient(135deg,#4facfe,#00f2fe)', 'delay'=>'.15s'],
-                        ['url'=>'doctor/mydoctor',                    'icon'=>'fa-list',              'label'=>'My Doctors',        'bg'=>'linear-gradient(135deg,#43e97b,#38f9d7)', 'delay'=>'.20s'],
-                        ['url'=>'doctor/prescription-invoice',        'icon'=>'fa-calendar',          'label'=>'Appointments',      'bg'=>'linear-gradient(135deg,#fa709a,#fee140)', 'delay'=>'.25s'],
-                        ['url'=>'doctor/medicine',                    'icon'=>'fa-medkit',            'label'=>'Medicines',         'bg'=>'linear-gradient(135deg,#f7971e,#ffd200)', 'delay'=>'.30s'],
-                        ['url'=>'doctor/staff',                       'icon'=>'fa-users',             'label'=>'Staff',             'bg'=>'linear-gradient(135deg,#a18cd1,#fbc2eb)', 'delay'=>'.35s'],
-                        ['url'=>'doctor/staff/attendance',            'icon'=>'fa-calendar-check-o',  'label'=>'Attendance',        'bg'=>'linear-gradient(135deg,#0a6ebd,#00b074)',  'delay'=>'.40s'],
-                        ['url'=>'doctor/staff/attendance/report',     'icon'=>'fa-bar-chart',         'label'=>'Att. Report',       'bg'=>'linear-gradient(135deg,#11998e,#38ef7d)',  'delay'=>'.45s'],
-                        ['url'=>'doctor/invoice-master',              'icon'=>'fa-cog',               'label'=>'Invoice Settings',  'bg'=>'linear-gradient(135deg,#373b44,#4286f4)',  'delay'=>'.50s'],
-                        ['url'=>'doctor/edit-profile',                'icon'=>'fa-user-circle',       'label'=>'My Profile',        'bg'=>'linear-gradient(135deg,#0f2027,#203a43,#2c5364)', 'delay'=>'.55s'],
+                        ['url'=>'doctor/mydoctor/add',             'icon'=>'fa-user-plus',    'label'=>'Add Doctor',   'bg'=>'linear-gradient(135deg,#667eea,#764ba2)', 'delay'=>'.05s'],
+                        ['url'=>'doctor/myhospital/add',           'icon'=>'fa-plus-square',  'label'=>'Add Hospital', 'bg'=>'linear-gradient(135deg,#f093fb,#f5576c)', 'delay'=>'.10s'],
+                        ['url'=>'doctor/prescription-invoice/add', 'icon'=>'fa-file-text',    'label'=>'New Invoice',  'bg'=>'linear-gradient(135deg,#4facfe,#00f2fe)', 'delay'=>'.15s'],
+                        ['url'=>'doctor/mydoctor',                 'icon'=>'fa-list',         'label'=>'My Doctors',   'bg'=>'linear-gradient(135deg,#43e97b,#38f9d7)', 'delay'=>'.20s'],
+                        ['url'=>'doctor/prescription-invoice',     'icon'=>'fa-calendar',     'label'=>'Appointments', 'bg'=>'linear-gradient(135deg,#fa709a,#fee140)', 'delay'=>'.25s'],
+                        ['url'=>'doctor/medicine',                 'icon'=>'fa-medkit',       'label'=>'Medicines',    'bg'=>'linear-gradient(135deg,#f7971e,#ffd200)', 'delay'=>'.30s'],
+                        ['url'=>'doctor/staff',                    'icon'=>'fa-users',        'label'=>'Staff',        'bg'=>'linear-gradient(135deg,#a18cd1,#fbc2eb)', 'delay'=>'.35s'],
+                        ['url'=>'doctor/edit-profile',             'icon'=>'fa-user-circle',  'label'=>'My Profile',   'bg'=>'linear-gradient(135deg,#0f2027,#203a43,#2c5364)', 'delay'=>'.55s'],
                     ] as $ql)
                     <div class="col-2 col-sm-2">
                         <a href="{{ url($ql['url']) }}" class="ql-card" style="animation-delay:{{ $ql['delay'] }};">
@@ -357,6 +355,54 @@
                         </a>
                     </div>
                     @endforeach
+
+                    {{-- Attendance --}}
+                    <div class="col-2 col-sm-2">
+                        @if($attendancePermission)
+                        <a href="{{ url('doctor/staff/attendance') }}" class="ql-card" style="animation-delay:.40s;">
+                            <div class="ql-icon" style="background:linear-gradient(135deg,#0a6ebd,#00b074);"><i class="fa fa-calendar-check-o"></i></div>
+                            <small class="fw-bold" style="font-size:11px;">Attendance</small>
+                        </a>
+                        @else
+                        <div class="ql-card" style="animation-delay:.40s;opacity:.45;filter:grayscale(1);cursor:not-allowed;background:#f1f5f9;box-shadow:none;"
+                             title="🔒 इस फीचर को उपयोग करने की आपके पास अनुमति नहीं है। कृपया एडमिन से संपर्क करें या मेंबरशिप खरीदें।">
+                            <div class="ql-icon" style="background:linear-gradient(135deg,#0a6ebd,#00b074);"><i class="fa fa-calendar-check-o"></i></div>
+                            <small class="fw-bold" style="font-size:11px;color:#94a3b8;">Attendance</small>
+                        </div>
+                        @endif
+                    </div>
+
+                    {{-- Att. Report --}}
+                    <div class="col-2 col-sm-2">
+                        @if($attendancePermission)
+                        <a href="{{ url('doctor/staff/attendance/report') }}" class="ql-card" style="animation-delay:.45s;">
+                            <div class="ql-icon" style="background:linear-gradient(135deg,#11998e,#38ef7d);"><i class="fa fa-bar-chart"></i></div>
+                            <small class="fw-bold" style="font-size:11px;">Att. Report</small>
+                        </a>
+                        @else
+                        <div class="ql-card" style="animation-delay:.45s;opacity:.45;filter:grayscale(1);cursor:not-allowed;background:#f1f5f9;box-shadow:none;"
+                             title="🔒 इस फीचर को उपयोग करने की आपके पास अनुमति नहीं है। कृपया एडमिन से संपर्क करें या मेंबरशिप खरीदें।">
+                            <div class="ql-icon" style="background:linear-gradient(135deg,#11998e,#38ef7d);"><i class="fa fa-bar-chart"></i></div>
+                            <small class="fw-bold" style="font-size:11px;color:#94a3b8;">Att. Report</small>
+                        </div>
+                        @endif
+                    </div>
+
+                    {{-- Invoice Settings --}}
+                    <div class="col-2 col-sm-2">
+                        @if($invoicePermission)
+                        <a href="{{ url('doctor/invoice-master') }}" class="ql-card" style="animation-delay:.50s;">
+                            <div class="ql-icon" style="background:linear-gradient(135deg,#373b44,#4286f4);"><i class="fa fa-cog"></i></div>
+                            <small class="fw-bold" style="font-size:11px;">Invoice Settings</small>
+                        </a>
+                        @else
+                        <div class="ql-card" style="animation-delay:.50s;opacity:.45;filter:grayscale(1);cursor:not-allowed;background:#f1f5f9;box-shadow:none;"
+                             title="🔒 इस फीचर को उपयोग करने की आपके पास अनुमति नहीं है। कृपया एडमिन से संपर्क करें या मेंबरशिप खरीदें।">
+                            <div class="ql-icon" style="background:linear-gradient(135deg,#373b44,#4286f4);"><i class="fa fa-cog"></i></div>
+                            <small class="fw-bold" style="font-size:11px;color:#94a3b8;">Invoice Settings</small>
+                        </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

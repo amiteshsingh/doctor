@@ -9,12 +9,23 @@ use App\Models\InvoiceMaster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Models\Doctor;
+use App\Models\UserDoctorRoleMembership;
 use PDF;
+use Illuminate\Support\Facades\Auth;
 
 class PrescriptionInvoiceController extends Controller
 {
     public function index(Request $request)
     {
+        $mem = UserDoctorRoleMembership::where('user_id', Auth::id())->first();
+        if (!$mem || !$mem->invoice_permission) {
+            return view('doctor.prescription_invoice.index', [
+                'result'  => [],
+                'title'   => 'Prescription Invoice List',
+                'blocked' => true,
+            ]);
+        }
+
         try {
             $page = 1;
             $page_size = 10;

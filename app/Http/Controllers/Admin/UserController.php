@@ -112,11 +112,22 @@ class UserController extends Controller
 
         $user = (object)[];
         $membership = null;
+        $userDoctors = [];
+        $userHospitals = [];
         if (!empty($data['id'])) {
             $user = User::find($data['id']);
             $membership = UserDoctorRoleMembership::where('user_id', $data['id'])->first();
+            $userDoctors = DB::table('doctors')
+                ->leftJoin('doctor_locations', 'doctors.id', '=', 'doctor_locations.doctor_id')
+                ->select('doctors.id', 'doctors.name', 'doctors.phone_no', 'doctors.email', 'doctors.status', 'doctors.approval_status', 'doctors.profile_pic', 'doctor_locations.city')
+                ->where('doctors.added_by', $data['id'])
+                ->orderBy('doctors.id', 'desc')->get();
+            $userHospitals = DB::table('hospitals')
+                ->select('id', 'name', 'phone_no', 'email', 'city', 'status', 'approval_status')
+                ->where('added_by', $data['id'])
+                ->orderBy('id', 'desc')->get();
         }
-        return view('admin.user.add', compact('user', 'membership'));
+        return view('admin.user.add', compact('user', 'membership', 'userDoctors', 'userHospitals'));
     }
 
     public function membership(Request $request)
@@ -148,6 +159,29 @@ class UserController extends Controller
             } catch (\Exception $e) {
                 return response()->json(['status' => 500, 'msg' => $e->getMessage()]);
             }
+        }
+    }
+
+    public function permission(Request $request)
+    {
+        if (!$request->isMethod('post')) return response()->json(['status' => 405, 'msg' => 'Invalid request.']);
+        try {
+            $validator = \Validator::make($request->all(), [
+                'user_id' => 'required|integer|exists:users,id',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['status' => 422, 'msg' => $validator->errors()->first()]);
+            }
+            UserDoctorRoleMembership::updateOrCreate(
+                ['user_id' => $request->user_id],
+                [
+                    'attendance_permission' => $request->has('attendance_permission') ? 1 : 0,
+                    'invoice_permission'    => $request->has('invoice_permission') ? 1 : 0,
+                ]
+            );
+            return response()->json(['status' => 200, 'msg' => 'Permissions saved successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 500, 'msg' => $e->getMessage()]);
         }
     }
 

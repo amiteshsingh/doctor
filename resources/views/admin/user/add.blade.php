@@ -169,6 +169,16 @@ textarea.uf-input { resize:vertical; min-height:75px; }
                     <i class="fa fa-star"></i> Membership
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#utab3" data-toggle="tab">
+                    <i class="fa fa-list"></i> Doctors & Hospitals
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#utab4" data-toggle="tab">
+                    <i class="fa fa-lock"></i> Permissions
+                </a>
+            </li>
             @endif
         </ul>
 
@@ -324,6 +334,194 @@ textarea.uf-input { resize:vertical; min-height:75px; }
             </div>
             @endif
 
+            {{-- ══ TAB 3: Doctors & Hospitals ══ --}}
+            @if($isEdit)
+            <div class="tab-pane" id="utab3">
+
+                <div class="sec-hd">
+                    <div class="sec-ic ic-blue"><i class="fa fa-user-md"></i></div>
+                    Doctors Added by This User
+                </div>
+
+                @if(count($userDoctors) > 0)
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-hover" style="font-size:13px;">
+                        <thead style="background:linear-gradient(135deg,#0a6ebd,#4da6ff);color:#fff;">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>City</th>
+                                <th>Status</th>
+                                <th>Approval</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($userDoctors as $i => $doc)
+                            <tr>
+                                <td>{{ $i + 1 }}</td>
+                                <td>
+                                    @if($doc->profile_pic)
+                                        <img src="{{ asset('storage/upload/doctor/'.$doc->profile_pic) }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;margin-right:6px;">
+                                    @endif
+                                    {{ $doc->name }}
+                                </td>
+                                <td>{{ $doc->phone_no ?: '—' }}</td>
+                                <td>{{ $doc->email ?: '—' }}</td>
+                                <td>{{ $doc->city ?: '—' }}</td>
+                                <td>
+                                    <span class="badge" style="background:{{ $doc->status == 1 ? '#00b074' : '#94a3b8' }};color:#fff;border-radius:12px;padding:3px 10px;">
+                                        {{ $doc->status == 1 ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background:{{ $doc->approval_status == 'approved' ? '#00b074' : ($doc->approval_status == 'rejected' ? '#ef4444' : '#f59e0b') }};color:#fff;border-radius:12px;padding:3px 10px;">
+                                        {{ ucfirst($doc->approval_status ?? 'pending') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ url('admin/doctor/add?id='.$doc->id) }}" target="_blank"
+                                       style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:#eef2ff;color:#0a6ebd;">
+                                        <i class="fa fa-pencil" style="font-size:11px;"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <div style="background:#f8fbff;border:1.5px dashed #d0e4ff;border-radius:10px;padding:20px;text-align:center;color:#888;margin-bottom:24px;">
+                    <i class="fa fa-user-md" style="font-size:28px;color:#d0e4ff;"></i>
+                    <p class="mt-2 mb-0">No doctors added by this user.</p>
+                </div>
+                @endif
+
+                <div class="sec-hd">
+                    <div class="sec-ic" style="background:linear-gradient(135deg,#f093fb,#f5576c);"><i class="fa fa-hospital-o"></i></div>
+                    Hospitals Added by This User
+                </div>
+
+                @if(count($userHospitals) > 0)
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" style="font-size:13px;">
+                        <thead style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>City</th>
+                                <th>Status</th>
+                                <th>Approval</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($userHospitals as $i => $hosp)
+                            <tr>
+                                <td>{{ $i + 1 }}</td>
+                                <td>{{ $hosp->name }}</td>
+                                <td>{{ $hosp->phone_no ?: '—' }}</td>
+                                <td>{{ $hosp->email ?: '—' }}</td>
+                                <td>{{ $hosp->city ?: '—' }}</td>
+                                <td>
+                                    <span class="badge" style="background:{{ $hosp->status == 1 ? '#00b074' : '#94a3b8' }};color:#fff;border-radius:12px;padding:3px 10px;">
+                                        {{ $hosp->status == 1 ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background:{{ $hosp->approval_status == 'approved' ? '#00b074' : ($hosp->approval_status == 'rejected' ? '#ef4444' : '#f59e0b') }};color:#fff;border-radius:12px;padding:3px 10px;">
+                                        {{ ucfirst($hosp->approval_status ?? 'pending') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ url('admin/hospital/add?id='.$hosp->id) }}" target="_blank"
+                                       style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:#fff0f5;color:#f5576c;">
+                                        <i class="fa fa-pencil" style="font-size:11px;"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <div style="background:#f8fbff;border:1.5px dashed #fbc2eb;border-radius:10px;padding:20px;text-align:center;color:#888;">
+                    <i class="fa fa-hospital-o" style="font-size:28px;color:#fbc2eb;"></i>
+                    <p class="mt-2 mb-0">No hospitals added by this user.</p>
+                </div>
+                @endif
+
+            </div>
+
+            {{-- ══ TAB 4: Permissions ══ --}}
+            <div class="tab-pane" id="utab4">
+
+                <div class="sec-hd">
+                    <div class="sec-ic" style="background:linear-gradient(135deg,#373b44,#4286f4);"><i class="fa fa-lock"></i></div>
+                    Dashboard Permissions
+                </div>
+
+                <div id="perm_form_error" class="uf-error" style="display:none;"></div>
+                <div id="perm_form_success" style="display:none;background:#e6fff5;border:1px solid #b3f0d8;border-radius:8px;padding:10px 14px;color:#00b074;font-size:13px;margin-bottom:16px;"></div>
+
+                <form id="permission_form" method="POST" onsubmit="return false;">
+                    @csrf
+                    <input type="hidden" name="user_id" value="{{ $isEdit ? $user->id : '' }}">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div style="background:#f0f7ff;border:1.5px solid #d0e4ff;border-radius:12px;padding:20px 22px;display:flex;align-items:center;gap:16px;">
+                                <div style="width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,#0a6ebd,#00b074);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0;">
+                                    <i class="fa fa-calendar-check-o"></i>
+                                </div>
+                                <div style="flex:1;">
+                                    <div style="font-size:14px;font-weight:700;color:#1a1a2e;">Attendance Permission</div>
+                                    <div style="font-size:12px;color:#666;margin-top:2px;">Allow user to access Staff Attendance module</div>
+                                </div>
+                                <label style="position:relative;display:inline-block;width:46px;height:24px;flex-shrink:0;cursor:pointer;" onclick="togglePerm('attendance_permission','att_toggle')">
+                                    <input type="checkbox" name="attendance_permission" id="attendance_permission" value="1"
+                                           style="opacity:0;width:0;height:0;position:absolute;"
+                                           {{ ($membership && $membership->attendance_permission) ? 'checked' : '' }}>
+                                    <span id="att_toggle" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;border-radius:24px;transition:.3s;background:{{ ($membership && $membership->attendance_permission) ? '#00b074' : '#cbd5e1' }};">
+                                        <span id="att_knob" style="position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;transform:{{ ($membership && $membership->attendance_permission) ? 'translateX(22px)' : 'translateX(0)' }};"></span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div style="background:#f0f7ff;border:1.5px solid #d0e4ff;border-radius:12px;padding:20px 22px;display:flex;align-items:center;gap:16px;">
+                                <div style="width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,#373b44,#4286f4);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0;">
+                                    <i class="fa fa-cog"></i>
+                                </div>
+                                <div style="flex:1;">
+                                    <div style="font-size:14px;font-weight:700;color:#1a1a2e;">Invoice Settings Permission</div>
+                                    <div style="font-size:12px;color:#666;margin-top:2px;">Allow user to access Invoice Master (Settings) module</div>
+                                </div>
+                                <label style="position:relative;display:inline-block;width:46px;height:24px;flex-shrink:0;cursor:pointer;" onclick="togglePerm('invoice_permission','inv_toggle')">
+                                    <input type="checkbox" name="invoice_permission" id="invoice_permission" value="1"
+                                           style="opacity:0;width:0;height:0;position:absolute;"
+                                           {{ ($membership && $membership->invoice_permission) ? 'checked' : '' }}>
+                                    <span id="inv_toggle" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;border-radius:24px;transition:.3s;background:{{ ($membership && $membership->invoice_permission) ? '#00b074' : '#cbd5e1' }};">
+                                        <span id="inv_knob" style="position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;transform:{{ ($membership && $membership->invoice_permission) ? 'translateX(22px)' : 'translateX(0)' }};"></span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <button type="submit" class="btn-save" id="save_permission">
+                            <i class="fa fa-save"></i> Save Permissions
+                        </button>
+                    </div>
+                </form>
+            </div>
+            @endif
+
         </div>{{-- tab-content --}}
     </div>{{-- uform-wrap --}}
 
@@ -417,7 +615,62 @@ var interval = setInterval(function () {
     }
     $('#startDate, #endDate').on('change', updateDatePreview);
 
+    /* ── Toggle switch visual ── */
+    $('#attendance_permission').on('change', function() {
+        var on = $(this).is(':checked');
+        $('#att_toggle').css('background', on ? '#00b074' : '#cbd5e1');
+        $('#att_toggle span').css('transform', on ? 'translateX(22px)' : 'translateX(0)');
+    });
+    $('#invoice_permission').on('change', function() {
+        var on = $(this).is(':checked');
+        $('#inv_toggle').css('background', on ? '#00b074' : '#cbd5e1');
+        $('#inv_toggle span').css('transform', on ? 'translateX(22px)' : 'translateX(0)');
+    });
+    /* Click on toggle span triggers checkbox --*/
+    $('#att_toggle').on('click', function() { $('#attendance_permission').trigger('click'); });
+    $('#inv_toggle').on('click', function() { $('#invoice_permission').trigger('click'); });
+
+    /* ── Permission Form Submit ── */
+    $('#permission_form').off('submit').on('submit', function(e) {
+        e.preventDefault();
+        var btn = $('#save_permission');
+        btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+        $('#perm_form_error').hide();
+        $('#perm_form_success').hide();
+        $.ajax({
+            url: '{{ route("admin.user.permission") }}',
+            type: 'POST',
+            data: $(this).serialize(),
+            dataType: 'json',
+            success: function(res) {
+                btn.prop('disabled', false).html('<i class="fa fa-save"></i> Save Permissions');
+                if (res.status === 200) {
+                    $('#perm_form_success').html('<i class="fa fa-check-circle"></i> ' + res.msg).show();
+                    if (typeof $.jGrowl !== 'undefined') {
+                        $.jGrowl(res.msg, { theme: 'success-theme', life: 2500 });
+                    }
+                } else {
+                    $('#perm_form_error').text(res.msg).show();
+                }
+            },
+            error: function(xhr) {
+                btn.prop('disabled', false).html('<i class="fa fa-save"></i> Save Permissions');
+                var msg = xhr.responseJSON && xhr.responseJSON.msg ? xhr.responseJSON.msg : 'Something went wrong.';
+                $('#perm_form_error').text(msg).show();
+            }
+        });
+    });
+
 }, 100);
+
+function togglePerm(checkId, toggleId) {
+    var cb = document.getElementById(checkId);
+    cb.checked = !cb.checked;
+    var on = cb.checked;
+    var track = document.getElementById(toggleId);
+    track.style.background = on ? '#00b074' : '#cbd5e1';
+    track.querySelector('span').style.transform = on ? 'translateX(22px)' : 'translateX(0)';
+}
 </script>
 
 @endsection

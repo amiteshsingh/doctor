@@ -27,8 +27,10 @@ class DoctorController extends Controller
 		}
 
 		$membership = \App\Models\UserDoctorRoleMembership::where('user_id', $user->id)->first();
+		$attendancePermission = $membership ? (bool)$membership->attendance_permission : false;
+		$invoicePermission    = $membership ? (bool)$membership->invoice_permission    : false;
 		
-		return view('doctor.dashboard', compact('membership'));
+		return view('doctor.dashboard', compact('membership', 'attendancePermission', 'invoicePermission'));
 	}
 
     public function index(Request $request){

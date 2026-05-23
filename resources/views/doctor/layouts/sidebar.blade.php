@@ -18,12 +18,30 @@
                         <li class="submenu {{ request()->routeIs('prescription-invoice.*') || request()->routeIs('invoice-master.*') ? 'active' : '' }}">
                             <a href="#"><i class="fa fa-pencil-square-o"></i> <span> Invoice Settings </span> <span class="menu-arrow"></span></a>
                             <ul style="display: {{ request()->routeIs('prescription-invoice.*') || request()->routeIs('invoice-master.*') ? 'block' : 'none' }};">
+                                @php $__mem = \App\Models\UserDoctorRoleMembership::where('user_id', Auth::id())->first(); @endphp
                                 <li class="{{ request()->routeIs('prescription-invoice.*') ? 'active' : '' }}">
+                                    @if($__mem && $__mem->invoice_permission)
                                     <a href="{{ route('prescription-invoice.index') }}">Appointments</a>
+                                    @else
+                                    <a href="javascript:void(0);" onclick="return false;"
+                                       style="opacity:.45;cursor:not-allowed;filter:grayscale(1);pointer-events:none;"
+                                       title="🔒 Yeh feature aapke liye available nahi hai. Admin se permission lein ya Membership khareedein. | इस फीचर को उपयोग करने की आपके पास अनुमति नहीं है। कृपया एडमिन से संपर्क करें या मेंबरशिप खरीदें।">
+                                        <i class="fa fa-lock" style="font-size:10px;margin-right:4px;"></i>Appointments
+                                    </a>
+                                    @endif
                                 </li>
+                                @if($__mem && $__mem->invoice_permission)
                                 <li class="{{ request()->routeIs('invoice-master.*') ? 'active' : '' }}">
                                     <a href="{{ route('invoice-master.index') }}">Invoice Settings</a>
                                 </li>
+                                @else
+                                <li title="🔒 Yeh feature aapke liye available nahi hai. Admin se permission lein ya Membership khareedein. | इस फीचर को उपयोग करने की आपके पास अनुमति नहीं है। कृपया एडमिन से संपर्क करें या मेंबरशिप खरीदें।">
+                                    <a href="javascript:void(0);" onclick="return false;"
+                                       style="opacity:.45;cursor:not-allowed;filter:grayscale(1);pointer-events:none;">
+                                        <i class="fa fa-lock" style="font-size:10px;margin-right:4px;"></i>Invoice Settings
+                                    </a>
+                                </li>
+                                @endif
                             </ul>
                         </li>
 
@@ -31,13 +49,23 @@
                             <a href="{{ route('doctor.medicine.index') }}"><i class="fa fa-pills"></i> <span>Medicine</span></a>
                         </li>
 
-                        <li class="{{ request()->routeIs('doctor.staff.*') ? 'active' : '' }}">
+                        <li class="{{ request()->routeIs('doctor.staff.index') ? 'active' : '' }}">
                             <a href="{{ route('doctor.staff.index') }}"><i class="fa fa-users"></i> <span>Staff</span></a>
                         </li>
 
+                        @php $__mem2 = $__mem ?? \App\Models\UserDoctorRoleMembership::where('user_id', Auth::id())->first(); @endphp
+                        @if($__mem2 && $__mem2->attendance_permission)
                         <li class="{{ request()->routeIs('doctor.staff.attendance') || request()->routeIs('doctor.staff.attendance.*') ? 'active' : '' }}">
                             <a href="{{ route('doctor.staff.attendance') }}"><i class="fa fa-calendar-check-o"></i> <span>Attendance</span></a>
                         </li>
+                        @else
+                        <li title="🔒 Yeh feature aapke liye available nahi hai. Admin se permission lein ya Membership khareedein. | इस फीचर को उपयोग करने की आपके पास अनुमति नहीं है। कृपया एडमिन से संपर्क करें या मेंबरशिप खरीदें।">
+                            <a href="javascript:void(0);" onclick="return false;"
+                               style="opacity:.45;cursor:not-allowed;filter:grayscale(1);pointer-events:none;">
+                                <i class="fa fa-calendar-check-o"></i> <span><i class="fa fa-lock" style="font-size:10px;margin-right:3px;"></i>Attendance</span>
+                            </a>
+                        </li>
+                        @endif
 
                         <!-- <li>
                             <a href="patients.html"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>

@@ -13,6 +13,8 @@ class UserDoctorRoleMembership extends Model
         'membership_amount',
         'membership_subscription_date',
         'membership_subscription_end_date',
+        'attendance_permission',
+        'invoice_permission',
     ];
 
     public function user()
