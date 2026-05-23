@@ -195,7 +195,7 @@
             <button class="nav-link active"
                     data-bs-toggle="tab"
                     data-bs-target="#english">
-                🇬🇧 English
+                English
             </button>
         </li>
 
@@ -203,7 +203,7 @@
             <button class="nav-link"
                     data-bs-toggle="tab"
                     data-bs-target="#hindi">
-                🇮🇳 हिंदी
+                हिंदी
             </button>
         </li>
 
