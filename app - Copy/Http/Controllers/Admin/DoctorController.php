@@ -1,42 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Doctor;
+// namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Hash;
-use Session;
-use DB;
-use App\Models\User;
-use App\Models\UserRole;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Http;
-use App\Http\Controllers\Controller;
 use App\Models\Doctor;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use DB;
+use Illuminate\Support\Facades\Session;
 
 class DoctorController extends Controller
 {
-    public function dashboard(){
-		
-		$user = Auth::user();
-		$userRole = UserRole::where('user_id', $user->id)->first();
-		if (!$user || !$userRole || $userRole->role !== 'doctor') {
-			return redirect('/');
-		}
-
-		$membership = \App\Models\UserDoctorRoleMembership::where('user_id', $user->id)->first();
-		$attendancePermission = $membership ? (bool)$membership->attendance_permission : false;
-		$invoicePermission    = $membership ? (bool)$membership->invoice_permission    : false;
-
-		$myDoctor = Doctor::where('added_by', $user->id)->first();
-		$profileComplete = $myDoctor && DB::table('doctor_locations')->where('doctor_id', $myDoctor->id)->exists();
-		$myDoctorId = $myDoctor ? $myDoctor->id : null;
-		
-		return view('doctor.dashboard', compact('membership', 'attendancePermission', 'invoicePermission', 'profileComplete', 'myDoctorId'));
-	}
-
     public function index(Request $request){
         
         try{
@@ -49,8 +23,8 @@ class DoctorController extends Controller
                 $page =  isset($filter['page'])?$filter['page']:$page;
                 $records = Doctor::getResult($page, $page_size, $filter);
                 $total = Doctor::getTotalResult($filter);
-                $content_html =  view('doctor.mydoctor.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
-                $pagination_html = view('pagination.pagination')->with(['url'=> 'mydoctor', 'recTotal' => $total, 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'doctor'])->render();
+                $content_html =  view('admin.doctor.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
+                $pagination_html = view('pagination.pagination')->with(['url'=> 'doctor', 'recTotal' => $total, 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'doctor'])->render();
                 $result['pagination_html'] = $pagination_html;
                 $result['content_html'] = $content_html;
                 $result['error'] = 0;
@@ -62,17 +36,17 @@ class DoctorController extends Controller
                 $result['total_count'] = Doctor::getTotalResult($filter);
                 $result['page'] = $page;
                 $result['page_size'] = $page_size;
-                $pagination_html = view('pagination.pagination')->with(['url'=> 'mydoctor', 'recTotal' => $result['total_count'], 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'doctor'])->render();
+                $pagination_html = view('pagination.pagination')->with(['url'=> 'doctor', 'recTotal' => $result['total_count'], 'pageSize' => $page_size, 'curPage' => $page,  'filterAjax' => 'ajaxSearching', 'filterType' => 'doctor'])->render();
                 $result['pagination_html'] = $pagination_html;
-                $content_html =  view('doctor.mydoctor.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
+                $content_html =  view('admin.doctor.list-content')->with(['res'=> $records,'page'=>$page, 'page_size' => $page_size])->render();
                 $result['content_html'] = $content_html;
             }
         }catch(\Exception $e){
             var_dump($e->getMessage()); die;
             return redirect()->back()->withError('Something went wrong');
         }
-        $title = "Doctors";
-        return view('doctor.mydoctor.index', compact('result', 'title')); 
+        $title = "Doctor List";
+        return view('admin.doctor.index', compact('result', 'title')); 
 
     }
 
@@ -85,6 +59,7 @@ class DoctorController extends Controller
                     'name' => 'required',
                     'phone_no' => 'required',
                     'status' => 'required',
+                    'approval_status' => 'required',
                 ]);
                 
                 if(isset($data['id']) && $data['id'] !=""){
@@ -102,22 +77,20 @@ class DoctorController extends Controller
                     $update['phone_no'] = $data['phone_no'];
                     $update['email'] = $data['email'];
                     $update['status'] = $data['status'];
-                    // $update['approval_status'] = $data['approval_status'];
-                    // $update['latitude'] = $data['latitude'];
-                    // $update['longitude'] = $data['longitude'];
+                    $update['approval_status'] = $data['approval_status'];
+                    $update['latitude'] = $data['latitude'];
+                    $update['longitude'] = $data['longitude'];
                     $update['updated_on'] = date('Y-m-d H:i:s');  
                     $update['updated_by'] = Session::get('user_id');                  
-                    $update['hospital_id'] = $data['hospital_id'];                  
-                    $update['gender'] = $data['gender'];                  
+                    $update['hospital_id'] = $data['hospital_id'];
+                    $update['gender'] = $data['gender'];                     
+                    $update['is_professional'] = $data['is_professional'];                     
                    
                     if(DB::table('doctors')->where('id', $data['id'])->update($update)){
-                        return response()->json([
-                            "status" => 200,
-                            "msg" => "Doctor updated successfully.",
-                            "redirect_url" => url("doctor/mydoctor/add?id=" . $data['id']) // redirect URL for updated doctor
-                        ]);
+                        return response()->json(["status"=>200,"msg"=>"Doctor updated successfully."]);
+                    }else{
+                        return response()->json(["status"=>403,"msg"=>'Doctor not updated.']);
                     }
-
                 }else{
                     //Save doctor 
                     $doctor = new Doctor;
@@ -134,17 +107,14 @@ class DoctorController extends Controller
                     $doctor->email = isset($data['email'])?$data['email']:'';
                     $doctor->status = isset($data['status'])?$data['status']:'';
                     $doctor->gender = isset($data['gender'])?$data['gender']:'';
-                    // $doctor->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
+                    $doctor->approval_status = isset($data['approval_status'])?$data['approval_status']:'';
                     $doctor->added_on = date('Y-m-d H:i:s');
                     $doctor->added_by = Session::get('user_id');
                     $doctor->updated_by = Session::get('user_id');
+                    $doctor->is_professional =  isset($data['is_professional'])?$data['is_professional']:'';
                     
                     if($doctor->save()){
-                        return response()->json([
-                            "status" => 200,
-                            "msg" => "Doctor saved successfully.",
-                            "redirect_url" => url("doctor/mydoctor/add?id=" . $doctor->id) // redirect URL with ID
-                        ]);
+                        return response()->json(["status"=>200,"msg"=>"Doctors saved successfully."]);
                     }else{
                         return response()->json(["status"=>403,"msg"=>'Invalid request']);
                     }
@@ -210,7 +180,7 @@ class DoctorController extends Controller
             $hospitals = DB::table('hospitals')->where('updated_by', Session::get('user_id'))->get()->toArray();
             $states = DB::table('states')->get()->toArray();
 
-            return view('doctor.mydoctor.add', compact('doctor', 'specializations', 'languages', 'states', 'hospitals'));
+            return view('admin.doctor.add', compact('doctor', 'specializations', 'languages', 'states', 'hospitals'));
         }
     }
 
@@ -302,11 +272,11 @@ class DoctorController extends Controller
                     'graduation_year'   => $data['graduation_year'],
                     'details'           => $data['education_details'],
                 ]);
+
                 if(isset($data['experience']) && !empty($data['experience'])){
                     // Update doctor experience if provided
                    DB::table('doctors')->where('id', $doctor_id)->update(['experience' => $data['experience']]);     
                 }
-                
 
                 // Insert doctor languages (multiple)
                 DB::table('doctor_languages')->where('doctor_id', $doctor_id)->delete();
@@ -338,67 +308,6 @@ class DoctorController extends Controller
     }
 
 
-    // public function doctorAvailability(Request $request)
-    // {
-    //     try {
-    //         $request->validate([
-    //             'id'           => 'required|integer|exists:doctors,id',
-    //             'availability' => 'required|array',
-    //         ]);
-
-    //         $doctorId    = $request->input('id');
-    //         $availability = $request->input('availability');
-    //         // Delete existing availability
-    //         DB::table('doctor_availability')->where('doctor_id', $doctorId)->delete();
-
-    //         $inserts = [];
-    //         foreach ($availability as $day => $time) {
-    //             if (!empty($time['start_time']) && !empty($time['end_time'])) {
-    //                 $inserts[] = [
-    //                     'doctor_id'  => $doctorId,
-    //                     'day'        => $day,
-    //                     'start_time' => $time['start_time'],
-    //                     'end_time'   => $time['end_time'],
-    //                     'created_at' => now(),
-    //                     'updated_at' => now(),
-    //                 ];
-    //             }else{
-    //                 $inserts[] = [
-    //                     'doctor_id'  => $doctorId,
-    //                     'day'        => $day,
-    //                     'start_time' => 'Closed',
-    //                     'end_time'   => 'Closed',
-    //                     'created_at' => now(),
-    //                     'updated_at' => now(),
-    //                 ];
-    //             }
-    //         }
-
-    //         if (!empty($inserts)) {
-    //             DB::table('doctor_availability')->insert($inserts);
-    //         }
-
-    //         return response()->json([
-    //             'status'     => 200,
-    //             'msg'    => 'Availability saved successfully!',
-    //             'doctor_id'  => $doctorId,
-    //         ]);
-
-    //     } catch (\Illuminate\Validation\ValidationException $ve) {
-    //         return response()->json([
-    //             'status'  => 422,
-    //             'msg' => 'Validation failed.',
-    //             'errors'  => $ve->errors()
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Doctor Availability Error: ' . $e->getMessage());
-    //         return response()->json([
-    //             'status'  => 500,
-    //             'msg' => 'Server Error: ' . $e->getMessage()
-    //         ]);
-    //     }
-    // }
-
     public function doctorAvailability(Request $request)
     {
         try {
@@ -407,7 +316,7 @@ class DoctorController extends Controller
                 'availability' => 'required|array',
             ]);
 
-            $doctorId     = $request->input('id');
+            $doctorId    = $request->input('id');
             $availability = $request->input('availability');
 
             // पुराने slots delete करो
@@ -468,129 +377,12 @@ class DoctorController extends Controller
     }
 
 
-
     public function delete(Request $request, $id){
         if(empty(Session::get('user_id'))){
 			return redirect('/');
 		}
         $data = DB::table('doctors')->where('id','=',$id)->delete();
         $request->session()->flash('msg','doctor delete successfully.');
-        return redirect('doctor/mydoctor');  
+        return redirect('admin/doctor');  
     }
-
-
-    public function profile(Request $request, $id)
-    {
-        if (empty(Session::get('user_id'))) {
-            return redirect('/');
-        }
-
-        // Get doctor basic info
-        $doctor = Doctor::find($id);
-        if (!$doctor) {
-            return redirect()->back()->withError('Doctor not found');
-        }
-
-        // Fetch related data
-        $availability = DB::table('doctor_availability')
-            ->where('doctor_id', $id)
-            ->get();
-
-        $educations = DB::table('doctor_educations')
-            ->where('doctor_id', $id)
-            ->get();
-
-        $languages = DB::table('doctor_languages')
-            ->join('languages', 'doctor_languages.language_id', '=', 'languages.id')
-            ->where('doctor_languages.doctor_id', $id)
-            ->select('languages.name as language_name')
-            ->get();
-
-        $locations = DB::table('doctor_locations')
-            ->where('doctor_id', $id)
-            ->get();
-
-        $specializations = DB::table('doctor_specializations')
-            ->join('specializations', 'doctor_specializations.specialization_id', '=', 'specializations.id')
-            ->where('doctor_specializations.doctor_id', $id)
-            ->select('specializations.name as specialization_name')
-            ->get();
-        $experiences = [];
-       
-        return view('doctor.mydoctor.profile', compact(
-            'doctor',
-            'availability',
-            'educations',
-            'languages',
-            'locations',
-            'specializations', 'experiences'
-        ));
-    }
-
-
-    public function editProfile(Request $request)
-    {
-        if (empty(Session::get('user_id'))) {
-            return redirect('/');
-        }
-        $user = Auth::user();
-
-        return view('doctor.edit-profile', compact('user'));
-    }
-
-
-    // Profile update
-    public function update(Request $request)
-    {
-        $user = Auth::user();
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'dob' => 'nullable|date',
-            'gender' => 'nullable|string',
-            'address' => 'nullable|string',
-            'state' => 'nullable|string',
-            'country' => 'nullable|string',
-            'pin_code' => 'nullable|string|max:10',
-            'phone_no' => 'nullable|string|max:15',
-            'password' => 'nullable|min:6|confirmed',
-            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
-        ]);
-
-        $user->name = $request->name;
-        $user->dob = $request->dob;
-        $user->gender = $request->gender;
-        $user->address = $request->address;
-        $user->state = $request->state;
-        $user->country = $request->country;
-        $user->pin_code = $request->pin_code;
-        $user->phone_no = $request->phone_no;
-
-        // Password Update
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
-        // Profile Image Upload
-        if ($request->hasFile('profile_image')) {
-            $image = $request->file('profile_image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            // $image->move(public_path('uploads/profile_images'), $filename);
-            $image->storeAs('upload/profile_images', $filename, 'public');
-
-            // पुरानी image delete कर सकते हैं अगर stored है
-            if ($user->profile_image && file_exists(public_path('uploads/profile_images/' . $user->profile_image))) {
-                // unlink(public_path('uploads/profile_images/' . $user->profile_image));
-                // unlink(public_path('upload/profile_images/' . $user->profile_image));
-            }
-
-            $user->profile_image = $filename;
-        }
-
-        $user->save();
-
-        return redirect()->route('doctor.edit-profile')->with('success', 'Profile updated successfully.');
-    }
-
-
 }
