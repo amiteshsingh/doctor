@@ -172,7 +172,7 @@ class DoctorController extends Controller
             $slots[] = [
                 'value'     => $value,
                 'label'     => $label,
-                'is_booked' => in_array($value, $bookedTimes), 
+                'is_booked' => in_array($value, $bookedTimes),  
                 'is_past'   => $isToday && $m <= $currentMins,
             ];
         }
