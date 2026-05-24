@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Doctor;
 use App\Models\User;
 use App\Models\UserRole;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -52,6 +53,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20', 'unique:doctors,phone_no'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             //'role' => ['required', 'in:admin,doctor'],
@@ -66,23 +68,37 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $user =  User::create([
+        \Log::info('Register data: ', ['name'=>$data['name'], 'email'=>$data['email'], 'phone'=>$data['phone'] ?? 'NOT SET']);
+
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
 
-         // Assign role
-         UserRole::create([
+        // Assign role
+        UserRole::create([
             'user_id' => $user->id,
-            //'role' => $data['role'],
             'role' => 'doctor',
         ]);
 
+        // Save in doctors table
+        try {
+            Doctor::create([
+                'name'     => $data['name'],
+                'email'    => $data['email'],
+                'phone_no' => $data['phone'] ?? '',
+                'added_by' => $user->id,
+                'added_on' => now(),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Doctor create failed: ' . $e->getMessage());
+        }
+
         session([
-            'user_id' => $user->id,
-            'user_email' => $user->email,
-            'user_role' =>  'doctor',
+            'user_id'   => $user->id,
+            'user_email'=> $user->email,
+            'user_role' => 'doctor',
         ]);
 
         return $user;

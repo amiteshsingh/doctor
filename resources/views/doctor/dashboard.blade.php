@@ -128,6 +128,23 @@
         </button>
     </div>
 
+    {{-- Profile Incomplete Banner --}}
+    @if(!$profileComplete)
+    <div style="background:linear-gradient(135deg,#fff3cd,#fff8e1);border:2px solid #ffc107;border-radius:16px;padding:18px 24px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;animation:fadeInUp .5s ease both;">
+        <div style="font-size:36px;">⚠️</div>
+        <div style="flex:1;">
+            <div style="font-size:15px;font-weight:700;color:#1a1a2e;">Profile Incomplete — Features Locked</div>
+            <div style="font-size:13px;color:#666;margin-top:3px;">
+                Apna doctor profile complete karein (Basic Info + Location) tab hi baaki saare features unlock honge.
+            </div>
+        </div>
+        <a href="{{ $myDoctorId ? url('doctor/mydoctor/add?id='.$myDoctorId) : url('doctor/mydoctor/add') }}"
+           style="background:linear-gradient(135deg,#ff6b6b,#feca57);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">
+            <i class="fa fa-edit mr-1"></i> Complete Profile Now
+        </a>
+    </div>
+    @endif
+
     <!-- Stat Cards Row 1 -->
     <div class="row mb-3" style="row-gap:16px;">
         <div class="col-xl-2 col-lg-4 col-sm-6">

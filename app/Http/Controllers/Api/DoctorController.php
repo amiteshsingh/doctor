@@ -88,7 +88,7 @@ class DoctorController extends Controller
             ]);
 
         $invoice_master = \DB::table('invoice_master')
-            ->select('hospital_clinic_name','consultation_fee', 'start_time',
+            ->select('id','doctor_id','hospital_clinic_name','consultation_fee', 'start_time',
              'end_time_slot', 'duration_time_slot','booking_mode','address','phone_no')
             ->where('doctor_id', $id)
             ->get();
@@ -112,16 +112,23 @@ class DoctorController extends Controller
 
     public function bookedSlots(Request $request)
     {
-        $request->validate([
-            'doctor_id' => 'required|integer',
-            'date'      => 'required|date',
-        ]);
+        $doctorId        = $request->input('doctor_id');
+        $invoiceMasterId = $request->input('invoice_master_id');
+        $date            = $request->input('date');
 
-        $invoiceMaster = InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
-
-        if (!$invoiceMaster) {
-            return response()->json(['status' => 404, 'message' => 'No slot configuration found for this doctor.'], 404);
+        if ((!$doctorId && !$invoiceMasterId) || !$date) {
+            return response()->json(['status' => 422, 'message' => 'doctor_id or invoice_master_id and date are required.', 'slots' => []]);
         }
+
+        $invoiceMaster = $invoiceMasterId
+            ? InvoiceMaster::find($invoiceMasterId)
+            : InvoiceMaster::where('doctor_id', $doctorId)->first();
+
+        if (!$invoiceMaster || !$invoiceMaster->start_time || !$invoiceMaster->end_time_slot || !$invoiceMaster->duration_time_slot) {
+            return response()->json(['status' => 404, 'message' => 'No slot configuration found for this doctor.', 'slots' => []]);
+        }
+
+        $doctorId = $invoiceMaster->doctor_id;
 
         $startTime    = $invoiceMaster->start_time       ?? '10:00';
         $endTime      = $invoiceMaster->end_time_slot    ?? '18:00';
@@ -133,17 +140,24 @@ class DoctorController extends Controller
         $startMins = (int)$sh * 60 + (int)$sm;
         $endMins   = (int)$eh * 60 + (int)$em;
 
-        // Already booked times for this date
+        // Already booked times for this date — normalize to h:i A
         $bookedTimes = PrescriptionInvoice::whereHas('invoiceMaster', function ($q) use ($request) {
-                $q->where('doctor_id', $request->doctor_id);
+        $q->where('doctor_id', $request->doctor_id);
             })
             ->where('booking_date', $request->date)
             ->pluck('booking_time')
+            ->map(function ($time) {
+                try {
+                    return \Carbon\Carbon::createFromFormat('h:i A', trim($time))->format('H:i');
+                } catch (\Exception $e) {
+                    return $time; // already in H:i format
+                }
+            })
             ->toArray();
 
         // Generate all slots
         $now         = now('Asia/Kolkata');
-        $isToday     = ($request->date === $now->format('Y-m-d'));
+        $isToday     = ($date === $now->format('Y-m-d'));
         $currentMins = $now->hour * 60 + $now->minute;
 
         $slots = [];
@@ -158,14 +172,14 @@ class DoctorController extends Controller
             $slots[] = [
                 'value'     => $value,
                 'label'     => $label,
-                'is_booked' => in_array($value, $bookedTimes),
+                'is_booked' => in_array($label, $bookedTimes),
                 'is_past'   => $isToday && $m <= $currentMins,
             ];
         }
 
         return response()->json([
             'status' => 200,
-            'date'   => $request->date,
+            'date'   => $date,
             'config' => [
                 'start_time'    => $startTime,
                 'end_time'      => $endTime,
@@ -187,11 +201,26 @@ class DoctorController extends Controller
             'booking_time'     => 'required',
         ]);
 
-        $invoiceMaster = InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
+        $invoiceMasterId = $request->input('invoice_master_id');
+        $invoiceMaster = $invoiceMasterId
+            ? InvoiceMaster::find($invoiceMasterId)
+            : InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
+
+        // Get booking_time from any input format
+        $rawTime = $request->input('booking_time') ?? $request->booking_time;
+        $normalizedTime = $this->normalizeTime($rawTime);
+        $alreadyBooked = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
+            ->where('booking_date', $request->booking_date)
+            ->whereRaw('LOWER(booking_time) = ?', [strtolower($normalizedTime)])
+            ->exists();
+
+        if ($alreadyBooked) {
+            return response()->json(['status' => 409, 'msg' => 'This slot is already booked.'], 409);
+        }
 
         $invoice = new PrescriptionInvoice;
         $invoice->invoice_master_id = $invoiceMaster->id ?? null;
-        $invoice->user_id           = $request->user_id;
+        $invoice->user_id           = $request->auth_user->id ?? null;
         $invoice->invoice_number    = 'INV-' . now()->format('YmdHis');
         $invoice->patient_name      = $request->patient_name;
         $invoice->age               = $request->age;
@@ -199,14 +228,34 @@ class DoctorController extends Controller
         $invoice->patient_address   = $request->patient_address;
         $invoice->patient_phone_no  = $request->patient_phone_no;
         $invoice->booking_date      = $request->booking_date;
-        $invoice->booking_time      = $request->booking_time;
+        $invoice->booking_time      = $normalizedTime;
         $invoice->created_at        = now();
         $invoice->updated_at        = now();
         $invoice->save();
 
         return response()->json([
             'status' => 200,
-            'msg'    => 'Appointment booked successfully!'
+            'msg'    => 'Appointment booked successfully!',
+            'booking_time_saved' => $normalizedTime,
+            'booking_time_received' => $request->booking_time,
         ]);
+    }
+
+    private function normalizeTime($time)
+    {
+        $time = trim($time);
+        // Already h:i A format
+        if (preg_match('/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i', $time, $m)) {
+            return sprintf('%02d:%02d %s', (int)$m[1], (int)$m[2], strtoupper($m[3]));
+        }
+        // 24-hour HH:MM format — convert manually
+        if (preg_match('/^(\d{1,2}):(\d{2})$/', $time, $m)) {
+            $h   = (int)$m[1];
+            $min = (int)$m[2];
+            $ampm = $h >= 12 ? 'PM' : 'AM';
+            $h12  = $h % 12 ?: 12;
+            return sprintf('%02d:%02d %s', $h12, $min, $ampm);
+        }
+        return $time;
     }
 }

@@ -143,6 +143,17 @@ class PrescriptionInvoiceController extends Controller
                         return response()->json(["status" => 403, "msg" => "Prescription invoice not updated."]);
                     }
                 } else {
+                    // Duplicate slot check
+                    $alreadyBooked = DB::table('prescription_invoice')
+                        ->where('invoice_master_id', $data['invoice_master_id'])
+                        ->where('booking_date', $data['booking_date'])
+                        ->whereRaw('LOWER(booking_time) = ?', [strtolower($data['booking_time'] ?? '')])
+                        ->exists();
+
+                    if ($alreadyBooked) {
+                        return response()->json(["status" => 409, "msg" => "This slot is already booked. Please select another time slot."]);
+                    }
+
                     // Insert
                     $now = now(); 
                     $invoice = new PrescriptionInvoice;
@@ -187,6 +198,58 @@ class PrescriptionInvoiceController extends Controller
 
             return view('doctor.prescription_invoice.add', compact('prescription', 'invoiceMasters'));
         }
+    }
+
+    public function getSlots(Request $request)
+    {
+        $invoiceMasterId = $request->invoice_master_id;
+        $date            = $request->booking_date;
+
+        $master = InvoiceMaster::find($invoiceMasterId);
+        if (!$master || !$master->start_time || !$master->end_time_slot || !$master->duration_time_slot) {
+            return response()->json(['status' => 404, 'slots' => []]);
+        }
+
+        // Generate all slots — store as minutes from midnight for easy comparison
+        $startMin = (int)date('H', strtotime($master->start_time)) * 60 + (int)date('i', strtotime($master->start_time));
+        $endMin   = (int)date('H', strtotime($master->end_time_slot)) * 60 + (int)date('i', strtotime($master->end_time_slot));
+        $duration = (int) $master->duration_time_slot;
+        $allSlots = [];
+        for ($m = $startMin; $m + $duration <= $endMin; $m += $duration) {
+            $h    = intdiv($m, 60);
+            $min  = $m % 60;
+            $ampm = $h >= 12 ? 'PM' : 'AM';
+            $h12  = $h % 12 ?: 12;
+            $allSlots[] = ['label' => sprintf('%02d:%02d %s', $h12, $min, $ampm), 'minutes' => $m];
+        }
+
+        // Get booked slot labels for this date
+        $booked = DB::table('prescription_invoice')
+            ->where('invoice_master_id', $invoiceMasterId)
+            ->where('booking_date', $date)
+            ->pluck('booking_time')
+            ->toArray();
+        // Normalize booked times to h:i A format
+        $bookedLabels = array_map(fn($t) => date('h:i A', strtotime($t)), $booked);
+
+        $now        = now();
+        $isToday    = ($date === $now->format('Y-m-d'));
+        $nowMin     = $isToday ? ($now->hour * 60 + $now->minute) : -1;
+
+        $slots = array_map(function($slot) use ($bookedLabels, $nowMin) {
+            $isBooked = in_array($slot['label'], $bookedLabels);
+            return [
+                'time'    => $slot['label'],
+                'minutes' => $slot['minutes'],
+                'booked'  => $isBooked,
+            ];
+        }, $allSlots);
+
+        return response()->json([
+            'status'  => 200,
+            'slots'   => $slots,
+            'isToday' => ($date === now()->format('Y-m-d')),
+        ]);
     }
 
     public function delete(Request $request, $id)

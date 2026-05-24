@@ -1,218 +1,119 @@
 <div class="sidebar" id="sidebar">
             <div class="sidebar-inner slimscroll">
                 <div id="sidebar-menu" class="sidebar-menu">
+                    @php
+                        $myDoc = \App\Models\Doctor::where('added_by', Auth::id())->first();
+                        $profileComplete = $myDoc && \Illuminate\Support\Facades\DB::table('doctor_locations')->where('doctor_id', $myDoc->id)->exists();
+                        $myDoctorId = $myDoc ? $myDoc->id : null;
+                        $disabledStyle = 'opacity:.4;cursor:not-allowed;pointer-events:none;filter:grayscale(1);';
+                        $disabledTitle = 'Pehle apna doctor profile complete karein';
+                        $__mem = \App\Models\UserDoctorRoleMembership::where('user_id', Auth::id())->first();
+                    @endphp
                     <ul>
                         <li class="menu-title">Main</li>
+
                         <li class="{{ request()->routeIs('doctor.dashboard') ? 'active' : '' }}">
                             <a href="{{ route('doctor.dashboard') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
 
-                        <li class="{{ request()->routeIs('doctor.myhospital') || request()->routeIs('doctor.myhospital.*') ? 'active' : '' }}">
-                            <a href="{{ route('doctor.myhospital') }}"><i class="fa fa-hospital-o"></i> <span>Hospitals List</span></a>
+                        {{-- Profile incomplete banner --}}
+                        @if(!$profileComplete)
+                        <li style="padding:8px 15px;">
+                            <a href="{{ $myDoctorId ? url('doctor/mydoctor/add?id='.$myDoctorId) : url('doctor/mydoctor/add') }}"
+                               style="display:block;background:linear-gradient(135deg,#ff6b6b,#feca57);color:#fff;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:700;text-decoration:none;text-align:center;">
+                                <i class="fa fa-exclamation-circle"></i> Complete Profile
+                            </a>
+                        </li>
+                        @endif
+
+                        <li class="{{ request()->routeIs('doctor.myhospital') || request()->routeIs('doctor.myhospital.*') ? 'active' : '' }}"
+                            @if(!$profileComplete) title="{{ $disabledTitle }}" @endif>
+                            <a href="{{ $profileComplete ? route('doctor.myhospital') : 'javascript:void(0)' }}"
+                               @if(!$profileComplete) style="{{ $disabledStyle }}" @endif>
+                                <i class="fa fa-hospital-o"></i> <span>Hospitals List</span>
+                            </a>
                         </li>
 
-                        <li class="{{ request()->routeIs('doctor.mydoctor')  || request()->routeIs('doctor.mydoctor.*') ? 'active' : '' }}">
+                        <li class="{{ request()->routeIs('doctor.mydoctor') || request()->routeIs('doctor.mydoctor.*') ? 'active' : '' }}">
                             <a href="{{ route('doctor.mydoctor') }}"><i class="fa fa-user-md"></i> <span>Doctors List</span></a>
                         </li>
-                
-                        <li class="submenu {{ request()->routeIs('prescription-invoice.*') || request()->routeIs('invoice-master.*') ? 'active' : '' }}">
-                            <a href="#"><i class="fa fa-pencil-square-o"></i> <span> Invoice Settings </span> <span class="menu-arrow"></span></a>
-                            <ul style="display: {{ request()->routeIs('prescription-invoice.*') || request()->routeIs('invoice-master.*') ? 'block' : 'none' }};">
-                                @php $__mem = \App\Models\UserDoctorRoleMembership::where('user_id', Auth::id())->first(); @endphp
-                                <li class="{{ request()->routeIs('prescription-invoice.*') ? 'active' : '' }}">
-                                    @if($__mem && $__mem->invoice_permission)
-                                    <a href="{{ route('prescription-invoice.index') }}">Appointments</a>
-                                    @else
-                                    <a href="javascript:void(0);" onclick="return false;"
-                                       style="opacity:.45;cursor:not-allowed;filter:grayscale(1);pointer-events:none;"
-                                       title="🔒 Yeh feature aapke liye available nahi hai. Admin se permission lein ya Membership khareedein. | इस फीचर को उपयोग करने की आपके पास अनुमति नहीं है। कृपया एडमिन से संपर्क करें या मेंबरशिप खरीदें।">
-                                        <i class="fa fa-lock" style="font-size:10px;margin-right:4px;"></i>Appointments
-                                    </a>
-                                    @endif
-                                </li>
-                                @if($__mem && $__mem->invoice_permission)
-                                <li class="{{ request()->routeIs('invoice-master.*') ? 'active' : '' }}">
-                                    <a href="{{ route('invoice-master.index') }}">Invoice Settings</a>
-                                </li>
-                                @else
-                                <li title="🔒 Yeh feature aapke liye available nahi hai. Admin se permission lein ya Membership khareedein. | इस फीचर को उपयोग करने की आपके पास अनुमति नहीं है। कृपया एडमिन से संपर्क करें या मेंबरशिप खरीदें।">
-                                    <a href="javascript:void(0);" onclick="return false;"
-                                       style="opacity:.45;cursor:not-allowed;filter:grayscale(1);pointer-events:none;">
-                                        <i class="fa fa-lock" style="font-size:10px;margin-right:4px;"></i>Invoice Settings
-                                    </a>
-                                </li>
-                                @endif
-                            </ul>
+
+                        {{-- Appointments (was submenu, now main menu) --}}
+                        @if(!$profileComplete)
+                        <li title="{{ $disabledTitle }}">
+                            <a href="javascript:void(0);" style="{{ $disabledStyle }}">
+                                <i class="fa fa-calendar"></i> <span>Appointments</span>
+                            </a>
+                        </li>
+                        @elseif($__mem && $__mem->invoice_permission)
+                        <li class="{{ request()->routeIs('prescription-invoice.*') ? 'active' : '' }}">
+                            <a href="{{ route('prescription-invoice.index') }}">
+                                <i class="fa fa-calendar"></i> <span>Appointments</span>
+                            </a>
+                        </li>
+                        @else
+                        <li title="🔒 Admin se permission lein ya Membership khareedein.">
+                            <a href="javascript:void(0);" style="opacity:.45;cursor:not-allowed;pointer-events:none;filter:grayscale(1);">
+                                <i class="fa fa-calendar"></i> <span><i class="fa fa-lock" style="font-size:10px;margin-right:3px;"></i>Appointments</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        {{-- Invoice Settings (was submenu, now main menu) --}}
+                        @if(!$profileComplete)
+                        <li title="{{ $disabledTitle }}">
+                            <a href="javascript:void(0);" style="{{ $disabledStyle }}">
+                                <i class="fa fa-file-text-o"></i> <span>Invoice Settings</span>
+                            </a>
+                        </li>
+                        @elseif($__mem && $__mem->invoice_permission)
+                        <li class="{{ request()->routeIs('invoice-master.*') ? 'active' : '' }}">
+                            <a href="{{ route('invoice-master.index') }}">
+                                <i class="fa fa-file-text-o"></i> <span>Invoice Settings</span>
+                            </a>
+                        </li>
+                        @else
+                        <li title="🔒 Admin se permission lein ya Membership khareedein.">
+                            <a href="javascript:void(0);" style="opacity:.45;cursor:not-allowed;pointer-events:none;filter:grayscale(1);">
+                                <i class="fa fa-file-text-o"></i> <span><i class="fa fa-lock" style="font-size:10px;margin-right:3px;"></i>Invoice Settings</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        <li class="{{ request()->routeIs('doctor.medicine.*') ? 'active' : '' }}"
+                            @if(!$profileComplete) title="{{ $disabledTitle }}" @endif>
+                            <a href="{{ $profileComplete ? route('doctor.medicine.index') : 'javascript:void(0)' }}"
+                               @if(!$profileComplete) style="{{ $disabledStyle }}" @endif>
+                                <i class="fa fa-pills"></i> <span>Medicine</span>
+                            </a>
                         </li>
 
-                        <li class="{{ request()->routeIs('doctor.medicine.*') ? 'active' : '' }}">
-                            <a href="{{ route('doctor.medicine.index') }}"><i class="fa fa-pills"></i> <span>Medicine</span></a>
+                        <li class="{{ request()->routeIs('doctor.staff.index') ? 'active' : '' }}"
+                            @if(!$profileComplete) title="{{ $disabledTitle }}" @endif>
+                            <a href="{{ $profileComplete ? route('doctor.staff.index') : 'javascript:void(0)' }}"
+                               @if(!$profileComplete) style="{{ $disabledStyle }}" @endif>
+                                <i class="fa fa-users"></i> <span>Staff</span>
+                            </a>
                         </li>
 
-                        <li class="{{ request()->routeIs('doctor.staff.index') ? 'active' : '' }}">
-                            <a href="{{ route('doctor.staff.index') }}"><i class="fa fa-users"></i> <span>Staff</span></a>
+                        @if(!$profileComplete)
+                        <li title="{{ $disabledTitle }}">
+                            <a href="javascript:void(0);" style="{{ $disabledStyle }}">
+                                <i class="fa fa-calendar-check-o"></i> <span>Attendance</span>
+                            </a>
                         </li>
-
-                        @php $__mem2 = $__mem ?? \App\Models\UserDoctorRoleMembership::where('user_id', Auth::id())->first(); @endphp
-                        @if($__mem2 && $__mem2->attendance_permission)
+                        @elseif($__mem && $__mem->attendance_permission)
                         <li class="{{ request()->routeIs('doctor.staff.attendance') || request()->routeIs('doctor.staff.attendance.*') ? 'active' : '' }}">
                             <a href="{{ route('doctor.staff.attendance') }}"><i class="fa fa-calendar-check-o"></i> <span>Attendance</span></a>
                         </li>
                         @else
-                        <li title="🔒 Yeh feature aapke liye available nahi hai. Admin se permission lein ya Membership khareedein. | इस फीचर को उपयोग करने की आपके पास अनुमति नहीं है। कृपया एडमिन से संपर्क करें या मेंबरशिप खरीदें।">
-                            <a href="javascript:void(0);" onclick="return false;"
-                               style="opacity:.45;cursor:not-allowed;filter:grayscale(1);pointer-events:none;">
+                        <li title="🔒 Admin se permission lein ya Membership khareedein.">
+                            <a href="javascript:void(0);" style="opacity:.45;cursor:not-allowed;pointer-events:none;filter:grayscale(1);">
                                 <i class="fa fa-calendar-check-o"></i> <span><i class="fa fa-lock" style="font-size:10px;margin-right:3px;"></i>Attendance</span>
                             </a>
                         </li>
                         @endif
 
-                        <!-- <li>
-                            <a href="patients.html"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
-                        </li>
-                        <li>
-                            <a href="appointments.html"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
-                        </li>
-                        <li>
-                            <a href="schedule.html"><i class="fa fa-calendar-check-o"></i> <span>Doctor Schedule</span></a>
-                        </li> -->
-                        
-						<!-- <li class="submenu">
-							<a href="#"><i class="fa fa-user"></i> <span> Employees </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="employees.html">Employees List</a></li>
-								<li><a href="leaves.html">Leaves</a></li>
-								<li><a href="holidays.html">Holidays</a></li>
-								<li><a href="attendance.html">Attendance</a></li>
-							</ul>
-						</li>
-						<li class="submenu">
-							<a href="#"><i class="fa fa-money"></i> <span> Accounts </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="invoices.html">Invoices</a></li>
-								<li><a href="payments.html">Payments</a></li>
-								<li><a href="expenses.html">Expenses</a></li>
-								<li><a href="taxes.html">Taxes</a></li>
-								<li><a href="provident-fund.html">Provident Fund</a></li>
-							</ul>
-						</li>
-						<li class="submenu">
-							<a href="#"><i class="fa fa-book"></i> <span> Payroll </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="salary.html"> Employee Salary </a></li>
-								<li><a href="salary-view.html"> Payslip </a></li>
-							</ul>
-						</li>
-                        <li>
-                            <a href="chat.html"><i class="fa fa-comments"></i> <span>Chat</span> <span class="badge badge-pill bg-primary float-right">5</span></a>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-video-camera camera"></i> <span> Calls</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="voice-call.html">Voice Call</a></li>
-                                <li><a href="video-call.html">Video Call</a></li>
-                                <li><a href="incoming-call.html">Incoming Call</a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-envelope"></i> <span> Email</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="compose.html">Compose Mail</a></li>
-                                <li><a href="inbox.html">Inbox</a></li>
-                                <li><a href="mail-view.html">Mail View</a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-commenting-o"></i> <span> Blog</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="blog.html">Blog</a></li>
-                                <li><a href="blog-details.html">Blog View</a></li>
-                                <li><a href="add-blog.html">Add Blog</a></li>
-                                <li><a href="edit-blog.html">Edit Blog</a></li>
-                            </ul>
-                        </li>
-						<li>
-							<a href="assets.html"><i class="fa fa-cube"></i> <span>Assets</span></a>
-						</li>
-						<li>
-							<a href="activities.html"><i class="fa fa-bell-o"></i> <span>Activities</span></a>
-						</li>
-						<li class="submenu">
-							<a href="#"><i class="fa fa-flag-o"></i> <span> Reports </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="expense-reports.html"> Expense Report </a></li>
-								<li><a href="invoice-reports.html"> Invoice Report </a></li>
-							</ul>
-						</li>
-                        <li>
-                            <a href="settings.html"><i class="fa fa-cog"></i> <span>Settings</span></a>
-                        </li>
-                        <li class="menu-title">UI Elements</li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-laptop"></i> <span> Components</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="uikit.html">UI Kit</a></li>
-                                <li><a href="typography.html">Typography</a></li>
-                                <li><a href="tabs.html">Tabs</a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-edit"></i> <span> Forms</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="form-basic-inputs.html">Basic Inputs</a></li>
-                                <li><a href="form-input-groups.html">Input Groups</a></li>
-                                <li><a href="form-horizontal.html">Horizontal Form</a></li>
-                                <li><a href="form-vertical.html">Vertical Form</a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-table"></i> <span> Tables</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="tables-basic.html">Basic Tables</a></li>
-                                <li><a href="tables-datatables.html">Data Table</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="calendar.html"><i class="fa fa-calendar"></i> <span>Calendar</span></a>
-                        </li>
-                        <li class="menu-title">Extras</li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-columns"></i> <span>Pages</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="login.html"> Login </a></li>
-                                <li><a href="register.html"> Register </a></li>
-                                <li><a href="forgot-password.html"> Forgot Password </a></li>
-                                <li><a href="change-password2.html"> Change Password </a></li>
-                                <li><a href="lock-screen.html"> Lock Screen </a></li>
-                                <li><a href="profile.html"> Profile </a></li>
-                                <li><a href="gallery.html"> Gallery </a></li>
-                                <li><a href="error-404.html">404 Error </a></li>
-                                <li><a href="error-500.html">500 Error </a></li>
-                                <li><a href="blank-page.html"> Blank Page </a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><i class="fa fa-share-alt"></i> <span>Multi Level</span> <span class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li class="submenu">
-                                    <a href="javascript:void(0);"><span>Level 1</span> <span class="menu-arrow"></span></a>
-                                    <ul style="display: none;">
-                                        <li><a href="javascript:void(0);"><span>Level 2</span></a></li>
-                                        <li class="submenu">
-                                            <a href="javascript:void(0);"> <span> Level 2</span> <span class="menu-arrow"></span></a>
-                                            <ul style="display: none;">
-                                                <li><a href="javascript:void(0);">Level 3</a></li>
-                                                <li><a href="javascript:void(0);">Level 3</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="javascript:void(0);"><span>Level 2</span></a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);"><span>Level 1</span></a>
-                                </li>
-                            </ul>
-                        </li> -->
                     </ul>
                 </div>
             </div>

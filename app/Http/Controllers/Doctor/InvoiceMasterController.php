@@ -172,6 +172,28 @@ class InvoiceMasterController extends Controller
     /**
      * Delete Invoice
      */
+    public function doctorDetails($id)
+    {
+        $doctor = DB::table('doctors')
+            ->leftJoin('doctor_locations', 'doctors.id', '=', 'doctor_locations.doctor_id')
+            ->where('doctors.id', $id)
+            ->where('doctors.added_by', auth()->id())
+            ->select(
+                'doctors.name',
+                'doctors.phone_no',
+                'doctors.email',
+                'doctor_locations.practice_name',
+                'doctor_locations.address',
+                'doctor_locations.phone'
+            )
+            ->first();
+
+        if (!$doctor) {
+            return response()->json(['status' => 404, 'msg' => 'Not found']);
+        }
+        return response()->json(['status' => 200, 'data' => $doctor]);
+    }
+
     public function delete(Request $request, $id)
     {
         if (empty(Session::get('user_id'))) {

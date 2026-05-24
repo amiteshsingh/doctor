@@ -8,9 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->tinyInteger('is_delete')->default(0)->after('api_token');
-        });
+        if (!Schema::hasColumn('users', 'is_delete')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->tinyInteger('is_delete')->default(0)->after('api_token');
+            });
+        }
     }
 
     public function down(): void

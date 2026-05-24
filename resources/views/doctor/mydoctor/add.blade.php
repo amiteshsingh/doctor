@@ -99,22 +99,19 @@ textarea.dform-control { resize:vertical; min-height:80px; }
 .spec-item.checked { border-color:#0a6ebd; background:#e8f3ff; }
 
 /* ── AVAILABILITY ── */
-.day-card {
-    background:#f8fbff; border:1.5px solid #e2e8f0;
-    border-radius:10px; padding:14px 16px; margin-bottom:12px;
-    transition:border-color .2s;
+.day-check-item {
+    display:flex; align-items:center; gap:8px;
+    background:#f8fbff; border:2px solid #e2e8f0;
+    border-radius:10px; padding:12px 20px;
+    font-size:14px; font-weight:600; color:#555;
+    cursor:pointer; transition:all .2s; user-select:none;
 }
-.day-card:hover { border-color:#0a6ebd; }
-.day-label {
-    font-size:13px; font-weight:700; color:#0a6ebd;
-    margin-bottom:10px; display:flex; align-items:center; gap:6px;
-}
-.slot-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
-.slot-row .dform-control { flex:1; min-width:120px; }
-.btn-slot-add { background:#00b074; color:#fff; border:none; border-radius:6px; width:30px; height:30px; font-size:16px; cursor:pointer; transition:background .2s; }
-.btn-slot-add:hover { background:#009060; }
-.btn-slot-rem { background:#ef4444; color:#fff; border:none; border-radius:6px; width:30px; height:30px; font-size:16px; cursor:pointer; transition:background .2s; }
-.btn-slot-rem:hover { background:#dc2626; }
+.day-check-item input[type=checkbox] { display:none; }
+.day-check-item i { font-size:16px; color:#aaa; transition:color .2s; }
+.day-check-item:hover { border-color:#0a6ebd; background:#f0f7ff; color:#0a6ebd; }
+.day-check-item:hover i { color:#0a6ebd; }
+.day-check-item.active { background:linear-gradient(135deg,#0a6ebd,#00b074); border-color:transparent; color:#fff; box-shadow:0 4px 14px rgba(10,110,189,.3); }
+.day-check-item.active i { color:#fff; }
 
 /* ── SUBMIT BTN ── */
 .btn-submit {
@@ -129,6 +126,62 @@ textarea.dform-control { resize:vertical; min-height:80px; }
 
 /* ── HR DIVIDER ── */
 .dform-divider { border:none; border-top:2px dashed #e2e8f0; margin:22px 0; }
+
+/* ── CERTIFICATES ── */
+#cert-dropzone {
+    border:2.5px dashed #0a6ebd; border-radius:14px;
+    padding:32px 20px; text-align:center; cursor:pointer;
+    background:#f0f7ff; transition:background .2s, border-color .2s;
+}
+#cert-dropzone:hover, #cert-dropzone.dragover {
+    background:#dbeafe; border-color:#0056b3;
+}
+.cert-card {
+    width:120px; background:#fff;
+    border:1.5px solid #e2e8f0; border-radius:12px;
+    overflow:hidden; text-align:center;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    transition:transform .2s, box-shadow .2s;
+}
+.cert-card:hover { transform:translateY(-3px); box-shadow:0 6px 20px rgba(0,0,0,.12); }
+.cert-thumb {
+    width:100%; height:80px; object-fit:cover; display:block;
+}
+.pdf-thumb {
+    height:80px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#fff0f0,#ffe4e4);
+    font-size:32px; color:#ef4444;
+}
+.cert-name {
+    font-size:11px; color:#555; padding:5px 6px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    border-top:1px solid #f0f0f0;
+}
+.cert-actions {
+    display:flex; border-top:1px solid #f0f0f0;
+}
+.cert-btn {
+    flex:1; padding:6px 0; border:none; background:none;
+    font-size:13px; cursor:pointer; transition:background .2s;
+    text-decoration:none; display:flex; align-items:center; justify-content:center;
+}
+.cert-btn.view { color:#0a6ebd; }
+.cert-btn.view:hover { background:#f0f7ff; }
+.cert-btn.del { color:#ef4444; border-left:1px solid #f0f0f0; }
+.cert-btn.del:hover { background:#fff0f0; }
+.cert-new-card {
+    width:120px; background:#fff;
+    border:1.5px solid #00b074; border-radius:12px;
+    overflow:hidden; text-align:center; position:relative;
+    box-shadow:0 2px 10px rgba(0,176,116,.1);
+}
+.cert-new-card .cert-remove {
+    position:absolute; top:4px; right:4px;
+    background:#ef4444; color:#fff; border:none;
+    border-radius:50%; width:20px; height:20px;
+    font-size:11px; cursor:pointer; line-height:20px;
+    display:flex; align-items:center; justify-content:center;
+}
 </style>
 
 <div class="page-wrapper dform-page">
@@ -289,7 +342,7 @@ textarea.dform-control { resize:vertical; min-height:80px; }
                     <div class="spec-grid">
                         @foreach($specializations as $spec)
                             @php $checked = isset($doctor->specialization_data) && in_array($spec->id, $doctor->specialization_data); @endphp
-                            <div class="spec-item {{ $checked ? 'checked' : '' }}" onclick="toggleSpec(this)">
+                            <div class="spec-item {{ $checked ? 'checked' : '' }}" onclick="toggleSpec(this, event)">
                                 <input type="checkbox" id="spec_{{ $spec->id }}"
                                        name="specialization_ids[]" value="{{ $spec->id }}"
                                        {{ $checked ? 'checked' : '' }}>
@@ -308,7 +361,7 @@ textarea.dform-control { resize:vertical; min-height:80px; }
 
             {{-- ══ TAB 3: Location & Education ══ --}}
             <div class="tab-pane" id="tab3">
-                <form method="POST" id="doctor_location_form">
+                <form method="POST" id="doctor_location_form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="id" value="{{ $doctor->id }}">
 
@@ -408,7 +461,7 @@ textarea.dform-control { resize:vertical; min-height:80px; }
                     <div class="spec-grid mb-4">
                         @foreach($languages as $lang)
                             @php $langChecked = isset($doctor->language_data) && in_array($lang->id, $doctor->language_data); @endphp
-                            <div class="spec-item {{ $langChecked ? 'checked' : '' }}" onclick="toggleSpec(this)">
+                            <div class="spec-item {{ $langChecked ? 'checked' : '' }}" onclick="toggleSpec(this, event)">
                                 <input type="checkbox" id="lang_{{ $lang->id }}"
                                        name="languages[]" value="{{ $lang->id }}"
                                        {{ $langChecked ? 'checked' : '' }}>
@@ -417,7 +470,57 @@ textarea.dform-control { resize:vertical; min-height:80px; }
                         @endforeach
                     </div>
 
-                    <button type="submit" id="save_doctor_location" class="btn-submit">
+                    <hr class="dform-divider">
+
+                    {{-- Certificates --}}
+                    <div class="sec-head">
+                        <div class="sec-icon si-green"><i class="fa fa-certificate"></i></div>
+                        Certificates
+                    </div>
+
+                    {{-- Drop Zone --}}
+                    <div id="cert-dropzone" onclick="document.getElementById('certificates').click()">
+                        <i class="fa fa-cloud-upload" style="font-size:36px;color:#0a6ebd;margin-bottom:10px;"></i>
+                        <div style="font-size:14px;font-weight:700;color:#1a1a2e;">Click or Drag & Drop files here</div>
+                        <div style="font-size:12px;color:#888;margin-top:4px;">PDF, JPG, PNG supported &bull; Multiple files allowed</div>
+                        <input type="file" name="certificates[]" id="certificates"
+                               multiple accept=".pdf,.jpg,.jpeg,.png"
+                               style="display:none;" onchange="previewCerts(this)">
+                    </div>
+
+                    {{-- New files preview --}}
+                    <div id="cert-new-preview" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;"></div>
+
+                    {{-- Existing uploaded certificates --}}
+                    @php $existingCerts = DB::table('doctor_certificates')->where('doctor_id', $doctor->id)->get(); @endphp
+                    @if($existingCerts->count())
+                    <div style="margin-top:18px;">
+                        <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Already Uploaded</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:10px;" id="existing-certs">
+                            @foreach($existingCerts as $cert)
+                            @php $isPdf = str_ends_with(strtolower($cert->file_name), '.pdf'); @endphp
+                            <div class="cert-card" id="cert-{{ $cert->id }}">
+                                @if($isPdf)
+                                    <div class="cert-thumb pdf-thumb"><i class="fa fa-file-pdf-o"></i></div>
+                                @else
+                                    <img src="{{ asset('storage/'.$cert->file_path) }}" class="cert-thumb" alt="cert">
+                                @endif
+                                <div class="cert-name">{{ Str::limit($cert->file_name, 20) }}</div>
+                                <div class="cert-actions">
+                                    <a href="{{ asset('storage/'.$cert->file_path) }}" target="_blank" class="cert-btn view" title="View">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <button type="button" class="cert-btn del" onclick="deleteCert({{ $cert->id }})" title="Delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <button type="submit" id="save_doctor_location" class="btn-submit" style="margin-top:24px;">
                         <i class="fa fa-save"></i> Save Information
                     </button>
                 </form>
@@ -431,42 +534,32 @@ textarea.dform-control { resize:vertical; min-height:80px; }
 
                     <div class="sec-head">
                         <div class="sec-icon si-green"><i class="fa fa-calendar-check-o"></i></div>
-                        Weekly Availability
+                        Available Days
                     </div>
 
-                    @php $days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']; @endphp
+                    @php
+                        $days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+                        $savedDays = collect($doctor->availability ?? [])
+                            ->filter(fn($slots) => !empty($slots) && ($slots[0]['start_time'] ?? '') !== 'Closed')
+                            ->keys()->toArray();
+                    @endphp
 
-                    @foreach($days as $day)
-                    <div class="day-card" data-day="{{ $day }}">
-                        <div class="day-label">
-                            <i class="fa fa-calendar-o"></i> {{ $day }}
-                        </div>
-                        <div class="slot-wrapper">
-                            @php $slots = $doctor->availability[$day] ?? [['start_time'=>'','end_time'=>'']]; @endphp
-                            @foreach($slots as $idx => $slot)
-                            <div class="slot-row">
-                                <input type="text" class="dform-control datetimepicker3"
-                                       name="availability[{{ $day }}][{{ $idx }}][start_time]"
-                                       placeholder="Start Time" value="{{ $slot['start_time'] ?? '' }}">
-                                <input type="text" class="dform-control datetimepicker3"
-                                       name="availability[{{ $day }}][{{ $idx }}][end_time]"
-                                       placeholder="End Time" value="{{ $slot['end_time'] ?? '' }}">
-                                @if($idx == 0)
-                                    <button type="button" class="btn-slot-add add-slot" title="Add slot">+</button>
-                                @else
-                                    <button type="button" class="btn-slot-rem remove-slot" title="Remove">−</button>
-                                @endif
-                            </div>
-                            @endforeach
-                        </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px;">
+                        @foreach($days as $day)
+                        @php $isChecked = in_array($day, $savedDays); @endphp
+                        <label class="day-check-item {{ $isChecked ? 'active' : '' }}">
+                            <input type="checkbox" name="available_days[]" value="{{ $day }}"
+                                   {{ $isChecked ? 'checked' : '' }}
+                                   onchange="this.closest('label').classList.toggle('active', this.checked)">
+                            <i class="fa fa-calendar-check-o"></i>
+                            {{ $day }}
+                        </label>
+                        @endforeach
                     </div>
-                    @endforeach
 
-                    <div class="mt-3">
-                        <button type="submit" id="save_doctor_availability" class="btn-submit">
-                            <i class="fa fa-save"></i> Save Availability
-                        </button>
-                    </div>
+                    <button type="submit" id="save_doctor_availability" class="btn-submit">
+                        <i class="fa fa-save"></i> Save Availability
+                    </button>
                 </form>
             </div>
 
@@ -494,6 +587,83 @@ textarea.dform-control { resize:vertical; min-height:80px; }
 </div>
 
 <script>
+/* Delete certificate */
+function deleteCert(id) {
+    if (!confirm('Delete this certificate?')) return;
+    fetch('{{ route("doctor.certificate.delete") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
+        body: JSON.stringify({ id: id })
+    }).then(r => r.json()).then(res => {
+        if (res.status === 200) {
+            var el = document.getElementById('cert-' + id);
+            if (el) el.remove();
+        }
+    });
+}
+
+/* Preview newly selected files */
+var selectedFiles = [];
+function previewCerts(input) {
+    var newFiles = Array.from(input.files);
+    selectedFiles = selectedFiles.concat(newFiles);
+    renderNewPreviews();
+}
+function renderNewPreviews() {
+    var container = document.getElementById('cert-new-preview');
+    container.innerHTML = '';
+    selectedFiles.forEach(function(file, idx) {
+        var card = document.createElement('div');
+        card.className = 'cert-new-card';
+        var isPdf = file.type === 'application/pdf';
+        if (isPdf) {
+            card.innerHTML = '<div class="pdf-thumb"><i class="fa fa-file-pdf-o"></i></div>';
+        } else {
+            var img = document.createElement('img');
+            img.className = 'cert-thumb';
+            var reader = new FileReader();
+            reader.onload = function(e) { img.src = e.target.result; };
+            reader.readAsDataURL(file);
+            card.appendChild(img);
+        }
+        card.innerHTML += '<div class="cert-name">' + file.name.substring(0, 18) + '</div>';
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'cert-remove';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.onclick = function() {
+            selectedFiles.splice(idx, 1);
+            renderNewPreviews();
+            rebuildFileInput();
+        };
+        card.appendChild(removeBtn);
+        container.appendChild(card);
+    });
+}
+function rebuildFileInput() {
+    var dt = new DataTransfer();
+    selectedFiles.forEach(function(f) { dt.items.add(f); });
+    document.getElementById('certificates').files = dt.files;
+}
+
+/* Drag & Drop */
+document.addEventListener('DOMContentLoaded', function() {
+    var dz = document.getElementById('cert-dropzone');
+    if (!dz) return;
+    dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', function() { dz.classList.remove('dragover'); });
+    dz.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dz.classList.remove('dragover');
+        var files = Array.from(e.dataTransfer.files).filter(function(f) {
+            return ['application/pdf','image/jpeg','image/png'].includes(f.type);
+        });
+        selectedFiles = selectedFiles.concat(files);
+        renderNewPreviews();
+        rebuildFileInput();
+    });
+});
+
 /* Avatar preview */
 function previewAvatar(input) {
     if (input.files && input.files[0]) {
@@ -506,51 +676,18 @@ function previewAvatar(input) {
 }
 
 /* Specialization / Language checkbox toggle */
-function toggleSpec(el) {
+function toggleSpec(el, event) {
     var cb = el.querySelector('input[type=checkbox]');
+    if (event && (event.target.tagName === 'LABEL' || event.target.tagName === 'INPUT')) {
+        setTimeout(function() { el.classList.toggle('checked', cb.checked); }, 0);
+        return;
+    }
     cb.checked = !cb.checked;
     el.classList.toggle('checked', cb.checked);
 }
 
+/* On page load — regenerate slots for days that already have data */
 document.addEventListener('DOMContentLoaded', function () {
-
-    /* Availability slot add/remove */
-    document.querySelectorAll('.day-card').forEach(function (card) {
-        card.addEventListener('click', function (e) {
-            var day = card.getAttribute('data-day');
-            var wrapper = card.querySelector('.slot-wrapper');
-
-            if (e.target.classList.contains('add-slot')) {
-                var idx = wrapper.querySelectorAll('.slot-row').length;
-                var row = document.createElement('div');
-                row.className = 'slot-row';
-                row.innerHTML =
-                    '<input type="text" class="dform-control datetimepicker3" name="availability[' + day + '][' + idx + '][start_time]" placeholder="Start Time">' +
-                    '<input type="text" class="dform-control datetimepicker3" name="availability[' + day + '][' + idx + '][end_time]" placeholder="End Time">' +
-                    '<button type="button" class="btn-slot-rem remove-slot" title="Remove">−</button>';
-                wrapper.appendChild(row);
-                initPicker();
-            }
-
-            if (e.target.classList.contains('remove-slot')) {
-                e.target.closest('.slot-row').remove();
-            }
-        });
-    });
-
-    function initPicker() {
-        if (typeof $ !== 'undefined' && $.fn.datetimepicker) {
-            $('.datetimepicker3').datetimepicker({ format: 'hh:mm A' });
-        }
-    }
-
-    var pickerInterval = setInterval(function () {
-        if (typeof $ !== 'undefined' && $.fn.datetimepicker) {
-            clearInterval(pickerInterval);
-            initPicker();
-        }
-    }, 100);
-});
 </script>
 
 @endsection

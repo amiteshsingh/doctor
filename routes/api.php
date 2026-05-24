@@ -16,7 +16,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/doctors',           [DoctorController::class, 'index']);
     Route::get('/doctors/{id}',      [DoctorController::class, 'show']);
     Route::get('/specializations',   [DoctorController::class, 'specializations']);
-    Route::get('/booked-slots',      [DoctorController::class, 'bookedSlots']);
+    Route::match(['get','post'], '/booked-slots', [DoctorController::class, 'bookedSlots']);
 
     // Hospitals (public)
     Route::get('/hospitals',         [HospitalController::class, 'index']);
