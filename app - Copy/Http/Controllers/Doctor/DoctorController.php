@@ -29,12 +29,8 @@ class DoctorController extends Controller
 		$membership = \App\Models\UserDoctorRoleMembership::where('user_id', $user->id)->first();
 		$attendancePermission = $membership ? (bool)$membership->attendance_permission : false;
 		$invoicePermission    = $membership ? (bool)$membership->invoice_permission    : false;
-
-		$myDoctor = Doctor::where('added_by', $user->id)->first();
-		$profileComplete = $myDoctor && DB::table('doctor_locations')->where('doctor_id', $myDoctor->id)->exists();
-		$myDoctorId = $myDoctor ? $myDoctor->id : null;
 		
-		return view('doctor.dashboard', compact('membership', 'attendancePermission', 'invoicePermission', 'profileComplete', 'myDoctorId'));
+		return view('doctor.dashboard', compact('membership', 'attendancePermission', 'invoicePermission'));
 	}
 
     public function index(Request $request){

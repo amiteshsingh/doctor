@@ -1,0 +1,446 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
+use App\Models\Doctor;
+use App\Models\Hospital;
+use App\Models\Specialization;
+use App\Models\DoctorLocation;
+use App\Models\Blog;
+use App\Models\PrescriptionInvoice;
+use App\Models\InvoiceMaster;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
+
+
+class PageController extends Controller
+{
+    public function index(){
+
+        $doctors = Doctor::with([
+            'availability',
+            'educations',
+            'languages',
+            'specializations.specialization',
+            'locations'
+        ])
+        ->where('is_professional', 1)
+        ->where('status', 1)
+        ->where('approval_status', 1)
+        ->limit(20)
+        ->get();
+
+        $totalDoctors       = Doctor::where('status', 1)->where('approval_status', 1)->count();
+        $totalHospitals     = Hospital::where('status', 1)->where('approval_status', 1)->count();
+        $totalSpecializations = Specialization::where('status', 1)->count();
+    
+        return View::make('page.index', compact('doctors', 'totalDoctors', 'totalHospitals', 'totalSpecializations'));
+    }
+
+    public function about()
+    {
+        $doctors = Doctor::with([
+            'availability',
+            'educations',
+            'languages',
+            'specializations.specialization',
+            'locations'
+        ])
+        ->where('is_professional', 1)
+        ->where('status', 1)
+        ->where('approval_status', 1)
+        ->limit(10)
+        ->get();
+    
+        return View::make('page.about', compact('doctors'));
+    }
+
+    
+    public function doctor(Request $request)
+    {
+        // -------------------
+        // Step 1: Get user state from IP
+        // -------------------
+        $ip = $request->ip();
+        // if ($ip == "127.0.0.1") { 
+        //     $ip = "103.44.119.10"; // localhost test ke liye ek dummy public IP
+        // }
+
+        $response = @file_get_contents("http://ip-api.com/json/{$ip}");
+        $data = $response ? json_decode($response, true) : null;
+        $userState = $data['regionName'] ?? null;
+
+        // -------------------
+        // Step 2: Build Query
+        // -------------------
+        $query = Doctor::with([
+            'availability',
+            'educations',
+            'languages',
+            'specializations.specialization',
+            'locations'
+        ]);
+
+        // Filter: Name
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        // Filter: Specialization
+        if ($request->filled('specialization')) {
+            $query->whereHas('specializations', function($q) use ($request) {
+                $q->whereHas('specialization', function($sp) use ($request) {
+                    $sp->where('name', 'like', '%' . $request->specialization . '%');
+                });
+            });
+        }
+
+        // Filter: Address / City / State
+        if ($request->filled('address')) {
+            $query->whereHas('locations', function($q) use ($request) {
+                $q->where(function($q2) use ($request) {
+                    $q2->where('address', 'like', '%' . $request->address . '%')
+                       ->orWhere('city',    'like', '%' . $request->address . '%')
+                       ->orWhere('state',   'like', '%' . $request->address . '%')
+                       ->orWhere('zip_code','like', '%' . $request->address . '%');
+                });
+            });
+        }
+
+        if ($request->filled('zip_code')) {
+            $query->whereHas('locations', function($q) use ($request) {
+                $q->where('zip_code', 'like', '%' . $request->zip_code . '%');
+            });
+        }
+
+       if ($request->filled('gender')) {
+            $query->where('gender', $request->gender);
+        }
+
+        $hasFilter = $request->hasAny(['name','specialization','address','zip_code','gender']);
+
+        if ($userState && !$hasFilter) {
+            $query->where('doctors.status', 1)
+                ->where('doctors.approval_status', 1)
+                ->orderByRaw("
+                    CASE WHEN EXISTS (
+                        SELECT 1 FROM doctor_locations
+                        WHERE doctor_locations.doctor_id = doctors.id
+                        AND doctor_locations.state = ?
+                    ) THEN 0 ELSE 1 END
+                ", [$userState]);
+        } else {
+            $query->where('status', 1)->where('approval_status', 1);
+        }
+
+
+        $doctors = $query->paginate(15);
+
+        $specializations = \App\Models\Specialization::where('status', 1)->orderBy('name')->pluck('name');
+        $states = DoctorLocation::select('state')
+            ->whereNotNull('state')->where('state', '!=', '')
+            ->distinct()->orderBy('state')->pluck('state');
+
+        if ($request->ajax()) {
+            return view('page.ajax.doctor_list', compact('doctors'))->render();
+        }
+
+        return view('page.doctors', [
+            'doctors'         => $doctors,
+            'userState'       => $userState,
+            'specializations' => $specializations,
+            'states'          => $states,
+        ]);
+    }
+
+    public function hospital(Request $request)
+    {
+        $query = Hospital::with(['specializations.specialization']);
+
+        if ($request->filled('name') || $request->filled('address') || $request->filled('zip_code')) {
+            $query->where(function($q) use ($request) {
+                if ($request->filled('name')) {
+                    $q->where('name', 'like', '%' . $request->name . '%');
+                }
+                if ($request->filled('address')) {
+                    $q->orWhere('address', 'like', '%' . $request->address . '%')
+                      ->orWhere('city',    'like', '%' . $request->address . '%')
+                      ->orWhere('state',   'like', '%' . $request->address . '%');
+                }
+                if ($request->filled('zip_code')) {
+                    $q->orWhere('zip_code', 'like', '%' . $request->zip_code . '%');
+                }
+            });
+        }
+
+        if ($request->filled('specialization')) {
+            $query->whereHas('specializations', function($q) use ($request) {
+                $q->whereHas('specialization', function($sp) use ($request) {
+                    $sp->where('name', 'like', '%' . $request->specialization . '%');
+                });
+            });
+        }
+
+        if ($request->filled('state')) {
+            $query->where('state', 'like', '%' . $request->state . '%');
+        }
+
+        $hospitals = $query->where('status', 1)
+                        ->where('approval_status', 1)
+                        ->paginate(10);
+
+        $specializations = Specialization::where('status', 1)->orderBy('name')->pluck('name');
+        $states = Hospital::select('state')
+            ->whereNotNull('state')->where('state', '!=', '')
+            ->where('status', 1)->where('approval_status', 1)
+            ->distinct()->orderBy('state')->pluck('state');
+
+        if ($request->ajax()) {
+            return view('page.ajax.hospital_list', compact('hospitals'))->render();
+        }
+
+        return view('page.hospitals', compact('hospitals', 'specializations', 'states'));
+    }
+
+
+    public function blog()
+    {
+        $blogs = Blog::where('status', 1)->latest()->paginate(10);
+        return view('page.blog', compact('blogs'));
+    }
+
+    public function blogDetail($slug)
+    {
+        $blog = Blog::where('slug', $slug)->where('status', 1)->firstOrFail();
+        $blog->increment('visit_count');
+        return view('page.blog-detail', compact('blog'));
+    }
+
+    public function detail()
+    {
+        return view('page.detail');
+    }
+    
+    public function team()
+    {
+        return view('page.team');
+    }
+
+    public function faq()
+    {
+        return view('page.faq');
+    }
+
+
+    public function appointment()
+    {
+        return view('page.appointment');
+    }
+
+    public function contact(Request $request)
+    {
+        if ($request->isMethod('post')) {
+
+            $validated = $request->validate([
+                'name'    => 'required|string|max:100',
+                'email'   => 'required|email',
+                'phone'   => 'nullable|string|max:20',
+                'subject' => 'required|string|max:150',
+                'message' => 'required|string|max:1000',
+            ]);
+
+            try {
+                Mail::send('page.contact', $validated, function ($mail) use ($validated) {
+                    $mail->to('rogisewa25@gmail.com')
+                        ->subject('New Contact Message - RogiSewa')
+                        ->replyTo($validated['email'], $validated['name']);
+                });
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Thank you! Your message has been sent successfully.'
+                ]);
+
+            } catch (\Exception $e) {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Mail error: '.$e->getMessage()
+                ], 500);
+            }
+        }
+
+        return view('page.contact');
+    }
+
+
+
+    public function howToUse()
+    {
+        return view('page.how-to-use');
+    }
+
+    public function terms()
+    {
+        return view('page.terms');
+    }
+    public function disclaimer()
+    {
+        return view('page.disclaimer');
+    }
+    public function sitemap()
+    {
+        $blogs = Blog::where('status', 1)->latest()->get(['slug', 'updated_at']);
+
+        return response()
+            ->view('page.sitemap', compact('blogs'))
+            ->header('Content-Type', 'application/xml');
+    }
+
+    public function privacy_policy()
+    {
+        return view('page.privacy_policy');
+    }
+
+    public function doctor_profile(Request $request, $id = null, $name=null)
+    {
+        $doctor = Doctor::with([
+            'availability',
+            'educations',
+            'languages',
+            'specializations',
+            'locations'
+        ])
+        ->where('status', 1)
+        ->where('approval_status', 1)
+        ->findOrFail($id);
+
+        $doctor->increment('visit_count');
+
+        $invoiceMaster = InvoiceMaster::where('doctor_id', $id)->first();
+        $isOnlineBooking = $invoiceMaster && $invoiceMaster->booking_mode === 'ONLINE';
+
+        $isFavourite = false;
+        if (Auth::check() && Auth::user()->role?->role === 'user') {
+            $isFavourite = \App\Models\MyFavourite::where('user_id', Auth::id())
+                ->where('doctor_id', $id)->exists();
+        }
+
+        return view('page.doctor-profile', [
+            'doctor'          => $doctor,
+            'isOnlineBooking' => $isOnlineBooking,
+            'isFavourite'     => $isFavourite,
+            'slotStart'       => $invoiceMaster->start_time ?? '10:00',
+            'slotEnd'         => $invoiceMaster->end_time_slot ?? '18:00',
+            'slotDuration'    => $invoiceMaster->duration_time_slot ?? 30,
+        ]);
+    }
+
+    public function hospital_details(Request $request, $id = null, $name=null)
+    {
+        $hospital = Hospital::with(['specializations.specialization'])
+                    ->where('id', $id)
+                    ->findOrFail($id);
+        $hospital->increment('visit_count');
+
+        return view('page.hospital-details', ['hospital' => $hospital]);
+    }
+
+    public function professionalDoctors(Request $request)
+    {
+        $query = Doctor::with(['educations', 'specializations.specialization', 'locations'])
+            ->where('is_professional', 1)
+            ->where('status', 1)
+            ->where('approval_status', 1);
+
+        if ($request->filled('specialization')) {
+            $query->whereHas('specializations.specialization', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->specialization . '%');
+            });
+        }
+
+        if ($request->filled('state')) {
+            $query->whereHas('locations', function($q) use ($request) {
+                $q->where('state', 'like', '%' . $request->state . '%');
+            });
+        }
+
+        if ($request->filled('gender')) {
+            $query->where('gender', $request->gender);
+        }
+
+        $doctors = $query->paginate(12);
+
+        $specializations = \App\Models\Specialization::where('status', 1)->orderBy('name')->pluck('name');
+        $states = \App\Models\DoctorLocation::select('state')
+            ->whereNotNull('state')->where('state', '!=', '')
+            ->distinct()->orderBy('state')->pluck('state');
+
+        return view('page.professional-doctors', compact('doctors', 'specializations', 'states'));
+    }
+
+    public function bookedSlots(Request $request)
+    {
+        $doctorId = $request->doctor_id;
+        $date     = $request->date;
+
+        $bookedTimes = PrescriptionInvoice::whereHas('invoiceMaster', function($q) use ($doctorId) {
+                $q->where('doctor_id', $doctorId);
+            })
+            ->where('booking_date', $date)
+            ->pluck('booking_time')
+            ->toArray();
+
+        return response()->json($bookedTimes);
+    }
+
+    public function bookAppointment(Request $request)
+    {
+        $request->validate([
+            'doctor_id'        => 'required|integer',
+            'patient_name'     => 'required|string|max:255',
+            'age'              => 'required|integer',
+            'gender'           => 'required|in:Male,Female,Other',
+            'patient_phone_no' => 'required|string|max:20',
+            'booking_date'     => 'required',
+            'booking_time'     => 'required',
+        ]);
+
+        $invoiceMaster = InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
+
+        $invoice = new PrescriptionInvoice;
+        $invoice->invoice_master_id = $invoiceMaster->id ?? null;
+        $invoice->user_id           = Auth::id();
+        $invoice->invoice_number    = 'INV-' . now()->format('YmdHis');
+        $invoice->patient_name      = $request->patient_name;
+        $invoice->age               = $request->age;
+        $invoice->gender            = $request->gender;
+        $invoice->patient_address   = $request->patient_address;
+        $invoice->patient_phone_no  = $request->patient_phone_no;
+        $invoice->booking_date      = $request->booking_date;
+        $invoice->booking_time      = $request->booking_time;
+        $invoice->created_at        = now();
+        $invoice->updated_at        = now();
+        $invoice->save();
+
+        return response()->json(['status' => 200, 'msg' => 'Appointment booked successfully!']);
+    }
+
+    public function specializationSuggest(Request $request)
+    {
+        $search = $request->get('term');
+
+        $specializations = Specialization::where('status', 1)
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'LIKE', "%{$search}%");
+            })
+            ->pluck('name');
+
+        return response()->json($specializations);
+    }
+
+
+}
