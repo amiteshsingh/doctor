@@ -8,9 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('api_token', 80)->nullable()->unique()->after('password');
-        });
+        if (!Schema::hasColumn('users', 'api_token')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('api_token', 80)->nullable()->unique()->after('password');
+            });
+        }
     }
 
     public function down(): void

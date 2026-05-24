@@ -29,8 +29,12 @@ class DoctorController extends Controller
 		$membership = \App\Models\UserDoctorRoleMembership::where('user_id', $user->id)->first();
 		$attendancePermission = $membership ? (bool)$membership->attendance_permission : false;
 		$invoicePermission    = $membership ? (bool)$membership->invoice_permission    : false;
+
+		$myDoctor = Doctor::where('added_by', $user->id)->first();
+		$profileComplete = $myDoctor && DB::table('doctor_locations')->where('doctor_id', $myDoctor->id)->exists();
+		$myDoctorId = $myDoctor ? $myDoctor->id : null;
 		
-		return view('doctor.dashboard', compact('membership', 'attendancePermission', 'invoicePermission'));
+		return view('doctor.dashboard', compact('membership', 'attendancePermission', 'invoicePermission', 'profileComplete', 'myDoctorId'));
 	}
 
     public function index(Request $request){
@@ -313,6 +317,21 @@ class DoctorController extends Controller
                     ]);
                 }
 
+                // Save certificates
+                if ($request->hasFile('certificates')) {
+                    foreach ($request->file('certificates') as $file) {
+                        $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                        $file->storeAs('upload/certificates', $fileName, 'public');
+                        DB::table('doctor_certificates')->insert([
+                            'doctor_id'  => $doctor_id,
+                            'file_name'  => $fileName,
+                            'file_path'  => 'upload/certificates/' . $fileName,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+
                 return response()->json([
                     "status"     => 200,
                     "msg"        => "Doctor location, education, and languages updated successfully.",
@@ -399,47 +418,23 @@ class DoctorController extends Controller
     {
         try {
             $request->validate([
-                'id'           => 'required|integer|exists:doctors,id',
-                'availability' => 'required|array',
+                'id' => 'required|integer|exists:doctors,id',
             ]);
 
-            $doctorId     = $request->input('id');
-            $availability = $request->input('availability');
+            $doctorId = $request->input('id');
+            $availableDays = $request->input('available_days', []);
 
-            // पुराने slots delete करो
             DB::table('doctor_availability')->where('doctor_id', $doctorId)->delete();
 
-            $inserts = [];
-
-            foreach ($availability as $day => $slots) {
-                if (!empty($slots) && is_array($slots)) {
-                    foreach ($slots as $slot) {
-                        if (!empty($slot['start_time']) && !empty($slot['end_time'])) {
-                            $inserts[] = [
-                                'doctor_id'  => $doctorId,
-                                'day'        => $day,
-                                'start_time' => $slot['start_time'],
-                                'end_time'   => $slot['end_time'],
-                                'created_at' => now(),
-                                'updated_at' => now(),
-                            ];
-                        }
-                    }
-                } else {
-                    // अगर कोई slot नहीं भरा तो Closed save करो
-                    $inserts[] = [
-                        'doctor_id'  => $doctorId,
-                        'day'        => $day,
-                        'start_time' => 'Closed',
-                        'end_time'   => 'Closed',
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }
-            }
-
-            if (!empty($inserts)) {
-                DB::table('doctor_availability')->insert($inserts);
+            foreach ($availableDays as $day) {
+                DB::table('doctor_availability')->insert([
+                    'doctor_id'  => $doctorId,
+                    'day'        => $day,
+                    'start_time' => 'Available',
+                    'end_time'   => 'Available',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
 
             return response()->json([
@@ -448,22 +443,23 @@ class DoctorController extends Controller
                 'doctor_id' => $doctorId,
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $ve) {
-            return response()->json([
-                'status' => 422,
-                'msg'    => 'Validation failed.',
-                'errors' => $ve->errors()
-            ]);
         } catch (\Exception $e) {
-            \Log::error('Doctor Availability Error: ' . $e->getMessage());
-            return response()->json([
-                'status' => 500,
-                'msg'    => 'Server Error: ' . $e->getMessage()
-            ]);
+            return response()->json(['status' => 500, 'msg' => $e->getMessage()]);
         }
     }
 
 
+
+    public function deleteCertificate(Request $request)
+    {
+        $cert = DB::table('doctor_certificates')->where('id', $request->id)->first();
+        if ($cert) {
+            \Storage::disk('public')->delete($cert->file_path);
+            DB::table('doctor_certificates')->where('id', $request->id)->delete();
+            return response()->json(['status' => 200, 'msg' => 'Deleted']);
+        }
+        return response()->json(['status' => 404, 'msg' => 'Not found']);
+    }
 
     public function delete(Request $request, $id){
         if(empty(Session::get('user_id'))){

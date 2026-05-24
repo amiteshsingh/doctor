@@ -31,7 +31,7 @@
                                 <label class="col-form-label col-lg-3">Doctor</label>
                                 <div class="col-md-9">
                                     <div class="input-group">
-                                        <select name="doctor_id" class="form-control">
+                                        <select name="doctor_id" id="doctor_id" class="form-control" onchange="fetchDoctorDetails(this.value)">
                                             <option value="">-- Select Doctor --</option>
                                             @foreach($doctors as $id => $name)
                                                 <option value="{{ $id }}" {{ (isset($invoice->doctor_id) && $invoice->doctor_id == $id) ? 'selected' : '' }}>
@@ -112,8 +112,23 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-lg-3">Start Time</label>
                                 <div class="col-md-9">
-                                    <input type="time" name="start_time" class="form-control"
-                                        value="{{ $invoice->start_time ?? '' }}">
+                                    <select name="start_time" class="form-control">
+                                        <option value="">-- Select Start Time --</option>
+                                        @for($h = 0; $h < 24; $h++)
+                                            @foreach(['00','15','30','45'] as $m)
+                                                @php
+                                                    $val   = sprintf('%02d:%s', $h, $m);
+                                                    $h12   = $h % 12 ?: 12;
+                                                    $ampm  = $h < 12 ? 'AM' : 'PM';
+                                                    $label = sprintf('%02d:%s %s', $h12, $m, $ampm);
+                                                @endphp
+                                                <option value="{{ $val }}"
+                                                    {{ ($invoice->start_time ?? '') == $val ? 'selected' : '' }}>
+                                                    {{ $label }}
+                                                </option>
+                                            @endforeach
+                                        @endfor
+                                    </select>
                                     <small class="text-muted">Clinic opening / slot start time</small>
                                 </div>
                             </div>
@@ -121,8 +136,23 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-lg-3">End Time</label>
                                 <div class="col-md-9">
-                                    <input type="time" name="end_time_slot" class="form-control"
-                                        value="{{ $invoice->end_time_slot ?? '' }}">
+                                    <select name="end_time_slot" class="form-control">
+                                        <option value="">-- Select End Time --</option>
+                                        @for($h = 0; $h < 24; $h++)
+                                            @foreach(['00','15','30','45'] as $m)
+                                                @php
+                                                    $val   = sprintf('%02d:%s', $h, $m);
+                                                    $h12   = $h % 12 ?: 12;
+                                                    $ampm  = $h < 12 ? 'AM' : 'PM';
+                                                    $label = sprintf('%02d:%s %s', $h12, $m, $ampm);
+                                                @endphp
+                                                <option value="{{ $val }}"
+                                                    {{ ($invoice->end_time_slot ?? '') == $val ? 'selected' : '' }}>
+                                                    {{ $label }}
+                                                </option>
+                                            @endforeach
+                                        @endfor
+                                    </select>
                                     <small class="text-muted">Clinic closing / slot end time</small>
                                 </div>
                             </div>
@@ -155,5 +185,31 @@
 </div> <!-- /.page-wrapper -->
 
 @endsection
+
+<script>
+function fetchDoctorDetails(doctorId) {
+    if (!doctorId) return;
+    fetch('{{ url("doctor/invoice-master/doctor-details") }}/' + doctorId, {
+        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }
+    })
+    .then(r => r.json())
+    .then(function(d) {
+        if (d.status !== 200) return;
+        var f = d.data;
+        setVal('hospital_clinic_name', f.practice_name || f.name || '');
+        setVal('address',              f.address || '');
+        setVal('phone_no',             f.phone || f.phone_no || '');
+        setVal('email',                f.email || '');
+    });
+}
+function setVal(name, val) {
+    var el = document.querySelector('[name="' + name + '"]');
+    if (el) el.value = val;
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var sel = document.getElementById('doctor_id');
+    if (sel && sel.value) fetchDoctorDetails(sel.value);
+});
+</script>
 
 

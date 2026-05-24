@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Doctor;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -31,6 +32,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20', 'unique:doctors,phone_no'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -40,6 +42,18 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        try {
+            Doctor::create([
+                'name'     => $request->name,
+                'email'    => $request->email,
+                'phone_no' => $request->phone,
+                'added_by' => $user->id,
+                'added_on' => now(),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Doctor create failed: ' . $e->getMessage());
+        }
 
         event(new Registered($user));
 

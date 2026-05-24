@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\User\UserAuthController;
 use App\Http\Controllers\User\FavouriteController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -143,6 +147,7 @@ Route::middleware(['doctor'])->prefix('doctor')->group(function () {
     Route::any('/mydoctor/doctor_location', [DoctorPanelController::class, 'doctorLocation'])->name('doctor.mydoctor.doctor_location');
     Route::post('/mydoctor/doctor_availability', [DoctorPanelController::class, 'doctorAvailability'])->name('doctor.mydoctor.doctor_availability');
     Route::get('/mydoctor/profile/{id}', [DoctorPanelController::class, 'profile'])->name('doctor.mydoctor.profile');
+    Route::post('/mydoctor/delete-certificate', [DoctorPanelController::class, 'deleteCertificate'])->name('doctor.certificate.delete');
 
     // Gallery Routes (Doctor Panel)
     Route::post('/gallery/upload',  [\App\Http\Controllers\Admin\GalleryController::class, 'upload'])->name('doctor.gallery.upload');
@@ -169,10 +174,12 @@ Route::middleware(['doctor'])->prefix('doctor')->group(function () {
 
     Route::any('/invoice-master', [InvoiceMasterController::class, 'index'])->name('invoice-master.index');
     Route::any('/invoice-master/add', [InvoiceMasterController::class, 'add'])->name('invoice-master.add');
+    Route::get('/invoice-master/doctor-details/{id}', [InvoiceMasterController::class, 'doctorDetails'])->name('invoice-master.doctor-details');
     Route::any('/invoice-master/delete/{id}', [InvoiceMasterController::class, 'delete'])->name('invoice-master.delete');
 
     Route::any('/prescription-invoice', [PrescriptionInvoiceController::class, 'index'])->name('prescription-invoice.index');
     Route::any('/prescription-invoice/add', [PrescriptionInvoiceController::class, 'add'])->name('prescription-invoice.add');
+    Route::post('/prescription-invoice/slots', [PrescriptionInvoiceController::class, 'getSlots'])->name('prescription-invoice.slots');
     Route::any('/prescription-invoice/delete/{id}', [PrescriptionInvoiceController::class, 'delete'])->name('prescription-invoice.delete');
     Route::get('prescription-invoice/pdf/{id}', [PrescriptionInvoiceController::class, 'generatePdf'])->name('prescription-invoice.pdf');
 

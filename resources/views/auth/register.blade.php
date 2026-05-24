@@ -264,6 +264,21 @@
                     @enderror
                 </div>
 
+                {{-- Phone --}}
+                <div class="form-group">
+                    <label class="f-label">Phone Number</label>
+                    <div class="input-wrap">
+                        <i class="fa fa-phone input-icon"></i>
+                        <input type="text" name="phone" id="phone"
+                               class="f-input {{ $errors->has('phone') ? 'is-invalid' : '' }}"
+                               value="{{ old('phone') }}"
+                               placeholder="Your phone number" required>
+                    </div>
+                    @error('phone')
+                        <div class="invalid-msg"><i class="fa fa-times-circle"></i> {{ $message }}</div>
+                    @enderror
+                </div>
+
                 {{-- Email --}}
                 <div class="form-group">
                     <label class="f-label">Email Address</label>
