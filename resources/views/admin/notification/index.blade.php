@@ -96,7 +96,7 @@
                 <div class="col-lg-9 offset-lg-3">
                     <button type="submit" class="btn"
                         style="background:linear-gradient(135deg,#0a6ebd,#00b074);color:#fff;border:none;border-radius:10px;padding:10px 28px;font-weight:700;"
-                        onclick="return confirm('Send notification to selected users?')">
+                        onclick="this.disabled=true; this.innerHTML='<i class=\'fa fa-spinner fa-spin\'></i> Sending...'; this.form.submit();">
                         <i class="fa fa-paper-plane"></i> Send Notification
                     </button>
                 </div>

@@ -472,6 +472,15 @@
         <li class="nav-item dropdown d-none d-sm-block">
             <a href="javascript:void(0);" id="open_msg_box" class="hasnotifications nav-link"><i class="fa fa-comment-o"></i> <span class="badge badge-pill bg-danger float-right">8</span></a>
         </li>
+        @auth
+        @if(Auth::user()->role?->role === 'doctor')
+        <li class="nav-item d-none d-sm-block">
+            <a href="javascript:void(0);" onclick="testSound()" class="nav-link" title="Test Notification Sound" style="font-size:13px;">
+                <i class="fa fa-volume-up"></i>
+            </a>
+        </li>
+        @endif
+        @endauth
         <li class="nav-item dropdown has-arrow">
             <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
                 <span class="user-img">

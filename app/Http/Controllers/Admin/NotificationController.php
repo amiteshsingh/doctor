@@ -55,6 +55,11 @@ class NotificationController extends Controller
         }
 
         foreach ($users as $user) {
+            // Skip duplicate fcm tokens
+            static $sentTokens = [];
+            if (in_array($user->fcm_token, $sentTokens)) continue;
+            $sentTokens[] = $user->fcm_token;
+
             $ok = FirebaseNotification::send(
                 $user->fcm_token,
                 $title,

@@ -286,6 +286,37 @@ class PrescriptionInvoiceController extends Controller
         ]);
     }
 
+    public function newBookingCount(Request $request)
+    {
+        $since = $request->query('since'); // timestamp
+        $userId = Session::get('user_id');
+
+        $query = PrescriptionInvoice::whereHas('invoiceMaster', function($q) use ($userId) {
+            $q->where('added_by', $userId);
+        });
+
+        if ($since) {
+            $query->where('created_at', '>', date('Y-m-d H:i:s', $since));
+        }
+
+        $newBookings = $query->with('invoiceMaster.doctor')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(fn($b) => [
+                'id'           => $b->id,
+                'patient_name' => $b->patient_name,
+                'booking_date' => $b->booking_date,
+                'booking_time' => $b->booking_time,
+                'doctor'       => $b->invoiceMaster?->doctor?->name ?? 'N/A',
+            ]);
+
+        return response()->json([
+            'count'    => $newBookings->count(),
+            'bookings' => $newBookings,
+            'now'      => time(),
+        ]);
+    }
+
     public function cancel(Request $request, $id)
     {
         $invoice = PrescriptionInvoice::find($id);

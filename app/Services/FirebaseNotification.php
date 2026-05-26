@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Cache;
 
 class FirebaseNotification
 {
-    /**
-     * Send FCM v1 notification
-     */
     public static function send(string $fcmToken, string $title, string $body, array $data = []): bool
     {
         $accessToken = self::getAccessToken();
@@ -20,39 +17,44 @@ class FirebaseNotification
         if (!$projectId) return false;
 
         try {
-            $imageUrl = $data['image'] ?? null;
+            $imageUrl = isset($data['image']) && $data['image'] !== '' ? $data['image'] : null;
 
-            // data mein image ko string rakho, baaki fields bhi
+            // data payload — sirf string values, image hata do
             $dataPayload = [];
             foreach ($data as $k => $v) {
+                if ($k === 'image') continue; // image notification level pe jayegi
                 $dataPayload[$k] = (string)$v;
             }
+            // image ko data mein bhi bhejo taaki app side handle kar sake
+            if ($imageUrl) {
+                $dataPayload['image'] = $imageUrl;
+            }
+
+            // notification payload
+            $notification = ['title' => $title, 'body' => $body];
+            if ($imageUrl) $notification['image'] = $imageUrl;
+
+            // android notification
+            $androidNotif = ['sound' => 'default'];
+            if ($imageUrl) $androidNotif['image'] = $imageUrl;
 
             $message = [
-                'token' => $fcmToken,
-                'notification' => array_filter([
-                    'title' => $title,
-                    'body'  => $body,
-                    'image' => $imageUrl,  // system notification mein image
-                ]),
-                'data' => $dataPayload,
-                'android' => [
-                    'priority' => 'high',
-                    'notification' => array_filter([
-                        'sound'              => 'default',
-                        'image'              => $imageUrl,
-                        'notification_count' => 1,
-                    ]),
-                ],
-                'apns' => [
-                    'payload' => [
-                        'aps' => ['mutable-content' => 1],
-                    ],
-                    'fcm_options' => array_filter([
-                        'image' => $imageUrl,
-                    ]),
+                'token'        => $fcmToken,
+                'notification' => $notification,
+                'data'         => $dataPayload,
+                'android'      => [
+                    'priority'     => 'high',
+                    'notification' => $androidNotif,
                 ],
             ];
+
+            // apns sirf tab add karo jab image ho
+            if ($imageUrl) {
+                $message['apns'] = [
+                    'payload'     => ['aps' => ['mutable-content' => 1]],
+                    'fcm_options' => ['image' => $imageUrl],
+                ];
+            }
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $accessToken,
@@ -66,15 +68,13 @@ class FirebaseNotification
             }
 
             return $response->successful();
+
         } catch (\Exception $e) {
             Log::error('FCM v1 Exception: ' . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Get OAuth2 access token from service account JSON (cached 55 min)
-     */
     private static function getAccessToken(): ?string
     {
         return Cache::remember('fcm_access_token', 3300, function () {
@@ -86,7 +86,7 @@ class FirebaseNotification
 
             $creds = json_decode(file_get_contents($credPath), true);
 
-            $now = time();
+            $now     = time();
             $payload = [
                 'iss'   => $creds['client_email'],
                 'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
@@ -114,9 +114,6 @@ class FirebaseNotification
         return $creds['project_id'] ?? null;
     }
 
-    /**
-     * Build JWT manually (no external library needed)
-     */
     private static function buildJwt(array $payload, string $privateKey): string
     {
         $header  = self::base64url(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));

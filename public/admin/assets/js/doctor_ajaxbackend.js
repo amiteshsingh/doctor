@@ -163,12 +163,14 @@ function ajaxSearching(current_page, filtertype, url) {
     }else if(type === 'prescription-invoice'){ 
         var url = base_url + url;
         var search = $("#search").val();
-		var sortBy = $("#sortBy").val();
-		var orderBy = $("#orderBy").val();
+        var sortBy = $("#sortBy").val();
+        var orderBy = $("#orderBy").val();
+        var filter_date = $("#filter_date").val();
         var data = {
             sortBy: sortBy,
-			orderBy: orderBy,
-			search: search,
+            orderBy: orderBy,
+            search: search,
+            filter_date: filter_date,
             page: page,
         }
     }else {
