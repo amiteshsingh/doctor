@@ -95,6 +95,60 @@ class UserController extends Controller
         ]);
     }
 
+    public function rescheduleBooking(Request $request)
+    {
+        $request->validate([
+            'booking_id'   => 'required|integer',
+            'booking_date' => 'required|date',
+            'booking_time' => 'required|string',
+        ]);
+
+        $user    = $request->auth_user;
+        $booking = PrescriptionInvoice::where('id', $request->booking_id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$booking) {
+            return response()->json(['status' => 404, 'message' => 'Booking not found.']);
+        }
+
+        if ($booking->status === 'cancelled') {
+            return response()->json(['status' => 400, 'message' => 'Cancelled booking cannot be modified.']);
+        }
+
+        // Check 1 hour restriction
+        $now         = \Carbon\Carbon::now('Asia/Kolkata');
+        $bookingDT   = \Carbon\Carbon::parse($booking->booking_date . ' ' . $booking->booking_time, 'Asia/Kolkata');
+        $diffMinutes = $now->diffInMinutes($bookingDT, false);
+
+        if ($diffMinutes <= 60 && $diffMinutes >= 0) {
+            return response()->json(['status' => 400, 'message' => 'Booking cannot be modified within 1 hour of appointment time.']);
+        }
+
+        if ($diffMinutes < 0) {
+            return response()->json(['status' => 400, 'message' => 'Past bookings cannot be modified.']);
+        }
+
+        // Check new slot not already booked
+        $newTime = $request->booking_time;
+        $conflict = PrescriptionInvoice::where('invoice_master_id', $booking->invoice_master_id)
+            ->where('booking_date', $request->booking_date)
+            ->whereRaw('LOWER(booking_time) = ?', [strtolower($newTime)])
+            ->where('id', '!=', $booking->id)
+            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
+            ->exists();
+
+        if ($conflict) {
+            return response()->json(['status' => 409, 'message' => 'This slot is already booked. Please select another time.']);
+        }
+
+        $booking->booking_date = $request->booking_date;
+        $booking->booking_time = $newTime;
+        $booking->save();
+
+        return response()->json(['status' => 200, 'message' => 'Booking rescheduled successfully.']);
+    }
+
     public function updateFcmToken(Request $request)
     {
         $user = $request->auth_user;
