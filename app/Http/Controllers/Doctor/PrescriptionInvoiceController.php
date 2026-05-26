@@ -17,6 +17,17 @@ use Illuminate\Support\Facades\Auth;
 
 class PrescriptionInvoiceController extends Controller
 {
+    /**
+     * Send FCM notification to booking's user
+     */
+    private function notifyUser(PrescriptionInvoice $inv, string $title, string $body, array $data = []): void
+    {
+        if (!$inv->user_id) return;
+        $user = User::find($inv->user_id);
+        if (!$user || !$user->fcm_token) return;
+        FirebaseNotification::send($user->fcm_token, $title, $body, $data);
+    }
+
     public function index(Request $request)
     {
         $mem = UserDoctorRoleMembership::where('user_id', Auth::id())->first();
@@ -148,18 +159,16 @@ class PrescriptionInvoiceController extends Controller
                     ];
 
                     if (DB::table('prescription_invoice')->where('id', $data['id'])->update($update)) {
-                        // Send notification on edit
                         $inv = PrescriptionInvoice::find($data['id']);
-                        if ($inv && $inv->user_id) {
-                            $user = User::find($inv->user_id);
-                            if ($user && $user->fcm_token) {
-                                FirebaseNotification::send(
-                                    $user->fcm_token,
-                                    'Appointment Updated',
-                                    'Your appointment has been updated to ' . \Carbon\Carbon::parse($data['booking_date'])->format('d M Y') . ' at ' . $data['booking_time'] . '.',
-                                    ['type' => 'update', 'invoice_id' => (string)$data['id']]
-                                );
-                            }
+                        if ($inv) {
+                            $date = \Carbon\Carbon::parse($data['booking_date'])->format('d M Y');
+                            $time = $data['booking_time'];
+                            $this->notifyUser(
+                                $inv,
+                                '✏️ अपॉइंटमेंट अपडेट',
+                                "आपकी अपॉइंटमेंट बदलकर {$date} को {$time} कर दी गई है। कृपया समय पर अस्पताल/क्लिनिक पहुँचें।",
+                                ['type' => 'update', 'invoice_id' => (string)$data['id']]
+                            );
                         }
                         return response()->json(["status" => 200, "msg" => "Prescription invoice updated successfully."]);
                     } else {
@@ -284,22 +293,17 @@ class PrescriptionInvoiceController extends Controller
             return response()->json(['status' => 404, 'msg' => 'Not found']);
         }
 
-        $invoice->status      = 'cancelled';
-        $invoice->updated_at  = now();
+        $invoice->status     = 'cancelled';
+        $invoice->updated_at = now();
         $invoice->save();
 
-        // Send FCM notification to user
-        if ($invoice->user_id) {
-            $user = User::find($invoice->user_id);
-            if ($user && $user->fcm_token) {
-                FirebaseNotification::send(
-                    $user->fcm_token,
-                    'Appointment Cancelled',
-                    'Your appointment on ' . \Carbon\Carbon::parse($invoice->booking_date)->format('d M Y') . ' at ' . $invoice->booking_time . ' has been cancelled.',
-                    ['type' => 'cancel', 'invoice_id' => (string)$invoice->id]
-                );
-            }
-        }
+        $date = \Carbon\Carbon::parse($invoice->booking_date)->format('d M Y');
+        $this->notifyUser(
+            $invoice,
+            '❌ अपॉइंटमेंट रद्द',
+            "{$date} को {$invoice->booking_time} बजे की आपकी अपॉइंटमेंट डॉक्टर द्वारा रद्द कर दी गई है। यह स्लॉट अब बुकिंग के लिए उपलब्ध है।",
+            ['type' => 'cancel', 'invoice_id' => (string)$invoice->id]
+        );
 
         return response()->json(['status' => 200, 'msg' => 'Appointment cancelled successfully.']);
     }

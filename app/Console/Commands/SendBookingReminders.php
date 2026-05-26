@@ -14,11 +14,10 @@ class SendBookingReminders extends Command
 
     public function handle()
     {
-        $now      = Carbon::now('Asia/Kolkata');
-        $today    = $now->format('Y-m-d');
-        $nowMins  = $now->hour * 60 + $now->minute;
+        $now     = Carbon::now('Asia/Kolkata');
+        $today   = $now->format('Y-m-d');
+        $nowMins = $now->hour * 60 + $now->minute;
 
-        // All active bookings for today with user fcm_token
         $bookings = DB::table('prescription_invoice')
             ->join('users', 'prescription_invoice.user_id', '=', 'users.id')
             ->where('prescription_invoice.booking_date', $today)
@@ -37,63 +36,46 @@ class SendBookingReminders extends Command
             ->get();
 
         foreach ($bookings as $booking) {
-            // Parse booking time to total minutes
             try {
                 $bt = Carbon::createFromFormat('h:i A', trim($booking->booking_time), 'Asia/Kolkata');
             } catch (\Exception $e) {
                 try {
                     $bt = Carbon::createFromFormat('H:i', trim($booking->booking_time), 'Asia/Kolkata');
-                } catch (\Exception $e2) {
-                    continue;
-                }
+                } catch (\Exception $e2) { continue; }
             }
 
             $bookingMins = $bt->hour * 60 + $bt->minute;
-            $diffMins    = $bookingMins - $nowMins; // minutes remaining
+            $diffMins    = $bookingMins - $nowMins;
 
-            // Check each reminder window
             foreach ([60, 30, 15, 5] as $minutesBefore) {
-                // Only send if diff is within this window (between minutesBefore and minutesBefore-1)
-                if ($diffMins < $minutesBefore || $diffMins >= ($minutesBefore + 1)) {
-                    continue;
-                }
+                if ($diffMins < $minutesBefore || $diffMins >= ($minutesBefore + 1)) continue;
 
-                // Check if already sent
-                $alreadySent = DB::table('booking_reminders')
-                    ->where('invoice_id', $booking->id)
-                    ->where('minutes_before', $minutesBefore)
-                    ->exists();
+                // Pehle DB mein insert karo (duplicate prevent)
+                $inserted = DB::table('booking_reminders')->insertOrIgnore([
+                    'invoice_id'     => $booking->id,
+                    'minutes_before' => $minutesBefore,
+                    'sent_at'        => now(),
+                ]);
 
-                if ($alreadySent) continue;
+                // Agar insert nahi hua matlab already sent hai
+                if (!$inserted) continue;
 
-                // Send notification
-                $msg = match($minutesBefore) {
-                    60 => "⏰ Your appointment is in 1 hour at {$booking->booking_time}. Please get ready and reach the hospital/clinic on time.",
-                    30 => "⏰ Your appointment is in 30 minutes at {$booking->booking_time}. Please start heading to the hospital/clinic.",
-                    15 => "⏰ Your appointment is in 15 minutes at {$booking->booking_time}. Please reach the hospital/clinic now.",
-                    5  => "🚨 Your appointment is in just 5 minutes at {$booking->booking_time}. Please be at the hospital/clinic!",
+                $time = $booking->booking_time;
+                $msg  = match($minutesBefore) {
+                    60 => "आपकी अपॉइंटमेंट 1 घंटे बाद {$time} पर है। कृपया तैयार होकर अस्पताल/क्लिनिक पहुँचें।",
+                    30 => "आपकी अपॉइंटमेंट 30 मिनट बाद {$time} पर है। कृपया अभी अस्पताल/क्लिनिक के लिए निकलें।",
+                    15 => "आपकी अपॉइंटमेंट 15 मिनट बाद {$time} पर है। कृपया अभी अस्पताल/क्लिनिक पहुँचें।",
+                    5  => "आपकी अपॉइंटमेंट सिर्फ 5 मिनट बाद {$time} पर है। कृपया तुरंत अस्पताल/क्लिनिक में उपस्थित हों!",
                 };
 
-                $sent = FirebaseNotification::send(
+                FirebaseNotification::send(
                     $booking->fcm_token,
-                    '🏥 Appointment Reminder',
+                    '🏥 अपॉइंटमेंट रिमाइंडर',
                     $msg,
-                    [
-                        'type'           => 'reminder',
-                        'invoice_id'     => (string)$booking->id,
-                        'minutes_before' => (string)$minutesBefore,
-                    ]
+                    ['type' => 'reminder', 'invoice_id' => (string)$booking->id, 'minutes_before' => (string)$minutesBefore]
                 );
 
-                if ($sent) {
-                    // Mark as sent so it doesn't send again
-                    DB::table('booking_reminders')->insert([
-                        'invoice_id'     => $booking->id,
-                        'minutes_before' => $minutesBefore,
-                        'sent_at'        => now(),
-                    ]);
-                    $this->info("✅ Sent {$minutesBefore}min reminder → booking #{$booking->id} at {$booking->booking_time}");
-                }
+                $this->info("Sent {$minutesBefore}min reminder → booking #{$booking->id}");
             }
         }
 

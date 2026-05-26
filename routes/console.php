@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Run every minute to check for upcoming appointment reminders
-Schedule::command('bookings:send-reminders')->everyMinute();
+// Schedule::command('bookings:send-reminders')->everyMinute();

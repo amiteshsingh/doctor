@@ -3,18 +3,47 @@ if(isset($res) && count($res) > 0){
     $i = 0;
     if(!empty($page)) $i = ($page - 1) * $page_size;
     foreach($res as $row){
+        $isToday = $row->booking_date && \Carbon\Carbon::parse($row->booking_date)->isToday();
 ?>
 <tr>
     <td>{{ ++$i }}</td>
-    <!-- <td>{{ $row->invoice_number }}</td> -->
     <td>{{ $row->invoiceMaster->doctor->name ?? 'N/A' }}</td>
     <td>{{ $row->patient_name }}</td>
     <td>{{ $row->age }}</td>
     <td>{{ $row->gender }}</td>
     <td>{{ $row->patient_address }}</td>
     <td>{{ $row->patient_phone_no }}</td>
-    <td>{{ $row->booking_date ? \Carbon\Carbon::parse($row->booking_date)->format('d-m-Y') : '' }}</td>
-    <td>{{ $row->booking_time }}</td>
+
+    {{-- Booking Date --}}
+    <td>
+        @if($row->booking_date)
+            @if($isToday)
+                <span style="display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#0a6ebd,#00b074);color:#fff;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;">
+                    <i class="fa fa-calendar-check-o"></i>
+                    {{ \Carbon\Carbon::parse($row->booking_date)->format('d-m-Y') }}
+                </span>
+            @else
+                <span style="color:#555;font-size:13px;">
+                    {{ \Carbon\Carbon::parse($row->booking_date)->format('d-m-Y') }}
+                </span>
+            @endif
+        @endif
+    </td>
+
+    {{-- Booking Time --}}
+    <td>
+        @if($row->booking_time)
+            @if($isToday)
+                <span style="display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;">
+                    <i class="fa fa-clock-o"></i>
+                    {{ $row->booking_time }}
+                </span>
+            @else
+                <span style="color:#555;font-size:13px;">{{ $row->booking_time }}</span>
+            @endif
+        @endif
+    </td>
+
     <td>
         @if(isset($row->status) && $row->status === 'cancelled')
             <span style="background:#fef2f2;color:#ef4444;border:1px solid #fecaca;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;">Cancelled</span>
