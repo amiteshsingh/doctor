@@ -180,6 +180,7 @@ Route::middleware(['doctor'])->prefix('doctor')->group(function () {
     Route::any('/prescription-invoice', [PrescriptionInvoiceController::class, 'index'])->name('prescription-invoice.index');
     Route::any('/prescription-invoice/add', [PrescriptionInvoiceController::class, 'add'])->name('prescription-invoice.add');
     Route::post('/prescription-invoice/slots', [PrescriptionInvoiceController::class, 'getSlots'])->name('prescription-invoice.slots');
+    Route::post('/prescription-invoice/cancel/{id}', [PrescriptionInvoiceController::class, 'cancel'])->name('prescription-invoice.cancel');
     Route::any('/prescription-invoice/delete/{id}', [PrescriptionInvoiceController::class, 'delete'])->name('prescription-invoice.delete');
     Route::get('prescription-invoice/pdf/{id}', [PrescriptionInvoiceController::class, 'generatePdf'])->name('prescription-invoice.pdf');
 

@@ -78,6 +78,9 @@ class UserController extends Controller
         }
 
         $user->api_token = Str::random(60);
+        if ($request->filled('fcm_token')) {
+            $user->fcm_token = $request->fcm_token;
+        }
         $user->save();
 
         return response()->json([
@@ -90,6 +93,16 @@ class UserController extends Controller
                 'email' => $user->email,
             ],
         ]);
+    }
+
+    public function updateFcmToken(Request $request)
+    {
+        $user = $request->auth_user;
+        if ($request->filled('fcm_token')) {
+            $user->fcm_token = $request->fcm_token;
+            $user->save();
+        }
+        return response()->json(['status' => 200, 'message' => 'FCM token updated.']);
     }
 
     public function profile(Request $request)

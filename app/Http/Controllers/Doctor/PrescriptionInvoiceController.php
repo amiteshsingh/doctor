@@ -8,6 +8,8 @@ use App\Models\PrescriptionInvoice;
 use App\Models\InvoiceMaster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use App\Services\FirebaseNotification;
+use App\Models\User;
 use App\Models\Doctor;
 use App\Models\UserDoctorRoleMembership;
 use PDF;
@@ -36,18 +38,25 @@ class PrescriptionInvoiceController extends Controller
                 $filter = $request->all();
                 $page = isset($filter['page']) ? $filter['page'] : $page;
 
-                $records = PrescriptionInvoice::with('invoiceMaster.doctor')
+                $query = PrescriptionInvoice::with('invoiceMaster.doctor')
                     ->whereHas('invoiceMaster', function($q) use ($request) {
                         $q->where('added_by', $request->session()->get('user_id'));
-                    })
-                    ->orderBy('id', 'DESC')
-                    ->skip(($page - 1) * $page_size)
-                    ->take($page_size)
-                    ->get();
+                    });
 
-                $total = PrescriptionInvoice::whereHas('invoiceMaster', function($q) use ($request) {
-                        $q->where('added_by', $request->session()->get('user_id'));
-                    })->count();
+                if (!empty($filter['filter_date'])) {
+                    $query->whereDate('booking_date', $filter['filter_date']);
+                }
+                if (!empty($filter['search'])) {
+                    $s = $filter['search'];
+                    $query->where(function($q) use ($s) {
+                        $q->where('invoice_number', 'like', "%$s%")
+                          ->orWhere('patient_name', 'like', "%$s%")
+                          ->orWhere('patient_phone_no', 'like', "%$s%");
+                    });
+                }
+
+                $total   = $query->count();
+                $records = $query->orderBy('id', 'DESC')->skip(($page-1)*$page_size)->take($page_size)->get();
 
                 $content_html = view('doctor.prescription_invoice.list-content')
                     ->with(['res' => $records, 'page' => $page, 'page_size' => $page_size])
@@ -74,6 +83,7 @@ class PrescriptionInvoiceController extends Controller
                     ->whereHas('invoiceMaster', function($q) use ($request) {
                         $q->where('added_by', $request->session()->get('user_id'));
                     })
+                    ->whereDate('booking_date', today())
                     ->orderBy('id', 'DESC')
                     ->skip(($page - 1) * $page_size)
                     ->take($page_size)
@@ -81,7 +91,7 @@ class PrescriptionInvoiceController extends Controller
 
                 $result['total_count'] = PrescriptionInvoice::whereHas('invoiceMaster', function($q) use ($request) {
                         $q->where('added_by', $request->session()->get('user_id'));
-                    })->count();
+                    })->whereDate('booking_date', today())->count();
                 $result['page'] = $page;
                 $result['page_size'] = $page_size;
 
@@ -138,6 +148,19 @@ class PrescriptionInvoiceController extends Controller
                     ];
 
                     if (DB::table('prescription_invoice')->where('id', $data['id'])->update($update)) {
+                        // Send notification on edit
+                        $inv = PrescriptionInvoice::find($data['id']);
+                        if ($inv && $inv->user_id) {
+                            $user = User::find($inv->user_id);
+                            if ($user && $user->fcm_token) {
+                                FirebaseNotification::send(
+                                    $user->fcm_token,
+                                    'Appointment Updated',
+                                    'Your appointment has been updated to ' . \Carbon\Carbon::parse($data['booking_date'])->format('d M Y') . ' at ' . $data['booking_time'] . '.',
+                                    ['type' => 'update', 'invoice_id' => (string)$data['id']]
+                                );
+                            }
+                        }
                         return response()->json(["status" => 200, "msg" => "Prescription invoice updated successfully."]);
                     } else {
                         return response()->json(["status" => 403, "msg" => "Prescription invoice not updated."]);
@@ -250,6 +273,33 @@ class PrescriptionInvoiceController extends Controller
             'slots'   => $slots,
             'isToday' => ($date === now()->format('Y-m-d')),
         ]);
+    }
+
+    public function cancel(Request $request, $id)
+    {
+        $invoice = PrescriptionInvoice::find($id);
+        if (!$invoice) {
+            return response()->json(['status' => 404, 'msg' => 'Not found']);
+        }
+
+        $invoice->status      = 'cancelled';
+        $invoice->updated_at  = now();
+        $invoice->save();
+
+        // Send FCM notification to user
+        if ($invoice->user_id) {
+            $user = User::find($invoice->user_id);
+            if ($user && $user->fcm_token) {
+                FirebaseNotification::send(
+                    $user->fcm_token,
+                    'Appointment Cancelled',
+                    'Your appointment on ' . \Carbon\Carbon::parse($invoice->booking_date)->format('d M Y') . ' at ' . $invoice->booking_time . ' has been cancelled.',
+                    ['type' => 'cancel', 'invoice_id' => (string)$invoice->id]
+                );
+            }
+        }
+
+        return response()->json(['status' => 200, 'msg' => 'Appointment cancelled successfully.']);
     }
 
     public function delete(Request $request, $id)

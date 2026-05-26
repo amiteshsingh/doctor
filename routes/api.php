@@ -26,6 +26,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware(ApiTokenMiddleware::class)->group(function () {
         Route::get('/profile',              [UserController::class, 'profile']);
         Route::post('/profile/update',      [UserController::class, 'updateProfile']);
+        Route::post('/fcm-token',           [UserController::class, 'updateFcmToken']);
         Route::get('/my-bookings',          [UserController::class, 'myBookings']);
         Route::post('/book-appointment',    [DoctorController::class, 'bookAppointment']);
     });

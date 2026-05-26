@@ -7,28 +7,45 @@
             <div class="col-sm-8 col-5">
                 <h4 class="page-title">{{ $title }}</h4>
             </div>
-            <div class="col-sm-4 col-7 text-right m-b-30">
-                <a href="{{ url('doctor/prescription-invoice/add') }}" class="btn btn-primary btn-rounded float-right">
-                    <i class="fa fa-plus"></i> Add Prescription Invoice
-                </a>
-            </div>
         </div>
 
-        <div class="row filter-row">
-            <div class="col-md-5">
-                <div class="form-group form-focus">
-                    <label class="focus-label">Search by Invoice Number, Patient Name, Phone</label>
-                    <input type="text" class="form-control floating filterPrescriptionInvoice" id="search">
-                    <input type="hidden" name="sortBy" id="sortBy" value="">
-                    <input type="hidden" name="orderBy" id="orderBy" value="">
-                </div>
+        {{-- Search & Filter Bar --}}
+        <div style="background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+
+            {{-- Search --}}
+            <div style="flex:1;min-width:200px;position:relative;">
+                <i class="fa fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#aaa;font-size:14px;"></i>
+                <input type="text" id="search"
+                       class="filterPrescriptionInvoice"
+                       placeholder="Search invoice, patient, phone..."
+                       style="width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:9px 12px 9px 36px;font-size:13px;background:#f8fbff;outline:none;transition:border-color .2s;"
+                       onfocus="this.style.borderColor='#0a6ebd'" onblur="this.style.borderColor='#e2e8f0'">
+                <input type="hidden" id="sortBy" value="">
+                <input type="hidden" id="orderBy" value="">
             </div>
 
-          
-
-            <div class="col-md-3">
-                <a href="javascript:void(0)" class="btn btn-success btn-block" onclick="FilterReset(1,'prescription','prescription','filterPrescriptionInvoice')">Clear All Filters</a>
+            {{-- Date Picker --}}
+            <div style="position:relative;">
+                <i class="fa fa-calendar" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#0a6ebd;font-size:14px;pointer-events:none;z-index:1;"></i>
+                <input type="text" id="filter_date"
+                       class="filterPrescriptionInvoice"
+                       placeholder="Select date"
+                       readonly
+                       style="border:1.5px solid #e2e8f0;border-radius:10px;padding:9px 12px 9px 36px;font-size:13px;background:#f8fbff;width:160px;cursor:pointer;outline:none;">
             </div>
+
+            {{-- Clear --}}
+            <button onclick="clearFilters()"
+                    style="background:#f1f5f9;color:#555;border:1.5px solid #e2e8f0;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s;"
+                    onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                <i class="fa fa-times" style="margin-right:5px;"></i> Clear
+            </button>
+
+            {{-- Add Button --}}
+            <a href="{{ url('doctor/prescription-invoice/add') }}"
+               style="background:linear-gradient(135deg,#0a6ebd,#00b074);color:#fff;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:6px;">
+                <i class="fa fa-plus"></i> Add New
+            </a>
         </div>
 
         <div class="row">
@@ -39,7 +56,7 @@
                             <tr>
                                 <th>#</th>
                                 <!-- <th>Invoice Master <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="invoice_master_id" data-sort_order="asc"></i></th> -->
-                                <th>Invoice Number <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="invoice_number" data-sort_order="asc"></i></th>
+                                <!-- <th>Invoice Number <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="invoice_number" data-sort_order="asc"></i></th> -->
                                 <th>Doctor Name</th>
                                 <th>Patient Name <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="patient_name" data-sort_order="asc"></i></th>
                                 <th>Age <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="age" data-sort_order="asc"></i></th>
@@ -48,7 +65,6 @@
                                 <th>Patient Phone <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="patient_phone_no" data-sort_order="asc"></i></th>
                                 <th>Booking Date</th>
                                 <th>Booking Time</th>
-                                <th>Created At <i class="fa fa-sort ajaxSorting" data-type="prescription" data-sort_by="created_at" data-sort_order="asc"></i></th>
                                 <th class="text-right">Actions</th>
                             </tr>
                         </thead>
@@ -101,6 +117,50 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr('#filter_date', {
+        dateFormat: 'Y-m-d',
+        defaultDate: 'today',
+        disableMobile: true,
+        onChange: function() {
+            ajaxSearching(1, 'prescription', 'prescription', 'filterPrescriptionInvoice');
+        }
+    });
+});
+
+function clearFilters() {
+    document.getElementById('search').value = '';
+    document.getElementById('filter_date')._flatpickr.clear();
+    ajaxSearching(1, 'prescription', 'prescription', 'filterPrescriptionInvoice');
+}
+
+function cancelBooking(id, btn) {
+    if (!confirm('Cancel this appointment? User will be notified.')) return;
+    btn.disabled = true;
+    fetch('{{ url("doctor/prescription-invoice/cancel") }}/' + id, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+        }
+    })
+    .then(r => r.json())
+    .then(function(res) {
+        if (res.status === 200) {
+            // Reload listing
+            ajaxSearching(1, 'prescription', 'prescription', 'filterPrescriptionInvoice');
+        } else {
+            alert(res.msg || 'Something went wrong.');
+            btn.disabled = false;
+        }
+    })
+    .catch(function() { btn.disabled = false; });
+}
 </script>
 
 @endsection
