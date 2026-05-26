@@ -140,17 +140,18 @@ class DoctorController extends Controller
         $startMins = (int)$sh * 60 + (int)$sm;
         $endMins   = (int)$eh * 60 + (int)$em;
 
-        // Already booked times for this date — normalize to h:i A
-        $bookedTimes = PrescriptionInvoice::whereHas('invoiceMaster', function ($q) use ($request) {
-        $q->where('doctor_id', $request->doctor_id);
+        // Already booked times for this date — normalize to h:i A (exclude cancelled)
+        $bookedTimes = PrescriptionInvoice::whereHas('invoiceMaster', function ($q) use ($doctorId) {
+                $q->where('doctor_id', $doctorId);
             })
-            ->where('booking_date', $request->date)
+            ->where('booking_date', $date)
+            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
             ->pluck('booking_time')
             ->map(function ($time) {
                 try {
                     return \Carbon\Carbon::createFromFormat('h:i A', trim($time))->format('H:i');
                 } catch (\Exception $e) {
-                    return $time; // already in H:i format
+                    return $time;
                 }
             })
             ->toArray();
@@ -212,6 +213,7 @@ class DoctorController extends Controller
         $alreadyBooked = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
             ->where('booking_date', $request->booking_date)
             ->whereRaw('LOWER(booking_time) = ?', [strtolower($normalizedTime)])
+            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
             ->exists();
 
         if ($alreadyBooked) {

@@ -166,11 +166,12 @@ class PrescriptionInvoiceController extends Controller
                         return response()->json(["status" => 403, "msg" => "Prescription invoice not updated."]);
                     }
                 } else {
-                    // Duplicate slot check
+                    // Duplicate slot check (exclude cancelled)
                     $alreadyBooked = DB::table('prescription_invoice')
                         ->where('invoice_master_id', $data['invoice_master_id'])
                         ->where('booking_date', $data['booking_date'])
                         ->whereRaw('LOWER(booking_time) = ?', [strtolower($data['booking_time'] ?? '')])
+                        ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
                         ->exists();
 
                     if ($alreadyBooked) {
@@ -246,10 +247,11 @@ class PrescriptionInvoiceController extends Controller
             $allSlots[] = ['label' => sprintf('%02d:%02d %s', $h12, $min, $ampm), 'minutes' => $m];
         }
 
-        // Get booked slot labels for this date
+        // Get booked slot labels for this date (exclude cancelled)
         $booked = DB::table('prescription_invoice')
             ->where('invoice_master_id', $invoiceMasterId)
             ->where('booking_date', $date)
+            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
             ->pluck('booking_time')
             ->toArray();
         // Normalize booked times to h:i A format
