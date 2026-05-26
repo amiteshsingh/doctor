@@ -20,22 +20,45 @@ class FirebaseNotification
         if (!$projectId) return false;
 
         try {
+            $imageUrl = $data['image'] ?? null;
+
+            // data mein image ko string rakho, baaki fields bhi
+            $dataPayload = [];
+            foreach ($data as $k => $v) {
+                $dataPayload[$k] = (string)$v;
+            }
+
+            $message = [
+                'token' => $fcmToken,
+                'notification' => array_filter([
+                    'title' => $title,
+                    'body'  => $body,
+                    'image' => $imageUrl,  // system notification mein image
+                ]),
+                'data' => $dataPayload,
+                'android' => [
+                    'priority' => 'high',
+                    'notification' => array_filter([
+                        'sound'              => 'default',
+                        'image'              => $imageUrl,
+                        'notification_count' => 1,
+                    ]),
+                ],
+                'apns' => [
+                    'payload' => [
+                        'aps' => ['mutable-content' => 1],
+                    ],
+                    'fcm_options' => array_filter([
+                        'image' => $imageUrl,
+                    ]),
+                ],
+            ];
+
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $accessToken,
                 'Content-Type'  => 'application/json',
             ])->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
-                'message' => [
-                    'token'        => $fcmToken,
-                    'notification' => [
-                        'title' => $title,
-                        'body'  => $body,
-                    ],
-                    'data'    => array_map('strval', $data),
-                    'android' => [
-                        'priority'     => 'high',
-                        'notification' => ['sound' => 'default'],
-                    ],
-                ],
+                'message' => $message,
             ]);
 
             if (!$response->successful()) {

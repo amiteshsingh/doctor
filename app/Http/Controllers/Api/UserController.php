@@ -183,6 +183,7 @@ class UserController extends Controller
                     'gender'         => $booking->gender,
                     'booking_date'   => $booking->booking_date,
                     'booking_time'   => $booking->booking_time,
+                    'status'         => $booking->status ?? 'active',
                     'doctor'         => $booking->invoiceMaster?->doctor
                         ? [
                             'id'   => $booking->invoiceMaster->doctor->id,

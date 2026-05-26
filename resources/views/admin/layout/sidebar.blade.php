@@ -21,6 +21,9 @@
                         <li class="{{ request()->routeIs('admin.blog.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.blog.index') }}"><i class="fa fa-newspaper-o"></i> <span>Blogs</span></a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.notification.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.notification.index') }}"><i class="fa fa-bell"></i> <span>Broadcast Notification</span></a>
+                        </li>
                     </ul>
                 </div>
             </div>

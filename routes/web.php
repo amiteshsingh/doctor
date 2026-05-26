@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\HospitalController;
 use App\Http\Controllers\Admin\SpecializationController;
 use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Doctor\DoctorController as DoctorPanelController;
 use App\Http\Controllers\Doctor\MyHospitalController;
 use App\Http\Controllers\Doctor\InvoiceMasterController;
@@ -121,6 +122,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/blog/edit/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'edit'])->name('admin.blog.edit');
     Route::put('/blog/update/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'update'])->name('admin.blog.update');
     Route::delete('/blog/delete/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'delete'])->name('admin.blog.delete');
+
+    // Notification Broadcast
+    Route::get('/notification', [NotificationController::class, 'index'])->name('admin.notification.index');
+    Route::post('/notification/send', [NotificationController::class, 'send'])->name('admin.notification.send');
 
     // Gallery Routes
     Route::post('/gallery/upload',  [\App\Http\Controllers\Admin\GalleryController::class, 'upload'])->name('gallery.upload');
