@@ -33,7 +33,7 @@
     @endif
 
     <div style="background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.07);">
-        <form method="POST" action="{{ route('admin.notification.send') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('admin.notification.send') }}" enctype="multipart/form-data" id="notif_form">
             @csrf
 
             <div class="form-group row">
@@ -94,9 +94,8 @@
 
             <div class="form-group row">
                 <div class="col-lg-9 offset-lg-3">
-                    <button type="submit" class="btn"
-                        style="background:linear-gradient(135deg,#0a6ebd,#00b074);color:#fff;border:none;border-radius:10px;padding:10px 28px;font-weight:700;"
-                        onclick="this.disabled=true; this.innerHTML='<i class=\'fa fa-spinner fa-spin\'></i> Sending...'; this.form.submit();">
+                    <button type="submit" id="send_btn" class="btn"
+                        style="background:linear-gradient(135deg,#0a6ebd,#00b074);color:#fff;border:none;border-radius:10px;padding:10px 28px;font-weight:700;">
                         <i class="fa fa-paper-plane"></i> Send Notification
                     </button>
                 </div>
@@ -141,6 +140,15 @@
 </div>
 
 <script>
+var _formSubmitting = false;
+document.getElementById('notif_form').addEventListener('submit', function(e) {
+    if (_formSubmitting) { e.preventDefault(); return false; }
+    _formSubmitting = true;
+    var btn = document.getElementById('send_btn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sending...';
+});
+
 function toggleUserSelect(val) {
     document.getElementById('specific_user_row').style.display = val === 'specific' ? 'flex' : 'none';
 }

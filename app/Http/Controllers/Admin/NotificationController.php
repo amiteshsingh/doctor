@@ -47,6 +47,7 @@ class NotificationController extends Controller
         if ($target === 'all') {
             $users = User::whereHas('role', fn($q) => $q->where('role', 'user'))
                 ->whereNotNull('fcm_token')
+                ->distinct('fcm_token')
                 ->get(['id', 'fcm_token']);
         } else {
             $users = User::where('id', $request->user_id)
@@ -54,9 +55,8 @@ class NotificationController extends Controller
                 ->get(['id', 'fcm_token']);
         }
 
+        $sentTokens = [];
         foreach ($users as $user) {
-            // Skip duplicate fcm tokens
-            static $sentTokens = [];
             if (in_array($user->fcm_token, $sentTokens)) continue;
             $sentTokens[] = $user->fcm_token;
 
