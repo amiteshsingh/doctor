@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PeriodTrackingController;
 use App\Http\Middleware\ApiTokenMiddleware;
 
 Route::prefix('v1')->group(function () {
@@ -30,6 +31,10 @@ Route::prefix('v1')->group(function () {
         Route::get('/my-bookings',          [UserController::class, 'myBookings']);
         Route::post('/reschedule-booking',   [UserController::class, 'rescheduleBooking']);
         Route::post('/book-appointment',     [DoctorController::class, 'bookAppointment']);
+        Route::get('/period-tracking',       [PeriodTrackingController::class, 'get']);
+        Route::post('/period-tracking',      [PeriodTrackingController::class, 'save']);
+        Route::get('/period-tracking',       [PeriodTrackingController::class, 'get']);
+        Route::post('/period-tracking',      [PeriodTrackingController::class, 'save']);
     });
 
 });
