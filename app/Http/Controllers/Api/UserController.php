@@ -17,6 +17,18 @@ class UserController extends Controller
         return $filename ? asset('storage/uploads/profile_images/' . $filename) : null;
     }
 
+    public function appVersion()
+    {
+        return response()->json([
+            'status'       => 200,
+            'version_code' => 11,
+            'version_name' => '1.1.0',
+            'force_update' => false,
+            'message'      => 'Naya update available hai!',
+            'store_url'    => 'https://play.google.com/store/apps/details?id=com.doctorapp',
+        ]);
+    }
+
     public function register(Request $request)
     {
         $validator = \Validator::make($request->all(), [

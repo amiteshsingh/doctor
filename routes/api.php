@@ -9,6 +9,9 @@ use App\Http\Middleware\ApiTokenMiddleware;
 
 Route::prefix('v1')->group(function () {
 
+    // App version check
+    Route::get('/app-version', [UserController::class, 'appVersion']);
+
     // Public routes
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/login',    [UserController::class, 'login']);
