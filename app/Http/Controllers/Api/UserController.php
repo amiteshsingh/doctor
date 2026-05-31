@@ -149,6 +149,41 @@ class UserController extends Controller
         return response()->json(['status' => 200, 'message' => 'Booking rescheduled successfully.']);
     }
 
+    public function cancelBooking(Request $request)
+    {
+        $user    = $request->auth_user;
+        $booking = PrescriptionInvoice::where('id', $request->booking_id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$booking) {
+            return response()->json(['status' => 404, 'message' => 'Booking not found.']);
+        }
+
+        if ($booking->status === 'cancelled') {
+            return response()->json(['status' => 400, 'message' => 'Already cancelled.']);
+        }
+
+        // 1 hour restriction
+        $now       = \Carbon\Carbon::now('Asia/Kolkata');
+        $bookingDT = \Carbon\Carbon::parse($booking->booking_date . ' ' . $booking->booking_time, 'Asia/Kolkata');
+        $diffMins  = $now->diffInMinutes($bookingDT, false);
+
+        if ($diffMins < 60 && $diffMins >= 0) {
+            return response()->json(['status' => 400, 'message' => 'Appointment 1 ghante se kam samay mein hai — cancel nahi ho sakta.']);
+        }
+
+        if ($diffMins < 0) {
+            return response()->json(['status' => 400, 'message' => 'Past booking cancel nahi ho sakti.']);
+        }
+
+        $booking->status     = 'cancelled';
+        $booking->updated_at = now();
+        $booking->save();
+
+        return response()->json(['status' => 200, 'message' => 'Booking cancelled successfully.']);
+    }
+
     public function updateFcmToken(Request $request)
     {
         $user = $request->auth_user;

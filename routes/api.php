@@ -30,6 +30,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/fcm-token',           [UserController::class, 'updateFcmToken']);
         Route::get('/my-bookings',          [UserController::class, 'myBookings']);
         Route::post('/reschedule-booking',   [UserController::class, 'rescheduleBooking']);
+        Route::post('/cancel-booking',        [UserController::class, 'cancelBooking']);
         Route::post('/book-appointment',     [DoctorController::class, 'bookAppointment']);
         Route::get('/period-tracking',       [PeriodTrackingController::class, 'get']);
         Route::post('/period-tracking',      [PeriodTrackingController::class, 'save']);
