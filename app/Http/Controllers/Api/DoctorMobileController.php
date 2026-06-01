@@ -72,18 +72,63 @@ class DoctorMobileController extends Controller
         if (!$user->fcm_token) {
             return response()->json(['status' => 400, 'msg' => 'No FCM token found for this user.']);
         }
-        $result = \App\Services\FirebaseNotification::send(
-            $user->fcm_token,
-            '🔔 Test Notification',
-            'Notification system is working correctly!',
-            ['type' => 'test']
-        );
-        return response()->json([
-            'status'    => 200,
-            'result'    => $result,
-            'fcm_token' => substr($user->fcm_token, 0, 20) . '...',
-            'msg'       => $result ? 'Notification sent successfully!' : 'Notification failed — check Laravel logs.',
+
+        // Get access token directly and return any error
+        $credPath = storage_path('app/rogisewa-b3189-dfa65691786a.json');
+        if (!file_exists($credPath)) {
+            return response()->json(['status' => 500, 'msg' => 'Firebase JSON file not found at: ' . $credPath]);
+        }
+
+        $creds = json_decode(file_get_contents($credPath), true);
+        $now   = time();
+        $payload = [
+            'iss'   => $creds['client_email'],
+            'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
+            'aud'   => 'https://oauth2.googleapis.com/token',
+            'iat'   => $now,
+            'exp'   => $now + 3600,
+        ];
+
+        // Build JWT
+        $header  = $this->base64url(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+        $pay     = $this->base64url(json_encode($payload));
+        $data    = $header . '.' . $pay;
+        openssl_sign($data, $signature, $creds['private_key'], 'SHA256');
+        $jwt = $data . '.' . $this->base64url($signature);
+
+        $tokenResp = \Illuminate\Support\Facades\Http::asForm()->post('https://oauth2.googleapis.com/token', [
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion'  => $jwt,
         ]);
+
+        if (!$tokenResp->successful()) {
+            return response()->json(['status' => 500, 'msg' => 'Failed to get access token', 'error' => $tokenResp->json()]);
+        }
+
+        $accessToken = $tokenResp->json('access_token');
+        $projectId   = $creds['project_id'];
+
+        $fcmResp = \Illuminate\Support\Facades\Http::withHeaders([
+            'Authorization' => 'Bearer ' . $accessToken,
+            'Content-Type'  => 'application/json',
+        ])->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
+            'message' => [
+                'token'        => $user->fcm_token,
+                'notification' => ['title' => 'Test Notification', 'body' => 'Working!'],
+            ],
+        ]);
+
+        return response()->json([
+            'status'     => 200,
+            'fcm_status' => $fcmResp->status(),
+            'fcm_body'   => $fcmResp->json(),
+            'success'    => $fcmResp->successful(),
+        ]);
+    }
+
+    private function base64url(string $data): string
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
     /** POST /api/v1/doctor/logout */
