@@ -65,6 +65,27 @@ class DoctorMobileController extends Controller
         ]);
     }
 
+    /** GET /api/v1/doctor/test-notification */
+    public function testNotification(Request $request)
+    {
+        $user = $request->auth_user;
+        if (!$user->fcm_token) {
+            return response()->json(['status' => 400, 'msg' => 'No FCM token found for this user.']);
+        }
+        $result = \App\Services\FirebaseNotification::send(
+            $user->fcm_token,
+            '🔔 Test Notification',
+            'Notification system is working correctly!',
+            ['type' => 'test']
+        );
+        return response()->json([
+            'status'    => 200,
+            'result'    => $result,
+            'fcm_token' => substr($user->fcm_token, 0, 20) . '...',
+            'msg'       => $result ? 'Notification sent successfully!' : 'Notification failed — check Laravel logs.',
+        ]);
+    }
+
     /** POST /api/v1/doctor/logout */
     public function logout(Request $request)
     {

@@ -50,6 +50,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware(ApiTokenMiddleware::class)->prefix('doctor')->group(function () {
         Route::post('/logout',                    [DoctorMobileController::class, 'logout']);
         Route::get('/dashboard',                  [DoctorMobileController::class, 'dashboard']);
+        Route::get('/test-notification',          [DoctorMobileController::class, 'testNotification']);
 
         // Profile
         Route::get('/profile',                    [DoctorMobileController::class, 'profile']);
