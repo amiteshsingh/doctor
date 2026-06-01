@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\DoctorMobileController;
 use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PeriodTrackingController;
@@ -39,6 +40,36 @@ Route::prefix('v1')->group(function () {
         Route::post('/period-tracking',      [PeriodTrackingController::class, 'save']);
         Route::get('/period-tracking',       [PeriodTrackingController::class, 'get']);
         Route::post('/period-tracking',      [PeriodTrackingController::class, 'save']);
+    });
+
+    // ── Doctor Mobile App Routes ──────────────────────────────────────────────
+    // Public
+    Route::post('/doctor/login', [DoctorMobileController::class, 'login']);
+
+    // Protected (token required)
+    Route::middleware(ApiTokenMiddleware::class)->prefix('doctor')->group(function () {
+        Route::post('/logout',                    [DoctorMobileController::class, 'logout']);
+        Route::get('/dashboard',                  [DoctorMobileController::class, 'dashboard']);
+
+        // Profile
+        Route::get('/profile',                    [DoctorMobileController::class, 'profile']);
+        Route::post('/profile/update',            [DoctorMobileController::class, 'updateProfile']);
+
+        // Appointments
+        Route::get('/appointments',               [DoctorMobileController::class, 'appointments']);
+        Route::post('/appointments/add',          [DoctorMobileController::class, 'addAppointment']);
+        Route::post('/appointments/cancel/{id}',  [DoctorMobileController::class, 'cancelAppointment']);
+        Route::get('/invoice-masters',            [DoctorMobileController::class, 'invoiceMasters']);
+
+        // Staff
+        Route::get('/staff',                      [DoctorMobileController::class, 'staff']);
+        Route::post('/staff/save',                [DoctorMobileController::class, 'saveStaff']);
+        Route::delete('/staff/{id}',              [DoctorMobileController::class, 'deleteStaff']);
+
+        // Staff Attendance
+        Route::get('/staff/attendance',           [DoctorMobileController::class, 'staffAttendance']);
+        Route::post('/staff/attendance/save',     [DoctorMobileController::class, 'saveAttendance']);
+        Route::get('/staff/attendance/report',    [DoctorMobileController::class, 'attendanceReport']);
     });
 
 });

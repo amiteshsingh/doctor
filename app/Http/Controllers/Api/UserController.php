@@ -22,10 +22,10 @@ class UserController extends Controller
         return response()->json([
             'status'       => 200,
             'version_code' => 11,
-            'version_name' => '1.1.0',
+            'version_name' => '2.1',
             'force_update' => false,
             'message'      => 'Naya update available hai!',
-            'store_url'    => 'https://play.google.com/store/apps/details?id=com.doctorapp',
+            'store_url'    => 'https://play.google.com/store/apps/details?id=com.rogisewa',
         ]);
     }
 
