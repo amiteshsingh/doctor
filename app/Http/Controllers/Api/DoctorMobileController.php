@@ -192,6 +192,16 @@ class DoctorMobileController extends Controller
         ]);
     }
 
+    /** POST /api/v1/doctor/fcm-token */
+    public function saveFcmToken(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate(['fcm_token' => 'required|string']);
+        $user->fcm_token = $request->fcm_token;
+        $user->save();
+        return response()->json(['status' => 200, 'msg' => 'FCM token saved.']);
+    }
+
     /** POST /api/v1/doctor/appointments/add */
     public function addAppointment(Request $request)
     {
@@ -238,6 +248,22 @@ class DoctorMobileController extends Controller
             'updated_at'        => now(),
         ]);
 
+        // ── Send push notification to doctor ──
+        if ($user->fcm_token) {
+            \App\Services\FirebaseNotification::send(
+                $user->fcm_token,
+                '📅 New Appointment Booked',
+                "{$request->patient_name} ne {$request->booking_date} ko {$request->booking_time} pe appointment book ki hai.",
+                [
+                    'type'         => 'new_appointment',
+                    'appointment_id' => (string)$id,
+                    'patient_name' => $request->patient_name,
+                    'booking_date' => $request->booking_date,
+                    'booking_time' => $request->booking_time,
+                ]
+            );
+        }
+
         return response()->json(['status' => 200, 'msg' => 'Appointment booked successfully.', 'id' => $id]);
     }
 
@@ -276,6 +302,60 @@ class DoctorMobileController extends Controller
             ->get();
 
         return response()->json(['status' => 200, 'data' => $masters]);
+    }
+
+    /** POST /api/v1/doctor/invoice-masters/save */
+    public function saveInvoiceMaster(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate([
+            'hospital_clinic_name' => 'required|string|max:255',
+            'consultation_fee'     => 'required|numeric',
+            'start_time'           => 'required|string',
+            'end_time_slot'        => 'required|string',
+            'duration_time_slot'   => 'required|integer|min:1',
+        ]);
+
+        $doctor = DB::table('doctors')->where('added_by', $user->id)->first();
+        if (!$doctor) {
+            return response()->json(['status' => 404, 'msg' => 'Doctor profile not found.'], 404);
+        }
+
+        $data = [
+            'hospital_clinic_name' => $request->hospital_clinic_name,
+            'consultation_fee'     => $request->consultation_fee,
+            'start_time'           => $request->start_time,
+            'end_time_slot'        => $request->end_time_slot,
+            'duration_time_slot'   => $request->duration_time_slot,
+            'booking_mode'         => $request->booking_mode ?? 'ONLINE',
+            'address'              => $request->address ?? '',
+            'phone_no'             => $request->phone_no ?? '',
+            'email'                => $request->email ?? '',
+            'updated_at'           => now(),
+            'updated_by'           => $user->id,
+        ];
+
+        if ($request->filled('id')) {
+            DB::table('invoice_master')
+                ->where('id', $request->id)
+                ->where('added_by', $user->id)
+                ->update($data);
+            return response()->json(['status' => 200, 'msg' => 'Clinic updated successfully.']);
+        }
+
+        $data['doctor_id']   = $doctor->id;
+        $data['added_by']    = $user->id;
+        $data['created_at']  = now();
+        $id = DB::table('invoice_master')->insertGetId($data);
+        return response()->json(['status' => 200, 'msg' => 'Clinic added successfully.', 'id' => $id]);
+    }
+
+    /** DELETE /api/v1/doctor/invoice-masters/{id} */
+    public function deleteInvoiceMaster(Request $request, $id)
+    {
+        $user = $request->auth_user;
+        DB::table('invoice_master')->where('id', $id)->where('added_by', $user->id)->delete();
+        return response()->json(['status' => 200, 'msg' => 'Clinic deleted successfully.']);
     }
 
     // ─── BOOKED SLOTS ─────────────────────────────────────────────────────────
