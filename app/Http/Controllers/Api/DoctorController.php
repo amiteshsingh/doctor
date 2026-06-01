@@ -235,6 +235,26 @@ class DoctorController extends Controller
         $invoice->updated_at        = now();
         $invoice->save();
 
+        // ── Push notification to doctor ──
+        $doctorUser = \App\Models\User::where('id', function($q) use ($invoiceMaster) {
+            $q->select('added_by')->from('invoice_master')->where('id', $invoiceMaster->id ?? 0);
+        })->first();
+
+        if ($doctorUser && $doctorUser->fcm_token) {
+            \App\Services\FirebaseNotification::send(
+                $doctorUser->fcm_token,
+                '📅 New Appointment Booked',
+                "{$request->patient_name} ne {$request->booking_date} ko {$normalizedTime} pe appointment book ki hai.",
+                [
+                    'type'           => 'new_appointment',
+                    'appointment_id' => (string)$invoice->id,
+                    'patient_name'   => $request->patient_name,
+                    'booking_date'   => $request->booking_date,
+                    'booking_time'   => $normalizedTime,
+                ]
+            );
+        }
+
         return response()->json([
             'status' => 200,
             'msg'    => 'Appointment booked successfully!',

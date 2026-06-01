@@ -29,6 +29,7 @@ class User extends Authenticatable
         'gender',
         'dob',
         'api_token',
+        'fcm_token',
     ];
 
     protected $hidden = [
