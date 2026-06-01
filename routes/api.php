@@ -60,6 +60,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/appointments/add',          [DoctorMobileController::class, 'addAppointment']);
         Route::post('/appointments/cancel/{id}',  [DoctorMobileController::class, 'cancelAppointment']);
         Route::get('/invoice-masters',            [DoctorMobileController::class, 'invoiceMasters']);
+        Route::post('/booked-slots',              [DoctorMobileController::class, 'bookedSlots']);
 
         // Staff
         Route::get('/staff',                      [DoctorMobileController::class, 'staff']);

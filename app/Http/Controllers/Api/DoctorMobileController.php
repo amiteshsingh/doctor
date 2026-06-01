@@ -278,6 +278,64 @@ class DoctorMobileController extends Controller
         return response()->json(['status' => 200, 'data' => $masters]);
     }
 
+    // ─── BOOKED SLOTS ─────────────────────────────────────────────────────────
+
+    /** POST /api/v1/doctor/booked-slots */
+    public function bookedSlots(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate([
+            'invoice_master_id' => 'required|integer',
+            'date'              => 'required|date',
+        ]);
+
+        // Verify master belongs to this doctor
+        $master = DB::table('invoice_master')
+            ->where('id', $request->invoice_master_id)
+            ->where('added_by', $user->id)
+            ->first();
+
+        if (!$master) {
+            return response()->json(['status' => 403, 'msg' => 'Invalid clinic selected.'], 403);
+        }
+
+        // Get already booked times for this date
+        $bookedTimes = DB::table('prescription_invoice')
+            ->where('invoice_master_id', $request->invoice_master_id)
+            ->where('booking_date', $request->date)
+            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
+            ->pluck('booking_time')
+            ->map(fn($t) => strtolower(trim($t)))
+            ->toArray();
+
+        // Generate slots from start_time to end_time with slot_duration interval
+        $startTime    = $master->start_time        ?? '09:00:00';
+        $endTime      = $master->end_time_slot      ?? '17:00:00';
+        $slotDuration = $master->duration_time_slot ?? 15; // minutes
+
+        $slots   = [];
+        $current = strtotime($request->date . ' ' . $startTime);
+        $end     = strtotime($request->date . ' ' . $endTime);
+        $now     = time();
+
+        while ($current < $end) {
+            $label     = date('h:i A', $current);
+            $isBooked  = in_array(strtolower($label), $bookedTimes);
+            $isPast    = $current < $now;
+
+            $slots[] = [
+                'label'     => $label,
+                'time'      => date('H:i', $current),
+                'is_booked' => $isBooked,
+                'is_past'   => $isPast,
+            ];
+
+            $current += $slotDuration * 60;
+        }
+
+        return response()->json(['status' => 200, 'slots' => $slots]);
+    }
+
     // ─── STAFF ───────────────────────────────────────────────────────────────
 
     /** GET /api/v1/doctor/staff */
