@@ -158,6 +158,19 @@ class UserController extends Controller
         $booking->booking_time = $newTime;
         $booking->save();
 
+        // Notify doctor
+        $doctorUser = \App\Models\User::whereHas('role', fn($q) => $q->where('role', 'doctor'))
+            ->whereHas('invoiceMasters', fn($q) => $q->where('id', $booking->invoice_master_id))
+            ->first();
+        if ($doctorUser && $doctorUser->fcm_token) {
+            \App\Services\FirebaseNotification::send(
+                $doctorUser->fcm_token,
+                '🔄 Appointment Rescheduled',
+                "{$booking->patient_name} ne appointment {$request->booking_date} ko {$newTime} pe reschedule kar di.",
+                ['type' => 'appointment_rescheduled', 'appointment_id' => (string)$booking->id, 'screen' => 'Appointments']
+            );
+        }
+
         return response()->json(['status' => 200, 'message' => 'Booking rescheduled successfully.']);
     }
 
@@ -192,6 +205,19 @@ class UserController extends Controller
         $booking->status     = 'cancelled';
         $booking->updated_at = now();
         $booking->save();
+
+        // Notify doctor
+        $doctorUser = \App\Models\User::whereHas('role', fn($q) => $q->where('role', 'doctor'))
+            ->whereHas('invoiceMasters', fn($q) => $q->where('id', $booking->invoice_master_id))
+            ->first();
+        if ($doctorUser && $doctorUser->fcm_token) {
+            \App\Services\FirebaseNotification::send(
+                $doctorUser->fcm_token,
+                '❌ Appointment Cancelled',
+                "{$booking->patient_name} ne {$booking->booking_date} ko {$booking->booking_time} wali appointment cancel kar di.",
+                ['type' => 'appointment_cancelled', 'appointment_id' => (string)$booking->id, 'screen' => 'Appointments']
+            );
+        }
 
         return response()->json(['status' => 200, 'message' => 'Booking cancelled successfully.']);
     }

@@ -56,6 +56,11 @@ class User extends Authenticatable
         return $this->hasOne(UserRole::class);
     }
 
+    public function invoiceMasters()
+    {
+        return $this->hasMany(\App\Models\InvoiceMaster::class, 'added_by');
+    }
+
     public function isAdmin()
     {
         return $this->role && $this->role->role === 'admin';

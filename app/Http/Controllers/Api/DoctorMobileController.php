@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Models\UserRole;
 use App\Models\Doctor;
 use App\Models\UserDoctorRoleMembership;
+use App\Models\PrescriptionInvoice;
+use App\Services\FirebaseNotification;
 use Str;
 
 class DoctorMobileController extends Controller
@@ -174,6 +176,21 @@ class DoctorMobileController extends Controller
     public function updateProfile(Request $request)
     {
         $user = $request->auth_user;
+
+        // Image only upload
+        if ($request->hasFile('profile_image') && !$request->filled('name')) {
+            $image    = $request->file('profile_image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('upload/profile_images', $filename, 'public');
+            $user->profile_image = $filename;
+            $user->save();
+            return response()->json([
+                'status' => 200,
+                'msg'    => 'Profile image updated successfully.',
+                'profile_image' => asset('storage/upload/profile_images/' . $filename),
+            ]);
+        }
+
         $request->validate([
             'name'     => 'required|string|max:255',
             'phone_no' => 'nullable|string|max:15',
@@ -337,21 +354,31 @@ class DoctorMobileController extends Controller
     public function cancelAppointment(Request $request, $id)
     {
         $user = $request->auth_user;
-        $inv  = DB::table('prescription_invoice')
-            ->join('invoice_master', 'prescription_invoice.invoice_master_id', '=', 'invoice_master.id')
-            ->where('prescription_invoice.id', $id)
-            ->where('invoice_master.added_by', $user->id)
-            ->select('prescription_invoice.id')
-            ->first();
+        $inv  = PrescriptionInvoice::with('invoiceMaster')
+            ->whereHas('invoiceMaster', fn($q) => $q->where('added_by', $user->id))
+            ->find($id);
 
         if (!$inv) {
             return response()->json(['status' => 404, 'msg' => 'Appointment not found.'], 404);
         }
 
-        DB::table('prescription_invoice')->where('id', $id)->update([
-            'status'     => 'cancelled',
-            'updated_at' => now(),
-        ]);
+        $inv->status     = 'cancelled';
+        $inv->updated_at = now();
+        $inv->save();
+
+        // User ko notification bhejo
+        if ($inv->user_id) {
+            $patient = User::find($inv->user_id);
+            if ($patient && $patient->fcm_token) {
+                $date = \Carbon\Carbon::parse($inv->booking_date)->format('d M Y');
+                FirebaseNotification::send(
+                    $patient->fcm_token,
+                    '❌ अपॉइंटमेंट रद्द',
+                    "{$date} को {$inv->booking_time} बजे की आपकी अपॉइंटमेंट डॉक्टर द्वारा रद्द कर दी गई है। यह स्लॉट अब बुकिंग के लिए उपलब्ध है।",
+                    ['type' => 'cancel', 'invoice_id' => (string)$inv->id]
+                );
+            }
+        }
 
         return response()->json(['status' => 200, 'msg' => 'Appointment cancelled.']);
     }
