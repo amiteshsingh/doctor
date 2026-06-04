@@ -13,3 +13,6 @@ Schedule::command('bookings:send-reminders')->everyMinute();
 
 // Period reminders - daily at 9 AM
 Schedule::command('period:send-reminders')->dailyAt('09:00');
+
+// Pregnancy weekly notifications - daily at 10 AM (sirf weekly anniversary wale users ko jayega)
+Schedule::command('pregnancy:weekly-notify')->dailyAt('10:00');

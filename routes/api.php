@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\DoctorMobileController;
 use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PregnancyTrackingController;
 use App\Http\Controllers\Api\PeriodTrackingController;
 use App\Http\Middleware\ApiTokenMiddleware;
 
@@ -36,10 +37,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/reschedule-booking',   [UserController::class, 'rescheduleBooking']);
         Route::post('/cancel-booking',        [UserController::class, 'cancelBooking']);
         Route::post('/book-appointment',     [DoctorController::class, 'bookAppointment']);
-        Route::get('/period-tracking',       [PeriodTrackingController::class, 'get']);
-        Route::post('/period-tracking',      [PeriodTrackingController::class, 'save']);
-        Route::get('/period-tracking',       [PeriodTrackingController::class, 'get']);
-        Route::post('/period-tracking',      [PeriodTrackingController::class, 'save']);
+        Route::get('/period-tracking',        [PeriodTrackingController::class, 'get']);
+        Route::post('/period-tracking',       [PeriodTrackingController::class, 'save']);
+        Route::get('/pregnancy-tracking',     [PregnancyTrackingController::class, 'get']);
+        Route::post('/pregnancy-tracking',    [PregnancyTrackingController::class, 'save']);
     });
 
     // ── Doctor Mobile App Routes ──────────────────────────────────────────────
