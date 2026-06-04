@@ -164,5 +164,4 @@ class SendPregnancyWeeklyNotification extends Command
 
         $this->info("Pregnancy notifications sent: {$sent}");
     }
-    }
 }
