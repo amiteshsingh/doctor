@@ -81,7 +81,8 @@ class PregnancyTrackingController extends Controller
     }
 
     public function get(Request $request) {
-        $record = PregnancyTracking::where('user_id', $request->user->id)->latest()->first();
+        $user   = $request->auth_user;
+        $record = PregnancyTracking::where('user_id', $user->id)->latest()->first();
         if (!$record) return response()->json(['status' => 404, 'data' => null]);
 
         $lmp  = Carbon::parse($record->lmp_date);
@@ -115,8 +116,9 @@ class PregnancyTrackingController extends Controller
         $lmp = Carbon::parse($request->lmp_date);
         $edd = $lmp->copy()->addDays(280)->format('Y-m-d');
 
+        $user   = $request->auth_user;
         $record = PregnancyTracking::updateOrCreate(
-            ['user_id' => $request->user->id],
+            ['user_id' => $user->id],
             ['lmp_date' => $request->lmp_date, 'edd' => $edd]
         );
 
