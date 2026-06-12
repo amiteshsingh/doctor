@@ -34,49 +34,63 @@ Route::prefix('v1')->group(function () {
         Route::post('/profile/update',      [UserController::class, 'updateProfile']);
         Route::post('/fcm-token',           [UserController::class, 'updateFcmToken']);
         Route::get('/my-bookings',          [UserController::class, 'myBookings']);
-        Route::post('/reschedule-booking',   [UserController::class, 'rescheduleBooking']);
-        Route::post('/cancel-booking',        [UserController::class, 'cancelBooking']);
-        Route::post('/book-appointment',     [DoctorController::class, 'bookAppointment']);
-        Route::get('/period-tracking',        [PeriodTrackingController::class, 'get']);
-        Route::post('/period-tracking',       [PeriodTrackingController::class, 'save']);
-        Route::get('/pregnancy-tracking',     [PregnancyTrackingController::class, 'get']);
-        Route::post('/pregnancy-tracking',    [PregnancyTrackingController::class, 'save']);
+        Route::post('/reschedule-booking',  [UserController::class, 'rescheduleBooking']);
+        Route::post('/cancel-booking',      [UserController::class, 'cancelBooking']);
+        Route::post('/book-appointment',    [DoctorController::class, 'bookAppointment']);
+        Route::get('/period-tracking',      [PeriodTrackingController::class, 'get']);
+        Route::post('/period-tracking',     [PeriodTrackingController::class, 'save']);
+        Route::get('/pregnancy-tracking',   [PregnancyTrackingController::class, 'get']);
+        Route::post('/pregnancy-tracking',  [PregnancyTrackingController::class, 'save']);
     });
 
     // ── Doctor Mobile App Routes ──────────────────────────────────────────────
-    // Public
     Route::post('/doctor/login', [DoctorMobileController::class, 'login']);
 
-    // Protected (token required)
     Route::middleware(ApiTokenMiddleware::class)->prefix('doctor')->group(function () {
-        Route::post('/logout',                    [DoctorMobileController::class, 'logout']);
-        Route::get('/dashboard',                  [DoctorMobileController::class, 'dashboard']);
-        Route::get('/test-notification',          [DoctorMobileController::class, 'testNotification']);
+        Route::post('/logout',                   [DoctorMobileController::class, 'logout']);
+        Route::get('/dashboard',                 [DoctorMobileController::class, 'dashboard']);
+        Route::get('/test-notification',         [DoctorMobileController::class, 'testNotification']);
 
         // Profile
-        Route::get('/profile',                    [DoctorMobileController::class, 'profile']);
-        Route::post('/profile/update',            [DoctorMobileController::class, 'updateProfile']);
+        Route::get('/profile',                   [DoctorMobileController::class, 'profile']);
+        Route::post('/profile/update',           [DoctorMobileController::class, 'updateProfile']);
 
         // Appointments
-        Route::get('/appointments',               [DoctorMobileController::class, 'appointments']);
-        Route::post('/appointments/add',          [DoctorMobileController::class, 'addAppointment']);
-        Route::post('/appointments/cancel/{id}',  [DoctorMobileController::class, 'cancelAppointment']);
-        Route::get('/invoice-masters',            [DoctorMobileController::class, 'invoiceMasters']);
-        Route::post('/invoice-masters/save',      [DoctorMobileController::class, 'saveInvoiceMaster']);
-        Route::delete('/invoice-masters/{id}',    [DoctorMobileController::class, 'deleteInvoiceMaster']);
-        Route::post('/booking-toggle',            [DoctorMobileController::class, 'toggleOnlineBooking']);
-        Route::post('/booked-slots',              [DoctorMobileController::class, 'bookedSlots']);
-        Route::post('/fcm-token',                 [DoctorMobileController::class, 'saveFcmToken']);
+        Route::get('/appointments',              [DoctorMobileController::class, 'appointments']);
+        Route::post('/appointments/add',         [DoctorMobileController::class, 'addAppointment']);
+        Route::post('/appointments/cancel/{id}', [DoctorMobileController::class, 'cancelAppointment']);
+
+        // Invoice Masters
+        Route::get('/invoice-masters',           [DoctorMobileController::class, 'invoiceMasters']);
+        Route::post('/invoice-masters/save',     [DoctorMobileController::class, 'saveInvoiceMaster']);
+        Route::delete('/invoice-masters/{id}',   [DoctorMobileController::class, 'deleteInvoiceMaster']);
+
+        // Booking
+        Route::post('/booking-toggle',           [DoctorMobileController::class, 'toggleOnlineBooking']);
+        Route::post('/booked-slots',             [DoctorMobileController::class, 'bookedSlots']);
+        Route::post('/fcm-token',                [DoctorMobileController::class, 'saveFcmToken']);
+
+        // My Doctors
+        Route::get('/my-doctors',                    [DoctorMobileController::class, 'myDoctors']);
+        Route::post('/my-doctors/save',              [DoctorMobileController::class, 'saveMyDoctor']);
+        Route::post('/my-doctors/specializations',   [DoctorMobileController::class, 'saveDoctorSpecializations']);
+        Route::post('/my-doctors/location',          [DoctorMobileController::class, 'saveDoctorLocation']);
+        Route::post('/my-doctors/availability',      [DoctorMobileController::class, 'saveDoctorAvailability']);
+        Route::post('/my-doctors/gallery',           [DoctorMobileController::class, 'saveDoctorGallery']);
+        Route::delete('/my-doctors/gallery/{id}',    [DoctorMobileController::class, 'deleteDoctorGallery']);
+        Route::post('/my-doctors/toggle/{id}',       [DoctorMobileController::class, 'toggleDoctorStatus']);
+        Route::get('/my-doctors/{id}/detail',        [DoctorMobileController::class, 'myDoctorDetail']);
+        Route::delete('/my-doctors/{id}',            [DoctorMobileController::class, 'deleteMyDoctor']);
 
         // Staff
-        Route::get('/staff',                      [DoctorMobileController::class, 'staff']);
-        Route::post('/staff/save',                [DoctorMobileController::class, 'saveStaff']);
-        Route::delete('/staff/{id}',              [DoctorMobileController::class, 'deleteStaff']);
+        Route::get('/staff',                     [DoctorMobileController::class, 'staff']);
+        Route::post('/staff/save',               [DoctorMobileController::class, 'saveStaff']);
+        Route::delete('/staff/{id}',             [DoctorMobileController::class, 'deleteStaff']);
 
         // Staff Attendance
-        Route::get('/staff/attendance',           [DoctorMobileController::class, 'staffAttendance']);
-        Route::post('/staff/attendance/save',     [DoctorMobileController::class, 'saveAttendance']);
-        Route::get('/staff/attendance/report',    [DoctorMobileController::class, 'attendanceReport']);
+        Route::get('/staff/attendance',          [DoctorMobileController::class, 'staffAttendance']);
+        Route::post('/staff/attendance/save',    [DoctorMobileController::class, 'saveAttendance']);
+        Route::get('/staff/attendance/report',   [DoctorMobileController::class, 'attendanceReport']);
     });
 
 });

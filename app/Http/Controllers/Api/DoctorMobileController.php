@@ -542,6 +542,291 @@ class DoctorMobileController extends Controller
         return response()->json(['status' => 200, 'slots' => $slots]);
     }
 
+    /** GET /api/v1/doctor/my-doctors/{id}/detail */
+    public function myDoctorDetail(Request $request, $id)
+    {
+        $user   = $request->auth_user;
+        $doctor = DB::table('doctors')->where('id', $id)->where('added_by', $user->id)->first();
+        if (!$doctor) return response()->json(['status' => 404, 'msg' => 'Not found.'], 404);
+
+        $specializations = DB::table('doctor_specializations')
+            ->join('specializations', 'doctor_specializations.specialization_id', '=', 'specializations.id')
+            ->where('doctor_specializations.doctor_id', $id)
+            ->select('specializations.id', 'specializations.name')
+            ->get();
+
+        $location = DB::table('doctor_locations')->where('doctor_id', $id)->first();
+        $education = DB::table('doctor_educations')->where('doctor_id', $id)->first();
+
+        $languages = DB::table('doctor_languages')
+            ->join('languages', 'doctor_languages.language_id', '=', 'languages.id')
+            ->where('doctor_languages.doctor_id', $id)
+            ->select('languages.id', 'languages.name')
+            ->get();
+
+        $availability = DB::table('doctor_availability')
+            ->where('doctor_id', $id)->get();
+
+        $gallery = DB::table('doctor_images')
+            ->where('doctor_id', $id)->get()
+            ->map(fn($g) => [
+                'id'  => $g->id,
+                'url' => asset('uploads/doctor_gallery/' . $g->image),
+            ]);
+
+        return response()->json([
+            'status'          => 200,
+            'doctor'          => $doctor,
+            'specializations' => $specializations,
+            'location'        => $location,
+            'education'       => $education,
+            'languages'       => $languages,
+            'availability'    => $availability,
+            'gallery'         => $gallery,
+        ]);
+    }
+
+    /** POST /api/v1/doctor/my-doctors/specializations */
+    public function saveDoctorSpecializations(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate(['doctor_id' => 'required|integer', 'specialization_ids' => 'required|array']);
+
+        $doctor = DB::table('doctors')->where('id', $request->doctor_id)->where('added_by', $user->id)->first();
+        if (!$doctor) return response()->json(['status' => 403, 'msg' => 'Unauthorized.'], 403);
+
+        DB::table('doctor_specializations')->where('doctor_id', $request->doctor_id)->delete();
+        foreach ($request->specialization_ids as $specId) {
+            DB::table('doctor_specializations')->insert([
+                'doctor_id'         => $request->doctor_id,
+                'specialization_id' => $specId,
+                'created_at'        => now(),
+            ]);
+        }
+        return response()->json(['status' => 200, 'msg' => 'Specializations saved.']);
+    }
+
+    /** POST /api/v1/doctor/my-doctors/location */
+    public function saveDoctorLocation(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate(['doctor_id' => 'required|integer']);
+
+        $doctor = DB::table('doctors')->where('id', $request->doctor_id)->where('added_by', $user->id)->first();
+        if (!$doctor) return response()->json(['status' => 403, 'msg' => 'Unauthorized.'], 403);
+
+        $id = $request->doctor_id;
+
+        // Location
+        $locData = [
+            'practice_name' => $request->practice_name ?? '',
+            'address'       => $request->address ?? '',
+            'city'          => $request->city ?? '',
+            'state'         => $request->state ?? '',
+            'zip_code'      => $request->zip_code ?? '',
+            'phone'         => $request->location_phone ?? '',
+            'updated_at'    => now(),
+        ];
+        $existing = DB::table('doctor_locations')->where('doctor_id', $id)->first();
+        if ($existing) DB::table('doctor_locations')->where('doctor_id', $id)->update($locData);
+        else { $locData['doctor_id'] = $id; $locData['created_at'] = now(); DB::table('doctor_locations')->insert($locData); }
+
+        // Education
+        DB::table('doctor_educations')->where('doctor_id', $id)->delete();
+        DB::table('doctor_educations')->insert([
+            'doctor_id'        => $id,
+            'degree_type'      => $request->degree_type ?? '',
+            'institution_name' => $request->institution_name ?? '',
+            'graduation_year'  => $request->graduation_year ?? '',
+            'details'          => $request->education_details ?? '',
+        ]);
+
+        // Experience
+        if ($request->filled('experience')) {
+            DB::table('doctors')->where('id', $id)->update(['experience' => $request->experience]);
+        }
+
+        // Languages
+        if ($request->filled('language_ids')) {
+            DB::table('doctor_languages')->where('doctor_id', $id)->delete();
+            foreach ((array)$request->language_ids as $langId) {
+                DB::table('doctor_languages')->insert(['doctor_id' => $id, 'language_id' => $langId]);
+            }
+        }
+
+        return response()->json(['status' => 200, 'msg' => 'Location & education saved.']);
+    }
+
+    /** POST /api/v1/doctor/my-doctors/availability */
+    public function saveDoctorAvailability(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate(['doctor_id' => 'required|integer', 'availability' => 'required|array']);
+
+        $doctor = DB::table('doctors')->where('id', $request->doctor_id)->where('added_by', $user->id)->first();
+        if (!$doctor) return response()->json(['status' => 403, 'msg' => 'Unauthorized.'], 403);
+
+        $id = $request->doctor_id;
+        DB::table('doctor_availability')->where('doctor_id', $id)->delete();
+
+        foreach ($request->availability as $day => $slots) {
+            if (empty($slots)) {
+                DB::table('doctor_availability')->insert(['doctor_id' => $id, 'day' => $day, 'start_time' => 'Closed', 'end_time' => 'Closed', 'created_at' => now(), 'updated_at' => now()]);
+            } else {
+                foreach ((array)$slots as $slot) {
+                    if (!empty($slot['start_time']) && !empty($slot['end_time'])) {
+                        DB::table('doctor_availability')->insert(['doctor_id' => $id, 'day' => $day, 'start_time' => $slot['start_time'], 'end_time' => $slot['end_time'], 'created_at' => now(), 'updated_at' => now()]);
+                    }
+                }
+            }
+        }
+        return response()->json(['status' => 200, 'msg' => 'Availability saved.']);
+    }
+
+    /** POST /api/v1/doctor/my-doctors/gallery */
+    public function saveDoctorGallery(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate(['doctor_id' => 'required|integer', 'image' => 'required|image']);
+
+        $doctor = DB::table('doctors')->where('id', $request->doctor_id)->where('added_by', $user->id)->first();
+        if (!$doctor) return response()->json(['status' => 403, 'msg' => 'Unauthorized.'], 403);
+
+        $image    = $request->file('image');
+        $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+        $image->storeAs('doctor_gallery', $filename, 'public');
+
+        $galleryId = DB::table('doctor_images')->insertGetId([
+            'doctor_id'  => $request->doctor_id,
+            'image'      => $filename,
+            'created_at' => now(),
+        ]);
+
+        return response()->json(['status' => 200, 'msg' => 'Image uploaded.', 'id' => $galleryId, 'url' => asset('storage/doctor_gallery/' . $filename)]);
+    }
+
+    /** DELETE /api/v1/doctor/my-doctors/gallery/{id} */
+    public function deleteDoctorGallery(Request $request, $id)
+    {
+        $user  = $request->auth_user;
+        $image = DB::table('doctor_images')
+            ->join('doctors', 'doctor_images.doctor_id', '=', 'doctors.id')
+            ->where('doctor_images.id', $id)
+            ->where('doctors.added_by', $user->id)
+            ->select('doctor_images.*')
+            ->first();
+        if (!$image) return response()->json(['status' => 404, 'msg' => 'Not found.'], 404);
+        DB::table('doctor_images')->where('id', $id)->delete();
+        return response()->json(['status' => 200, 'msg' => 'Image deleted.']);
+    }
+
+    // ─── MY DOCTORS ───────────────────────────────────────────────────────────
+
+    /** GET /api/v1/doctor/my-doctors */
+    public function myDoctors(Request $request)
+    {
+        $user    = $request->auth_user;
+        $doctors = DB::table('doctors')
+            ->leftJoin('doctor_locations', 'doctors.id', '=', 'doctor_locations.doctor_id')
+            ->leftJoin('doctor_specializations', 'doctors.id', '=', 'doctor_specializations.doctor_id')
+            ->leftJoin('specializations', 'doctor_specializations.specialization_id', '=', 'specializations.id')
+            ->where('doctors.added_by', $user->id)
+            ->select(
+                'doctors.id', 'doctors.name', 'doctors.phone_no', 'doctors.email',
+                'doctors.gender', 'doctors.status', 'doctors.experience', 'doctors.profile_pic',
+                'doctor_locations.city', 'doctor_locations.address',
+                DB::raw('GROUP_CONCAT(specializations.name SEPARATOR ", ") as specializations')
+            )
+            ->groupBy('doctors.id', 'doctors.name', 'doctors.phone_no', 'doctors.email',
+                'doctors.gender', 'doctors.status', 'doctors.experience', 'doctors.profile_pic',
+                'doctor_locations.city', 'doctor_locations.address')
+            ->orderBy('doctors.id', 'desc')
+            ->get()
+            ->map(function($d) {
+                $d->profile_pic_url = $d->profile_pic
+                    ? asset('storage/upload/doctor/' . $d->profile_pic)
+                    : null;
+                return $d;
+            });
+
+        return response()->json(['status' => 200, 'data' => $doctors]);
+    }
+
+    /** POST /api/v1/doctor/my-doctors/save */
+    public function saveMyDoctor(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'phone_no' => 'required|string|max:15',
+            'status'   => 'required',
+        ]);
+
+        $data = [
+            'name'       => $request->name,
+            'phone_no'   => $request->phone_no,
+            'email'      => $request->email ?? '',
+            'gender'     => $request->gender ?? '',
+            'experience' => $request->experience ?? null,
+            'status'     => $request->status,
+            'updated_on' => now(),
+            'updated_by' => $user->id,
+        ];
+
+        if ($request->hasFile('profile_pic')) {
+            $image    = $request->file('profile_pic');
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('upload/doctor', $filename, 'public');
+            $data['profile_pic'] = $filename;
+        }
+
+        if ($request->filled('id')) {
+            DB::table('doctors')->where('id', $request->id)->where('added_by', $user->id)->update($data);
+            $doctorId = $request->id;
+            $msg = 'Doctor updated successfully.';
+        } else {
+            $data['added_by'] = $user->id;
+            $data['added_on'] = now();
+            $data['approval_status'] = 1;
+            $doctorId = DB::table('doctors')->insertGetId($data);
+            $msg = 'Doctor added successfully.';
+        }
+
+        // Save specializations
+        if ($request->filled('specialization_ids')) {
+            DB::table('doctor_specializations')->where('doctor_id', $doctorId)->delete();
+            foreach ((array)$request->specialization_ids as $specId) {
+                DB::table('doctor_specializations')->insert([
+                    'doctor_id'         => $doctorId,
+                    'specialization_id' => $specId,
+                    'created_at'        => now(),
+                ]);
+            }
+        }
+
+        return response()->json(['status' => 200, 'msg' => $msg, 'id' => $doctorId]);
+    }
+
+    /** DELETE /api/v1/doctor/my-doctors/{id} */
+    public function deleteMyDoctor(Request $request, $id)
+    {
+        $user = $request->auth_user;
+        DB::table('doctors')->where('id', $id)->where('added_by', $user->id)->delete();
+        return response()->json(['status' => 200, 'msg' => 'Doctor deleted successfully.']);
+    }
+
+    /** POST /api/v1/doctor/my-doctors/toggle/{id} */
+    public function toggleDoctorStatus(Request $request, $id)
+    {
+        $user   = $request->auth_user;
+        $doctor = DB::table('doctors')->where('id', $id)->where('added_by', $user->id)->first();
+        if (!$doctor) return response()->json(['status' => 404, 'msg' => 'Doctor not found.'], 404);
+
+        $newStatus = $doctor->status == 1 ? 0 : 1;
+        DB::table('doctors')->where('id', $id)->update(['status' => $newStatus, 'updated_on' => now()]);
+        return response()->json(['status' => 200, 'active' => $newStatus == 1, 'msg' => $newStatus == 1 ? 'Doctor activated.' : 'Doctor deactivated.']);
+    }
+
     // ─── STAFF ───────────────────────────────────────────────────────────────
 
     /** GET /api/v1/doctor/staff */
