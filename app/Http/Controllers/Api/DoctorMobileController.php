@@ -366,6 +366,9 @@ class DoctorMobileController extends Controller
         $inv->updated_at = now();
         $inv->save();
 
+        // Cancel hone pe future reminders delete karo
+        DB::table('booking_reminders')->where('invoice_id', $id)->delete();
+
         // User ko notification bhejo
         if ($inv->user_id) {
             $patient = User::find($inv->user_id);

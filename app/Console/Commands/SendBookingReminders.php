@@ -23,7 +23,7 @@ class SendBookingReminders extends Command
             ->where('prescription_invoice.booking_date', $today)
             ->where(function($q) {
                 $q->whereNull('prescription_invoice.status')
-                  ->orWhere('prescription_invoice.status', '!=', 'cancelled');
+                  ->orWhereNotIn('prescription_invoice.status', ['cancelled', 'cancel', 'rejected']);
             })
             ->whereNotNull('users.fcm_token')
             ->whereNotNull('prescription_invoice.user_id')
@@ -31,11 +31,17 @@ class SendBookingReminders extends Command
                 'prescription_invoice.id',
                 'prescription_invoice.booking_time',
                 'prescription_invoice.patient_name',
+                'prescription_invoice.status',
                 'users.fcm_token'
             )
             ->get();
 
         foreach ($bookings as $booking) {
+            // Double check - cancelled appointments skip karo
+            if (!empty($booking->status) && in_array(strtolower($booking->status), ['cancelled', 'cancel', 'rejected'])) {
+                continue;
+            }
+
             try {
                 $bt = Carbon::createFromFormat('h:i A', trim($booking->booking_time), 'Asia/Kolkata');
             } catch (\Exception $e) {

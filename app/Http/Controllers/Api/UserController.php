@@ -8,6 +8,7 @@ use App\Models\UserRole;
 use App\Models\PrescriptionInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -205,6 +206,9 @@ class UserController extends Controller
         $booking->status     = 'cancelled';
         $booking->updated_at = now();
         $booking->save();
+
+        // Cancel hone pe future reminders delete karo
+        DB::table('booking_reminders')->where('invoice_id', $booking->id)->delete();
 
         // Notify doctor
         $doctorUser = \App\Models\User::whereHas('role', fn($q) => $q->where('role', 'doctor'))
