@@ -383,6 +383,39 @@ class DoctorMobileController extends Controller
         return response()->json(['status' => 200, 'msg' => 'Appointment cancelled.']);
     }
 
+    /** POST /api/v1/doctor/booking-toggle */
+    public function toggleOnlineBooking(Request $request)
+    {
+        $user = $request->auth_user;
+
+        // Get current status from any invoice_master of this doctor
+        $master = DB::table('invoice_master')
+            ->where('added_by', $user->id)
+            ->first();
+
+        if (!$master) {
+            return response()->json(['status' => 404, 'msg' => 'No clinic found.'], 404);
+        }
+
+        // Toggle: agar koi bhi ONLINE ya BOTH hai to band karo, warna kholo
+        $currentlyOpen = DB::table('invoice_master')
+            ->where('added_by', $user->id)
+            ->whereIn('booking_mode', ['ONLINE', 'BOTH'])
+            ->exists();
+
+        $newMode = $currentlyOpen ? 'OFFLINE' : 'ONLINE';
+
+        DB::table('invoice_master')
+            ->where('added_by', $user->id)
+            ->update(['booking_mode' => $newMode, 'updated_at' => now()]);
+
+        return response()->json([
+            'status'       => 200,
+            'booking_open' => !$currentlyOpen,
+            'msg'          => !$currentlyOpen ? 'Online booking enabled.' : 'Online booking disabled.',
+        ]);
+    }
+
     /** GET /api/v1/doctor/invoice-masters */
     public function invoiceMasters(Request $request)
     {
@@ -673,12 +706,18 @@ class DoctorMobileController extends Controller
         $doctor = Doctor::where('added_by', $user->id)->first();
         $membership = UserDoctorRoleMembership::where('user_id', $user->id)->first();
 
+        $bookingOpen = DB::table('invoice_master')
+            ->where('added_by', $user->id)
+            ->whereIn('booking_mode', ['ONLINE', 'BOTH'])
+            ->exists();
+
         return response()->json([
             'status' => 200,
             'data'   => [
                 'total_appointments' => $totalAppointments,
                 'today_appointments' => $todayAppointments,
                 'total_staff'        => $totalStaff,
+                'booking_open'       => $bookingOpen,
                 'doctor'             => $doctor,
                 'permissions'        => [
                     'attendance_permission' => $membership ? (bool)$membership->attendance_permission : false,
