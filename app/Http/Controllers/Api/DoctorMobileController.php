@@ -1095,6 +1095,7 @@ class DoctorMobileController extends Controller
                     'availability'   => !$hasAvailability,
                 ],
                 'doctor'             => $doctor,
+                'is_verified'        => $doctor && $doctor->approval_status == 2,
                 'permissions'        => [
                     'attendance_permission' => $membership ? (bool)$membership->attendance_permission : false,
                     'invoice_permission'    => $membership ? (bool)$membership->invoice_permission    : false,
