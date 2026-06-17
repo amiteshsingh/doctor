@@ -22,8 +22,8 @@ class UserController extends Controller
     {
         return response()->json([
             'status'       => 200,
-            'version_code' => 13,
-            'version_name' => '2.1',
+            'version_code' => 14,
+            'version_name' => '2.3',
             'force_update' => false,
             'message'      => 'Naya update available hai!',
             'store_url'    => 'https://play.google.com/store/apps/details?id=com.rogisewa',
