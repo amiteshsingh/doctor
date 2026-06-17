@@ -486,7 +486,14 @@ class DoctorMobileController extends Controller
             ->orderBy('invoice_master.id', 'desc')
             ->get();
 
-        return response()->json(['status' => 200, 'data' => $masters]);
+        // Doctor list for dropdown
+        $doctors = DB::table('doctors')
+            ->where('added_by', $user->id)
+            ->where('status', 1)
+            ->select('id', 'name')
+            ->get();
+
+        return response()->json(['status' => 200, 'data' => $masters, 'doctors' => $doctors]);
     }
 
     /** POST /api/v1/doctor/invoice-masters/save */
@@ -501,7 +508,13 @@ class DoctorMobileController extends Controller
             'duration_time_slot'   => 'required|integer|min:1',
         ]);
 
-        $doctor = DB::table('doctors')->where('added_by', $user->id)->first();
+        $doctor = null;
+        if ($request->filled('doctor_id')) {
+            $doctor = DB::table('doctors')->where('id', $request->doctor_id)->where('added_by', $user->id)->first();
+        }
+        if (!$doctor) {
+            $doctor = DB::table('doctors')->where('added_by', $user->id)->first();
+        }
         if (!$doctor) {
             return response()->json(['status' => 404, 'msg' => 'Doctor profile not found.'], 404);
         }
