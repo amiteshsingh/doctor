@@ -503,10 +503,16 @@ class DoctorMobileController extends Controller
         $request->validate([
             'hospital_clinic_name' => 'required|string|max:255',
             'consultation_fee'     => 'required|numeric',
-            'start_time'           => 'required|string',
-            'end_time_slot'        => 'required|string',
-            'duration_time_slot'   => 'required|integer|min:1',
+            'start_time'           => 'nullable|string',
+            'end_time_slot'        => 'nullable|string',
+            'duration_time_slot'   => 'nullable|integer|min:1',
         ]);
+
+        // booking_mode validate & sanitize
+        $bookingMode = $request->booking_mode ?? 'ONLINE';
+        if (!in_array($bookingMode, ['ONLINE', 'OFFLINE', 'BOTH'])) {
+            $bookingMode = 'ONLINE';
+        }
 
         $doctor = null;
         if ($request->filled('doctor_id')) {
@@ -522,13 +528,13 @@ class DoctorMobileController extends Controller
         $data = [
             'hospital_clinic_name' => $request->hospital_clinic_name,
             'consultation_fee'     => $request->consultation_fee,
-            'start_time'           => $request->start_time,
-            'end_time_slot'        => $request->end_time_slot,
-            'duration_time_slot'   => $request->duration_time_slot,
-            'booking_mode'         => $request->booking_mode ?? 'ONLINE',
-            'address'              => $request->address ?? '',
+            'start_time'           => $request->start_time   ?: null,
+            'end_time_slot'        => $request->end_time_slot ?: null,
+            'duration_time_slot'   => $request->duration_time_slot ?: null,
+            'booking_mode'         => $bookingMode,
+            'address'              => $request->address  ?? '',
             'phone_no'             => $request->phone_no ?? '',
-            'email'                => $request->email ?? '',
+            'email'                => $request->email    ?? '',
             'updated_at'           => now(),
             'updated_by'           => $user->id,
         ];
