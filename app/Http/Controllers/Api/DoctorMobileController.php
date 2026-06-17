@@ -19,6 +19,62 @@ class DoctorMobileController extends Controller
 {
     // ─── AUTH ────────────────────────────────────────────────────────────────
 
+    /** POST /api/v1/doctor/register */
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'phone'    => 'required|string|max:20',
+            'password' => 'required|string|min:8',
+        ], [
+            'email.unique' => 'This email is already registered.',
+        ]);
+
+        // Create user
+        $token = Str::random(60);
+        $user  = User::create([
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'password'  => Hash::make($request->password),
+            'api_token' => $token,
+        ]);
+
+        // Assign doctor role
+        UserRole::create(['user_id' => $user->id, 'role' => 'doctor']);
+
+        // Create doctor profile
+        $doctor = Doctor::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'phone_no' => $request->phone,
+            'added_by' => $user->id,
+            'added_on' => now(),
+            'status'   => 1,
+            'approval_status' => 1,
+        ]);
+
+        $membership = \App\Models\UserDoctorRoleMembership::where('user_id', $user->id)->first();
+
+        return response()->json([
+            'status' => 200,
+            'msg'    => 'Registration successful.',
+            'token'  => $token,
+            'user'   => [
+                'id'            => $user->id,
+                'name'          => $user->name,
+                'email'         => $user->email,
+                'phone_no'      => $request->phone,
+                'profile_image' => null,
+            ],
+            'doctor' => $doctor,
+            'permissions' => [
+                'attendance_permission' => $membership ? (bool)$membership->attendance_permission : false,
+                'invoice_permission'    => $membership ? (bool)$membership->invoice_permission    : false,
+            ],
+        ]);
+    }
+
     /** POST /api/v1/doctor/login */
     public function login(Request $request)
     {
