@@ -1050,6 +1050,13 @@ class DoctorMobileController extends Controller
         $doctor = Doctor::where('added_by', $user->id)->first();
         $membership = UserDoctorRoleMembership::where('user_id', $user->id)->first();
 
+        // Profile completeness check
+        $doctorId           = $doctor?->id;
+        $hasSpecialization  = $doctorId && DB::table('doctor_specializations')->where('doctor_id', $doctorId)->exists();
+        $hasLocation        = $doctorId && DB::table('doctor_locations')->where('doctor_id', $doctorId)->exists();
+        $hasAvailability    = $doctorId && DB::table('doctor_availability')->where('doctor_id', $doctorId)->where('start_time', '!=', 'Closed')->exists();
+        $profileComplete    = $hasSpecialization && $hasLocation && $hasAvailability;
+
         $bookingOpen = DB::table('invoice_master')
             ->where('added_by', $user->id)
             ->whereIn('booking_mode', ['ONLINE', 'BOTH'])
@@ -1062,6 +1069,12 @@ class DoctorMobileController extends Controller
                 'today_appointments' => $todayAppointments,
                 'total_staff'        => $totalStaff,
                 'booking_open'       => $bookingOpen,
+                'profile_complete'   => $profileComplete,
+                'profile_missing'    => [
+                    'specialization' => !$hasSpecialization,
+                    'location'       => !$hasLocation,
+                    'availability'   => !$hasAvailability,
+                ],
                 'doctor'             => $doctor,
                 'permissions'        => [
                     'attendance_permission' => $membership ? (bool)$membership->attendance_permission : false,
