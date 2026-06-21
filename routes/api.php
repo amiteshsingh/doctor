@@ -44,8 +44,10 @@ Route::prefix('v1')->group(function () {
     });
 
     // ── Doctor Mobile App Routes ──────────────────────────────────────────────
-    Route::post('/doctor/login',    [DoctorMobileController::class, 'login']);
-    Route::post('/doctor/register', [DoctorMobileController::class, 'register']);
+    Route::post('/doctor/login',           [DoctorMobileController::class, 'login']);
+    Route::post('/doctor/register',         [DoctorMobileController::class, 'register']);
+    Route::post('/doctor/forgot-password',  [DoctorMobileController::class, 'forgotPassword']);
+    Route::post('/doctor/verify-otp',       [DoctorMobileController::class, 'verifyOtp']);
 
     Route::middleware(ApiTokenMiddleware::class)->prefix('doctor')->group(function () {
         Route::post('/logout',                   [DoctorMobileController::class, 'logout']);

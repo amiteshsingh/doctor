@@ -19,6 +19,68 @@ class DoctorMobileController extends Controller
 {
     // ─── AUTH ────────────────────────────────────────────────────────────────
 
+    /** POST /api/v1/doctor/forgot-password */
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = User::where('email', $request->email)->first();
+        $role = $user ? UserRole::where('user_id', $user->id)->where('role', 'doctor')->first() : null;
+
+        if (!$user || !$role) {
+            return response()->json(['status' => 404, 'msg' => 'No doctor account found with this email.'], 404);
+        }
+
+        $otp = rand(100000, 999999);
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $request->email],
+            ['token' => $otp, 'created_at' => now()]
+        );
+
+        // Send OTP via PHP mail
+        $to      = $request->email;
+        $subject = 'RogiSewa Doctor - Password Reset OTP';
+        $message = "Dear {$user->name},\n\nYour OTP for password reset is: {$otp}\n\nThis OTP is valid for 10 minutes.\n\nRegards,\nRogiSewa Team";
+        $headers = 'From: rogisewa25@gmail.com' . "\r\n" . 'X-Mailer: PHP/' . phpversion();
+
+        mail($to, $subject, $message, $headers);
+
+        return response()->json(['status' => 200, 'msg' => 'OTP sent to your email.']);
+    }
+
+    /** POST /api/v1/doctor/verify-otp */
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email'        => 'required|email',
+            'otp'          => 'required|string',
+            'new_password' => 'required|string|min:6',
+        ]);
+
+        $record = DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->first();
+
+        if (!$record) {
+            return response()->json(['status' => 400, 'msg' => 'OTP not found. Please request again.'], 400);
+        }
+
+        // 10 minute expiry
+        if (now()->diffInMinutes($record->created_at) > 10) {
+            DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+            return response()->json(['status' => 400, 'msg' => 'OTP expired. Please request again.'], 400);
+        }
+
+        if ((string)$record->token !== (string)$request->otp) {
+            return response()->json(['status' => 400, 'msg' => 'Invalid OTP.'], 400);
+        }
+
+        User::where('email', $request->email)->update(['password' => Hash::make($request->new_password)]);
+        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+        return response()->json(['status' => 200, 'msg' => 'Password reset successfully.']);
+    }
+
     /** POST /api/v1/doctor/register */
     public function register(Request $request)
     {
