@@ -441,7 +441,7 @@ class DoctorMobileController extends Controller
             'patient_name'      => $request->patient_name,
             'patient_address'   => $request->patient_address  ?? null,
             'patient_phone_no'  => $request->patient_phone_no ?? null,
-            'age'               => $request->age ? (int)$request->age : null,
+            'age'               => $request->age ? (int)$request->age : 0,
             'gender'            => $request->gender ?? null,
             'booking_date'      => $request->booking_date,
             'booking_time'      => $request->booking_time,
