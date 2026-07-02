@@ -365,7 +365,9 @@ $(function() {
 
                 // ✅ अगर सब ठीक है तो Ajax submit होगा
                 var formData = new FormData($("#doctor_availability_form")[0]);
-                let url = base_url + "mydoctor/doctor_availability";
+                let isAdmin = window.location.pathname.indexOf('/admin') !== -1;
+                let url = base_url + (isAdmin ? "doctor/doctor_availability" : "mydoctor/doctor_availability");
+                let redirectBase = isAdmin ? "doctor/add" : "mydoctor/add";
 
                 $.ajax({
                     url: url,
@@ -383,9 +385,8 @@ $(function() {
                         if (response.status === 200) {
                             $.jGrowl(response.msg, { header: "Availability Saved", theme: 'success-theme' });
 
-                            // Redirect or jump to another tab
                             setTimeout(function () {
-                                window.location.href = base_url + `mydoctor/add?id=${response.doctor_id}#basictab4`;
+                                window.location.href = base_url + `${redirectBase}?id=${response.doctor_id}#basictab4`;
                             }, 2000);
                         } else {
                             $.jGrowl(response.msg, { header: "Error", theme: 'error-theme' });
