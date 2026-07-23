@@ -113,7 +113,7 @@
                                             <option value="">Select Hospital</option>
                                             @foreach($hospitals as $hospital)
                                                 <option value="{{ $hospital->id }}"
-                                                    {{ (isset($doctor->language_data) && $hospital->id == $doctor->hospital_id) ? 'selected' : '' }}>
+                                                    {{ (isset($doctor->hospital_id) && $hospital->id == $doctor->hospital_id) ? 'selected' : '' }}>
                                                     {{ $hospital->name }}
                                                 </option>
                                             @endforeach
@@ -380,7 +380,7 @@
                                 <div class="form-group row">
                                     <div class="col-md-4 text-right">
                                         <button type="submit" id="save_doctor_availability" class="btn btn-primary">Save Availability</button>
-                                        <a href="{{ route('doctor.mydoctor') }}" class="btn btn-primary">Back</a>
+                                        <a href="{{ route('admin.doctor') }}" class="btn btn-primary">Back</a>
                                     </div>
                                 </div>
                             </form>
@@ -414,11 +414,10 @@
 document.addEventListener("DOMContentLoaded", function() {
     function initDateTimePicker() {
         $('.datetimepicker3').datetimepicker({
-            format: 'hh:mm A'   // ✅ AM/PM format
+            format: 'hh:mm A'
         });
     }
 
-    // Already existing inputs initialize
     initDateTimePicker();
 
     document.querySelectorAll(".day-wrapper").forEach(function(dayWrapper) {
@@ -446,8 +445,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 `;
 
                 slotWrapper.appendChild(newSlot);
-
-                // ✅ initialize datetimepicker for new slot also
                 initDateTimePicker();
             }
 
@@ -456,6 +453,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
+
+
 });
 </script>
 

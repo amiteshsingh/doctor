@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Doctor;
 use App\Models\User;
 use App\Models\UserRole;
+use App\Models\UserDoctorRoleMembership;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -94,6 +95,15 @@ class RegisterController extends Controller
         } catch (\Exception $e) {
             \Log::error('Doctor create failed: ' . $e->getMessage());
         }
+
+        UserDoctorRoleMembership::create([
+            'user_id'                        => $user->id,
+            'membership_amount'              => 0.00,
+            'membership_subscription_date'   => now()->toDateString(),
+            'membership_subscription_end_date' => now()->addYear()->toDateString(),
+            'attendance_permission'          => 1,
+            'invoice_permission'             => 1,
+        ]);
 
         session([
             'user_id'   => $user->id,
