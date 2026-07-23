@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PregnancyTrackingController;
 use App\Http\Controllers\Api\PeriodTrackingController;
+use App\Http\Controllers\Api\ChildVaccineController;
 use App\Http\Middleware\ApiTokenMiddleware;
 
 Route::prefix('v1')->group(function () {
@@ -41,6 +42,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/period-tracking',     [PeriodTrackingController::class, 'save']);
         Route::get('/pregnancy-tracking',   [PregnancyTrackingController::class, 'get']);
         Route::post('/pregnancy-tracking',  [PregnancyTrackingController::class, 'save']);
+        Route::get('/children',             [ChildVaccineController::class, 'getChildren']);
+        Route::post('/children/add',        [ChildVaccineController::class, 'addChild']);
+        Route::post('/children/vaccine',    [ChildVaccineController::class, 'markVaccine']);
+        Route::delete('/children/{id}',     [ChildVaccineController::class, 'deleteChild']);
     });
 
     // ── Doctor Mobile App Routes ──────────────────────────────────────────────

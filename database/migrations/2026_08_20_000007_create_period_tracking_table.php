@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
+        if (Schema::hasTable('period_tracking')) return;
         Schema::create('period_tracking', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
