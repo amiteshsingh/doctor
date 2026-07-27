@@ -22,7 +22,7 @@ class UserController extends Controller
     {
         return response()->json([
             'status'       => 200,
-            'version_code' => 16,
+            'version_code' => 17,
             'version_name' => '2.3',
             'force_update' => false,
             'message'      => 'Naya update available hai!',
