@@ -24,6 +24,9 @@
                         <li class="{{ request()->routeIs('admin.notification.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.notification.index') }}"><i class="fa fa-bell"></i> <span>Broadcast Notification</span></a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.payment.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.payment.settings') }}"><i class="fa fa-credit-card"></i> <span>Payment Settings</span></a>
+                        </li>
                     </ul>
                 </div>
             </div>

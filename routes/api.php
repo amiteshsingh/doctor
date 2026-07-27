@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PregnancyTrackingController;
 use App\Http\Controllers\Api\PeriodTrackingController;
 use App\Http\Controllers\Api\ChildVaccineController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Middleware\ApiTokenMiddleware;
 
 Route::prefix('v1')->group(function () {
@@ -29,6 +30,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/hospitals',         [HospitalController::class, 'index']);
     Route::get('/hospitals/{id}',    [HospitalController::class, 'show']);
 
+    // Payment (public — settings fetch)
+    Route::get('/payment-settings',  [PaymentController::class, 'settings']);
+
     // Protected routes (token required)
     Route::middleware(ApiTokenMiddleware::class)->group(function () {
         Route::get('/profile',              [UserController::class, 'profile']);
@@ -46,6 +50,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/children/add',        [ChildVaccineController::class, 'addChild']);
         Route::post('/children/vaccine',    [ChildVaccineController::class, 'markVaccine']);
         Route::delete('/children/{id}',     [ChildVaccineController::class, 'deleteChild']);
+        Route::post('/payment/order',        [PaymentController::class, 'createOrder']);
+        Route::post('/payment/verify',       [PaymentController::class, 'verifyPayment']);
     });
 
     // ── Doctor Mobile App Routes ──────────────────────────────────────────────
