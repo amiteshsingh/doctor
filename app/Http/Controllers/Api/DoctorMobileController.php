@@ -716,7 +716,7 @@ class DoctorMobileController extends Controller
 
         return response()->json([
             'status'          => 200,
-            'doctor'          => $doctor,
+            'doctor'          => array_merge((array)$doctor, ['phone_no' => $doctor->phone_no ?? $doctor->phone ?? '']),
             'specializations' => $specializations,
             'location'        => $location,
             'education'       => $education,
