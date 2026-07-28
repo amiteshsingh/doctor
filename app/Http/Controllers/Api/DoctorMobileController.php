@@ -174,7 +174,7 @@ class DoctorMobileController extends Controller
                 'email'         => $user->email,
                 'phone_no'      => $user->phone_no,
                 'profile_image' => $user->profile_image
-                    ? asset('storage/upload/profile_images/' . $user->profile_image)
+                    ? asset('uploads/profile_images/' . $user->profile_image)
                     : null,
             ],
             'doctor'      => $doctor,
@@ -284,7 +284,7 @@ class DoctorMobileController extends Controller
                 'country'       => $user->country,
                 'pin_code'      => $user->pin_code      ?: ($loc->zip_code ?? ''),
                 'profile_image' => $user->profile_image
-                    ? asset('storage/upload/profile_images/' . $user->profile_image)
+                    ? asset('uploads/profile_images/' . $user->profile_image)
                     : null,
             ],
             'doctor' => $doctor,
@@ -299,14 +299,14 @@ class DoctorMobileController extends Controller
         // Image only upload
         if ($request->hasFile('profile_image') && !$request->filled('name')) {
             $image    = $request->file('profile_image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('upload/profile_images', $filename, 'public');
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/profile_images'), $filename);
             $user->profile_image = $filename;
             $user->save();
             return response()->json([
                 'status' => 200,
                 'msg'    => 'Profile image updated successfully.',
-                'profile_image' => asset('storage/upload/profile_images/' . $filename),
+                'profile_image' => asset('uploads/profile_images/' . $filename),
             ]);
         }
 
@@ -337,8 +337,8 @@ class DoctorMobileController extends Controller
 
         if ($request->hasFile('profile_image')) {
             $image    = $request->file('profile_image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('upload/profile_images', $filename, 'public');
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/profile_images'), $filename);
             $user->profile_image = $filename;
         }
 
