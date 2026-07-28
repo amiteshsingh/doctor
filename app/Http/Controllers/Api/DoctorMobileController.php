@@ -1143,6 +1143,10 @@ class DoctorMobileController extends Controller
             ->whereIn('booking_mode', ['ONLINE', 'BOTH'])
             ->exists();
 
+        $hasTimeSlot = DB::table('invoice_master')
+            ->where('added_by', $user->id)
+            ->exists();
+
         return response()->json([
             'status' => 200,
             'data'   => [
@@ -1150,6 +1154,7 @@ class DoctorMobileController extends Controller
                 'today_appointments' => $todayAppointments,
                 'total_staff'        => $totalStaff,
                 'booking_open'       => $bookingOpen,
+                'has_time_slot'      => $hasTimeSlot,
                 'profile_complete'   => $profileComplete,
                 'profile_missing'    => [
                     'specialization' => !$hasSpecialization,
