@@ -268,6 +268,7 @@ class DoctorMobileController extends Controller
         $user   = $request->auth_user;
         $doctor = Doctor::with(['availability','educations','languages.language','specializations.specialization','locations'])
                     ->where('added_by', $user->id)->first();
+        $loc    = $doctor ? DB::table('doctor_locations')->where('doctor_id', $doctor->id)->first() : null;
 
         return response()->json([
             'status' => 200,
@@ -275,13 +276,13 @@ class DoctorMobileController extends Controller
                 'id'            => $user->id,
                 'name'          => $user->name,
                 'email'         => $user->email,
-                'phone_no'      => $user->phone_no,
-                'gender'        => $user->gender,
+                'phone_no'      => $user->phone_no      ?: ($doctor->phone_no ?? ''),
+                'gender'        => $user->gender        ?: ($doctor->gender   ?? ''),
                 'dob'           => $user->dob,
-                'address'       => $user->address,
-                'state'         => $user->state,
+                'address'       => $user->address       ?: ($loc->address ?? ''),
+                'state'         => $user->state         ?: ($loc->state   ?? ''),
                 'country'       => $user->country,
-                'pin_code'      => $user->pin_code,
+                'pin_code'      => $user->pin_code      ?: ($loc->zip_code ?? ''),
                 'profile_image' => $user->profile_image
                     ? asset('storage/upload/profile_images/' . $user->profile_image)
                     : null,
