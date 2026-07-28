@@ -343,6 +343,28 @@ class DoctorMobileController extends Controller
 
         $user->save();
 
+        // Sync doctor table
+        $doctor = Doctor::where('added_by', $user->id)->first();
+        if ($doctor) {
+            $doctor->name     = $user->name;
+            $doctor->phone_no = $user->phone_no ?? $doctor->phone_no;
+            $doctor->email    = $user->email;
+            $doctor->gender   = $user->gender ?? $doctor->gender;
+            $doctor->save();
+        }
+
+        // Sync doctor_locations address
+        if ($request->filled('address') || $request->filled('state')) {
+            $loc = DB::table('doctor_locations')->where('doctor_id', $doctor?->id)->first();
+            if ($loc) {
+                DB::table('doctor_locations')->where('doctor_id', $doctor->id)->update([
+                    'address'    => $request->address ?? $loc->address,
+                    'state'      => $request->state   ?? $loc->state,
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
         return response()->json(['status' => 200, 'msg' => 'Profile updated successfully.']);
     }
 
@@ -771,6 +793,13 @@ class DoctorMobileController extends Controller
         if ($existing) DB::table('doctor_locations')->where('doctor_id', $id)->update($locData);
         else { $locData['doctor_id'] = $id; $locData['created_at'] = now(); DB::table('doctor_locations')->insert($locData); }
 
+        // Sync users table address/state
+        DB::table('users')->where('id', $user->id)->update([
+            'address'    => $request->address    ?? null,
+            'state'      => $request->state      ?? null,
+            'updated_at' => now(),
+        ]);
+
         // Education
         DB::table('doctor_educations')->where('doctor_id', $id)->delete();
         DB::table('doctor_educations')->insert([
@@ -924,6 +953,14 @@ class DoctorMobileController extends Controller
             DB::table('doctors')->where('id', $request->id)->where('added_by', $user->id)->update($data);
             $doctorId = $request->id;
             $msg = 'Doctor updated successfully.';
+
+            // Sync users table
+            DB::table('users')->where('id', $user->id)->update([
+                'name'       => $request->name,
+                'phone_no'   => $request->phone_no,
+                'gender'     => $request->gender ?? null,
+                'updated_at' => now(),
+            ]);
         } else {
             $data['added_by'] = $user->id;
             $data['added_on'] = now();
