@@ -454,7 +454,7 @@ class DoctorMobileController extends Controller
             \App\Services\FirebaseNotification::send(
                 $user->fcm_token,
                 '📅 New Appointment Booked',
-                "{$request->patient_name} ne {$request->booking_date} ko {$request->booking_time} pe appointment book ki hai.",
+                "{$request->patient_name} ne " . \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y') . " ko {$request->booking_time} pe appointment book ki hai.",
                 [
                     'type'         => 'new_appointment',
                     'appointment_id' => (string)$id,
