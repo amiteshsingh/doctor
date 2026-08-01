@@ -52,7 +52,7 @@ class DoctorController extends Controller
             });
         }
 
-        $doctors = $query->paginate($request->get('per_page', 15));
+        $doctors = $query->paginate($request->get('per_page', 50000));
 
         return response()->json([
             'status'  => 200,
