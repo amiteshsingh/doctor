@@ -367,6 +367,13 @@ textarea.dform-control { resize:vertical; min-height:80px; }
                                 @endfor
                             </select>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="dform-label">Registration Number</label>
+                            <input type="text" class="dform-control" name="registration_no"
+                                   value="{{ $doctor->registration_no ?? '' }}">
+
+                        </div>
+
                     </div>
 
                     <hr class="dform-divider">

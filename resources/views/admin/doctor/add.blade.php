@@ -272,6 +272,13 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Registration Number</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="registration_no" value="{{ $doctor->registration_no ?? '' }}">
+                                    </div>
+                                </div>
+
                                 <hr>
                                 <h5 class="mb-3">Education</h5>
 
