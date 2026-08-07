@@ -24,6 +24,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/doctors',           [DoctorController::class, 'index']);
     Route::get('/doctors/{id}',      [DoctorController::class, 'show']);
     Route::get('/specializations',   [DoctorController::class, 'specializations']);
+    Route::get('/cities',            [DoctorMobileController::class, 'cities']);
     Route::match(['get','post'], '/booked-slots', [DoctorController::class, 'bookedSlots']);
 
     // Hospitals (public)

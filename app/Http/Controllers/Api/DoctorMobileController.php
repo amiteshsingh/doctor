@@ -185,6 +185,17 @@ class DoctorMobileController extends Controller
         ]);
     }
 
+    /** GET /api/v1/cities?state_id=X */
+    public function cities(Request $request)
+    {
+        $cities = DB::table('cities')
+            ->when($request->filled('state_id'), fn($q) => $q->where('state_id', $request->state_id))
+            ->orderBy('city_name')
+            ->select('id', 'city_name', 'state_id')
+            ->get();
+        return response()->json(['status' => 200, 'data' => $cities]);
+    }
+
     /** GET /api/v1/doctor/test-notification */
     public function testNotification(Request $request)
     {
@@ -801,10 +812,11 @@ class DoctorMobileController extends Controller
         if ($existing) DB::table('doctor_locations')->where('doctor_id', $id)->update($locData);
         else { $locData['doctor_id'] = $id; $locData['created_at'] = now(); DB::table('doctor_locations')->insert($locData); }
 
-        // Sync users table address/state
+        // Sync users table address/state/city
         DB::table('users')->where('id', $user->id)->update([
-            'address'    => $request->address    ?? null,
-            'state'      => $request->state      ?? null,
+            'address'    => $request->address ?? null,
+            'state'      => $request->state   ?? null,
+            'city'       => $request->city    ?? null,
             'updated_at' => now(),
         ]);
 
