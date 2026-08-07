@@ -18,11 +18,17 @@
                         <li class="{{ request()->routeIs('admin.user') || request()->routeIs('admin.user.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.user') }}"><i class="fa fa-user"></i> <span>Users (Doctors)</span></a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.app-users.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.app-users.index') }}"><i class="fa fa-users"></i> <span>App Users</span></a>
+                        </li>
                         <li class="{{ request()->routeIs('admin.blog.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.blog.index') }}"><i class="fa fa-newspaper-o"></i> <span>Blogs</span></a>
                         </li>
                         <li class="{{ request()->routeIs('admin.notification.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.notification.index') }}"><i class="fa fa-bell"></i> <span>Broadcast Notification</span></a>
+                            <a href="{{ route('admin.notification.index') }}"><i class="fa fa-bell"></i> <span>User Notification</span></a>
+                        </li>
+                        <li class="{{ request()->routeIs('admin.doctor.notification.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.doctor.notification.index') }}"><i class="fa fa-bell"></i> <span>Doctor Notification</span></a>
                         </li>
                         <li class="{{ request()->routeIs('admin.payment.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.payment.settings') }}"><i class="fa fa-credit-card"></i> <span>Payment Settings</span></a>

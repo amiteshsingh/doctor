@@ -8,16 +8,16 @@ use App\Services\FirebaseNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class NotificationController extends Controller
+class DoctorNotificationController extends Controller
 {
     public function index()
     {
-        $totalUsers      = User::whereHas('role', fn($q) => $q->where('role', 'user'))->count();
-        $usersWithToken  = User::whereHas('role', fn($q) => $q->where('role', 'user'))->whereNotNull('fcm_token')->count();
-        $users           = User::whereHas('role', fn($q) => $q->where('role', 'user'))->whereNotNull('fcm_token')->get(['id', 'name', 'email']);
-        $logs            = DB::table('notification_logs')->orderByDesc('id')->limit(20)->get();
+        $totalDoctors      = User::whereHas('role', fn($q) => $q->where('role', 'doctor'))->count();
+        $doctorsWithToken  = User::whereHas('role', fn($q) => $q->where('role', 'doctor'))->whereNotNull('fcm_token')->count();
+        $doctors           = User::whereHas('role', fn($q) => $q->where('role', 'doctor'))->whereNotNull('fcm_token')->get(['id', 'name', 'email']);
+        $logs              = DB::table('notification_logs')->where('target_type', 'doctor')->orderByDesc('id')->limit(20)->get();
 
-        return view('admin.notification.index', compact('totalUsers', 'usersWithToken', 'users', 'logs'));
+        return view('admin.notification.doctor', compact('totalDoctors', 'doctorsWithToken', 'doctors', 'logs'));
     }
 
     public function send(Request $request)
@@ -35,7 +35,6 @@ class NotificationController extends Controller
         $sent    = 0;
         $failed  = 0;
 
-        // Upload image if provided
         $imageUrl = null;
         if ($request->hasFile('image')) {
             $file     = $request->file('image');
@@ -45,7 +44,7 @@ class NotificationController extends Controller
         }
 
         if ($target === 'all') {
-            $users = User::whereHas('role', fn($q) => $q->where('role', 'user'))
+            $users = User::whereHas('role', fn($q) => $q->where('role', 'doctor'))
                 ->whereNotNull('fcm_token')
                 ->distinct('fcm_token')
                 ->get(['id', 'fcm_token']);
@@ -76,6 +75,7 @@ class NotificationController extends Controller
             'title'        => $title,
             'message'      => $message,
             'target'       => $target,
+            'target_type'  => 'doctor',
             'user_id'      => $target === 'specific' ? $request->user_id : null,
             'sent_count'   => $sent,
             'failed_count' => $failed,
@@ -83,7 +83,7 @@ class NotificationController extends Controller
             'updated_at'   => now(),
         ]);
 
-        return redirect()->route('admin.notification.index')
+        return redirect()->route('admin.doctor.notification.index')
             ->with('success', "Notification sent! ✅ Sent: {$sent} | ❌ Failed: {$failed}");
     }
 }

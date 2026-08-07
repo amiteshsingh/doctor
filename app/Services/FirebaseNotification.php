@@ -8,6 +8,26 @@ use Illuminate\Support\Facades\Cache;
 
 class FirebaseNotification
 {
+    /**
+     * Send notification to multiple tokens in chunks.
+     * Returns ['sent' => int, 'failed' => int]
+     */
+    public static function sendBulk(array $tokens, string $title, string $body, array $data = [], int $chunkSize = 100): array
+    {
+        $sent   = 0;
+        $failed = 0;
+
+        foreach (array_chunk($tokens, $chunkSize) as $chunk) {
+            foreach ($chunk as $token) {
+                self::send($token, $title, $body, $data) ? $sent++ : $failed++;
+            }
+            // Small pause between chunks to avoid rate limiting
+            if (count($tokens) > $chunkSize) usleep(200000); // 200ms
+        }
+
+        return ['sent' => $sent, 'failed' => $failed];
+    }
+
     public static function send(string $fcmToken, string $title, string $body, array $data = []): bool
     {
         $accessToken = self::getAccessToken();

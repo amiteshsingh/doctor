@@ -124,9 +124,17 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::put('/blog/update/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'update'])->name('admin.blog.update');
     Route::delete('/blog/delete/{id}', [\App\Http\Controllers\Admin\BlogController::class, 'delete'])->name('admin.blog.delete');
 
+    // App Users
+    Route::get('/app-users', [\App\Http\Controllers\Admin\AppUsersController::class, 'index'])->name('admin.app-users.index');
+    Route::delete('/app-users/{id}', [\App\Http\Controllers\Admin\AppUsersController::class, 'destroy'])->name('admin.app-users.destroy');
+
     // Notification Broadcast
     Route::get('/notification', [NotificationController::class, 'index'])->name('admin.notification.index');
     Route::post('/notification/send', [NotificationController::class, 'send'])->name('admin.notification.send');
+
+    // Doctor Notification Broadcast
+    Route::get('/doctor-notification', [\App\Http\Controllers\Admin\DoctorNotificationController::class, 'index'])->name('admin.doctor.notification.index');
+    Route::post('/doctor-notification/send', [\App\Http\Controllers\Admin\DoctorNotificationController::class, 'send'])->name('admin.doctor.notification.send');
 
     // Payment Settings
     Route::get('/payment-settings',  [PaymentSettingController::class, 'index'])->name('admin.payment.settings');
