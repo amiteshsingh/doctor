@@ -737,12 +737,9 @@ class DoctorMobileController extends Controller
                 'url' => asset('uploads/doctor_gallery/' . $g->image),
             ]);
 
-        // Resolve profile_pic URL — check public/uploads/doctor first, fallback to storage
+        // Resolve profile_pic URL
         if ($doctor && $doctor->profile_pic) {
-            $pubPath = public_path('uploads/doctor/' . $doctor->profile_pic);
-            $doctor->profile_pic_url = file_exists($pubPath)
-                ? asset('uploads/doctor/' . $doctor->profile_pic)
-                : asset('storage/upload/doctor/' . $doctor->profile_pic);
+            $doctor->profile_pic_url = asset('uploads/doctor/' . $doctor->profile_pic);
         } else if ($doctor) {
             $doctor->profile_pic_url = null;
         }
@@ -923,9 +920,8 @@ class DoctorMobileController extends Controller
             ->orderBy('doctors.id', 'desc')
             ->get()
             ->map(function($d) {
-                $pubPath = $d->profile_pic ? public_path('uploads/doctor/' . $d->profile_pic) : null;
                 $d->profile_pic_url = $d->profile_pic
-                    ? (file_exists($pubPath) ? asset('uploads/doctor/' . $d->profile_pic) : asset('storage/upload/doctor/' . $d->profile_pic))
+                    ? asset('uploads/doctor/' . $d->profile_pic)
                     : null;
                 return $d;
             });

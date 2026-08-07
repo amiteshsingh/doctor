@@ -54,6 +54,22 @@ Route::prefix('v1')->group(function () {
         Route::post('/payment/verify',       [PaymentController::class, 'verifyPayment']);
     });
 
+    // One-time: migrate old doctor pics from storage to public/uploads/doctor
+    Route::get('/migrate-doctor-pics', function () {
+        $src = storage_path('app/public/upload/doctor');
+        $dst = public_path('uploads/doctor');
+        if (!is_dir($src)) return response()->json(['msg' => 'Source not found', 'src' => $src]);
+        $files = scandir($src);
+        $moved = [];
+        foreach ($files as $f) {
+            if ($f === '.' || $f === '..') continue;
+            $from = $src . DIRECTORY_SEPARATOR . $f;
+            $to   = $dst . DIRECTORY_SEPARATOR . $f;
+            if (!file_exists($to)) { copy($from, $to); $moved[] = $f; }
+        }
+        return response()->json(['msg' => 'Done', 'moved' => $moved]);
+    });
+
     // ── Doctor Mobile App Routes ──────────────────────────────────────────────
     Route::post('/doctor/login',           [DoctorMobileController::class, 'login']);
     Route::post('/doctor/register',         [DoctorMobileController::class, 'register']);
