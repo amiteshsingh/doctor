@@ -70,6 +70,18 @@ Route::prefix('v1')->group(function () {
         return response()->json(['msg' => 'Done', 'moved' => $moved]);
     });
 
+    // Debug: check paths and folder permissions on live server
+    Route::get('/debug-paths', function () {
+        $dst = public_path('uploads/doctor');
+        return response()->json([
+            'public_path'   => public_path(),
+            'uploads_doctor'=> $dst,
+            'dir_exists'    => is_dir($dst),
+            'is_writable'   => is_writable($dst),
+            'files'         => is_dir($dst) ? array_slice(scandir($dst), 2, 5) : [],
+        ]);
+    });
+
     // ── Doctor Mobile App Routes ──────────────────────────────────────────────
     Route::post('/doctor/login',           [DoctorMobileController::class, 'login']);
     Route::post('/doctor/register',         [DoctorMobileController::class, 'register']);
