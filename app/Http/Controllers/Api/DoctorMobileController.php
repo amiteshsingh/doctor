@@ -953,7 +953,7 @@ class DoctorMobileController extends Controller
         if ($request->hasFile('profile_pic')) {
             $image    = $request->file('profile_pic');
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $dest = public_path('uploads/doctor');
+            $dest = base_path('../uploads/doctor');
             if (!is_dir($dest)) mkdir($dest, 0755, true);
             $image->move($dest, $filename);
             $data['profile_pic'] = $filename;

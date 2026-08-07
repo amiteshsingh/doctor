@@ -73,12 +73,17 @@ Route::prefix('v1')->group(function () {
     // Debug: check paths and folder permissions on live server
     Route::get('/debug-paths', function () {
         $dst = public_path('uploads/doctor');
+        $dst2 = base_path('../uploads/doctor');
         return response()->json([
-            'public_path'   => public_path(),
-            'uploads_doctor'=> $dst,
-            'dir_exists'    => is_dir($dst),
-            'is_writable'   => is_writable($dst),
-            'files'         => is_dir($dst) ? array_slice(scandir($dst), 2, 5) : [],
+            'public_path'    => public_path(),
+            'base_path'      => base_path(),
+            'uploads_doctor' => $dst,
+            'dir_exists'     => is_dir($dst),
+            'is_writable'    => is_writable($dst),
+            'alt_path'       => $dst2,
+            'alt_exists'     => is_dir($dst2),
+            'alt_writable'   => is_dir($dst2) ? is_writable($dst2) : false,
+            'files'          => is_dir($dst) ? array_slice(scandir($dst), 2, 5) : [],
         ]);
     });
 
