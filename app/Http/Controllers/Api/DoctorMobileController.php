@@ -914,7 +914,7 @@ class DoctorMobileController extends Controller
             ->get()
             ->map(function($d) {
                 $d->profile_pic_url = $d->profile_pic
-                    ? asset('storage/upload/doctor/' . $d->profile_pic)
+                    ? asset('uploads/doctor/' . $d->profile_pic)
                     : null;
                 return $d;
             });
@@ -946,7 +946,7 @@ class DoctorMobileController extends Controller
         if ($request->hasFile('profile_pic')) {
             $image    = $request->file('profile_pic');
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('upload/doctor', $filename, 'public');
+            $image->move(public_path('uploads/doctor'), $filename);
             $data['profile_pic'] = $filename;
         }
 
