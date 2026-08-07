@@ -196,6 +196,20 @@ class DoctorMobileController extends Controller
         return response()->json(['status' => 200, 'data' => $cities]);
     }
 
+    /** GET /api/v1/doctor/app-version */
+    public function doctorAppVersion()
+    {
+        return response()->json([
+            'status'           => 200,
+            'version_code'     => 8,
+            'version_name'     => '1.7',
+            'min_version_code' => 8,
+            'force_update'     => true,
+            'message'          => 'Naya update available hai! Behtar experience ke liye app update karein.',
+            'store_url'        => 'https://play.google.com/store/apps/details?id=com.rogisewadr',
+        ]);
+    }
+
     /** GET /api/v1/doctor/test-notification */
     public function testNotification(Request $request)
     {

@@ -93,6 +93,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/doctor/register',         [DoctorMobileController::class, 'register']);
     Route::post('/doctor/forgot-password',  [DoctorMobileController::class, 'forgotPassword']);
     Route::post('/doctor/verify-otp',       [DoctorMobileController::class, 'verifyOtp']);
+    Route::get('/doctor/app-version',       [DoctorMobileController::class, 'doctorAppVersion']);
 
     Route::middleware(ApiTokenMiddleware::class)->prefix('doctor')->group(function () {
         Route::post('/logout',                   [DoctorMobileController::class, 'logout']);
