@@ -840,10 +840,8 @@ class DoctorMobileController extends Controller
             'doctor_id'        => $id,
             'degree_type'      => $request->degree_type ?? '',
             'institution_name' => $request->institution_name ?? '',
-            'graduation_year'  => $request->graduation_year ?? '',
+            'graduation_year'  => $request->graduation_year ? (int)$request->graduation_year : null,
             'details'          => $request->education_details ?? '',
-            'created_at'       => now(),
-            'updated_at'       => now(),
         ]);
 
         // Experience + Registration No
