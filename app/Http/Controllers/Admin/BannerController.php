@@ -25,7 +25,7 @@ class BannerController extends Controller
         $imageUrl = null;
         if ($request->hasFile('image')) {
             $imageName = time() . '_' . str_replace(' ', '_', $request->file('image')->getClientOriginalName());
-            $uploadPath = public_path('uploads/banners');
+            $uploadPath = base_path('uploads/banners');
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0755, true);
             }
@@ -57,7 +57,7 @@ class BannerController extends Controller
         $banner = Banner::findOrFail($id);
         if ($banner->image) {
             $filename = basename($banner->image);
-            $filePath = public_path('uploads/banners/' . $filename);
+            $filePath = base_path('uploads/banners/' . $filename);
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
