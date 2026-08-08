@@ -31,8 +31,8 @@
                         @csrf
 
                         <div class="form-group">
-                            <label style="font-weight:700;font-size:12px;color:#555;">Title *</label>
-                            <input type="text" name="title" class="form-control" placeholder="Jaise: Stay Hydrated" required
+                            <label style="font-weight:700;font-size:12px;color:#555;">Title</label>
+                            <input type="text" name="title" class="form-control" placeholder="Jaise: Stay Hydrated"
                                    style="border-radius:10px;border:1.5px solid #e0e0e0;padding:10px;">
                         </div>
 
@@ -107,7 +107,7 @@
                     {{-- Banner Preview --}}
                     <div style="background:{{ $banner->color }};padding:16px 20px;min-width:200px;display:flex;align-items:center;gap:12px;flex-shrink:0;">
                         @if($banner->image)
-                            <img src="{{ asset('storage/uploads/banners/'.$banner->image) }}"
+                            <img src="{{ $banner->image }}"
                                  style="width:60px;height:60px;border-radius:10px;object-fit:cover;">
                         @else
                             <span style="font-size:36px;">{{ $banner->icon ?? '🏥' }}</span>
