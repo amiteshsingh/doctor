@@ -33,6 +33,9 @@
                         <li class="{{ request()->routeIs('admin.payment.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.payment.settings') }}"><i class="fa fa-credit-card"></i> <span>Payment Settings</span></a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.banner.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.banner.index') }}"><i class="fa fa-image"></i> <span>Banners</span></a>
+                        </li>
                     </ul>
                 </div>
             </div>

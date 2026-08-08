@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PaymentSettingController;
+use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Doctor\DoctorController as DoctorPanelController;
 use App\Http\Controllers\Doctor\MyHospitalController;
 use App\Http\Controllers\Doctor\InvoiceMasterController;
@@ -140,6 +141,12 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/payment-settings',  [PaymentSettingController::class, 'index'])->name('admin.payment.settings');
     Route::post('/payment-settings', [PaymentSettingController::class, 'update'])->name('admin.payment.update');
     Route::post('/payment-toggle',   [PaymentSettingController::class, 'toggle'])->name('admin.payment.toggle');
+
+    // Banner Management
+    Route::get('/banners',              [AdminBannerController::class, 'index'])->name('admin.banner.index');
+    Route::post('/banners',             [AdminBannerController::class, 'store'])->name('admin.banner.store');
+    Route::post('/banners/toggle/{id}', [AdminBannerController::class, 'toggle'])->name('admin.banner.toggle');
+    Route::delete('/banners/{id}',      [AdminBannerController::class, 'delete'])->name('admin.banner.delete');
 
     // Gallery Routes
     Route::post('/gallery/upload',  [\App\Http\Controllers\Admin\GalleryController::class, 'upload'])->name('gallery.upload');

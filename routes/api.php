@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PregnancyTrackingController;
 use App\Http\Controllers\Api\PeriodTrackingController;
 use App\Http\Controllers\Api\ChildVaccineController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\BannerController;
 use App\Http\Middleware\ApiTokenMiddleware;
 
 Route::prefix('v1')->group(function () {
@@ -33,6 +34,7 @@ Route::prefix('v1')->group(function () {
 
     // Payment (public — settings fetch)
     Route::get('/payment-settings',  [PaymentController::class, 'settings']);
+    Route::get('/banners',           [BannerController::class, 'index']);
 
     // Protected routes (token required)
     Route::middleware(ApiTokenMiddleware::class)->group(function () {
