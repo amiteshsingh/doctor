@@ -18,7 +18,7 @@ class BannerController extends Controller
                 'subtitle' => $b->subtitle,
                 'icon'     => $b->icon,
                 'color'    => $b->color,
-                'image'    => $b->image ? asset('storage/uploads/banners/' . $b->image) : null,
+                'image'    => $b->image ?: null,
                 'link'     => $b->link,
             ]);
 
