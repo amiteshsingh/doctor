@@ -24,7 +24,7 @@ class BannerController extends Controller
 
         $imageUrl = null;
         if ($request->hasFile('image')) {
-            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $imageName = time() . '_' . str_replace(' ', '_', $request->file('image')->getClientOriginalName());
             $uploadPath = public_path('uploads/banners');
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0755, true);
