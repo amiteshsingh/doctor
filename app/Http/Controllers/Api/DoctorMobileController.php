@@ -844,9 +844,12 @@ class DoctorMobileController extends Controller
             'details'          => $request->education_details ?? '',
         ]);
 
-        // Experience
-        if ($request->filled('experience')) {
-            DB::table('doctors')->where('id', $id)->update(['experience' => $request->experience]);
+        // Experience + Registration No
+        if ($request->filled('experience') || $request->filled('registration_no')) {
+            DB::table('doctors')->where('id', $id)->update(array_filter([
+                'experience'      => $request->experience      ?: null,
+                'registration_no' => $request->registration_no ?: null,
+            ], fn($v) => $v !== null));
         }
 
         // Languages
@@ -966,14 +969,15 @@ class DoctorMobileController extends Controller
         ]);
 
         $data = [
-            'name'       => $request->name,
-            'phone_no'   => $request->phone_no,
-            'email'      => $request->email ?? '',
-            'gender'     => $request->gender ?? '',
-            'experience' => $request->experience ?? null,
-            'status'     => $request->status,
-            'updated_on' => now(),
-            'updated_by' => $user->id,
+            'name'         => $request->name,
+            'phone_no'     => $request->phone_no,
+            'email'        => $request->email ?? '',
+            'gender'       => $request->gender ?? '',
+            'experience'   => $request->experience ?? null,
+            'status'       => $request->status,
+            'is_emergency' => $request->has('is_emergency') ? (int)$request->is_emergency : 0,
+            'updated_on'   => now(),
+            'updated_by'   => $user->id,
         ];
 
         if ($request->hasFile('profile_pic')) {
