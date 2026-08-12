@@ -32,7 +32,10 @@
     </div>
     <!-- Topbar End -->
 
-
+<head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3979062395254203"
+     crossorigin="anonymous"></script>
+</head>
     <!-- Navbar Start -->
     <div class="container-fluid sticky-top bg-white shadow-sm">
         <div class="container">
