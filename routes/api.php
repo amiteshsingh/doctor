@@ -83,16 +83,22 @@ Route::prefix('v1')->group(function () {
     Route::get('/debug-paths', function () {
         $dst = public_path('uploads/doctor');
         $dst2 = base_path('../uploads/doctor');
+        $storageReports = storage_path('app/public/uploads/reports');
+        if (!is_dir($storageReports)) { mkdir($storageReports, 0755, true); }
         return response()->json([
-            'public_path'    => public_path(),
-            'base_path'      => base_path(),
-            'uploads_doctor' => $dst,
-            'dir_exists'     => is_dir($dst),
-            'is_writable'    => is_writable($dst),
-            'alt_path'       => $dst2,
-            'alt_exists'     => is_dir($dst2),
-            'alt_writable'   => is_dir($dst2) ? is_writable($dst2) : false,
-            'files'          => is_dir($dst) ? array_slice(scandir($dst), 2, 5) : [],
+            'public_path'       => public_path(),
+            'base_path'         => base_path(),
+            'storage_path'      => storage_path(),
+            'storage_reports'   => $storageReports,
+            'storage_exists'    => is_dir($storageReports),
+            'storage_writable'  => is_writable($storageReports),
+            'uploads_doctor'    => $dst,
+            'dir_exists'        => is_dir($dst),
+            'is_writable'       => is_writable($dst),
+            'alt_path'          => $dst2,
+            'alt_exists'        => is_dir($dst2),
+            'alt_writable'      => is_dir($dst2) ? is_writable($dst2) : false,
+            'files'             => is_dir($dst) ? array_slice(scandir($dst), 2, 5) : [],
         ]);
     });
 

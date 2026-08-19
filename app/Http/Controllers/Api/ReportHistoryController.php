@@ -22,7 +22,7 @@ class ReportHistoryController extends Controller {
                 'abnormal_count'=> $r->abnormal_count,
                 'sections'      => json_decode($r->sections_json, true),
                 'date'          => $r->created_at->format('d M Y, h:i A'),
-                'image_url'     => $r->image_path ? url($r->image_path) : null,
+                'image_url'     => $r->image_path ? 'https://rogisewa.com/public/uploads/reports/' . $r->image_path : null,
             ]);
 
         return response()->json(['status' => 200, 'data' => $reports]);
@@ -35,7 +35,7 @@ class ReportHistoryController extends Controller {
             $file = $request->file('image');
             $filename = 'report_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/reports'), $filename);
-            $imagePath = 'uploads/reports/' . $filename;
+            $imagePath = $filename;
         }
 
         $report = ReportHistory::create([
