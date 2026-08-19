@@ -10,7 +10,7 @@ class ReportHistoryController extends Controller {
 
     // GET /api/v1/report-history
     public function index(Request $request) {
-        $reports = ReportHistory::where('user_id', $request->user->id)
+        $reports = ReportHistory::where('user_id', $request->auth_user->id)
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn($r) => [
@@ -30,7 +30,7 @@ class ReportHistoryController extends Controller {
     // POST /api/v1/report-history
     public function store(Request $request) {
         $report = ReportHistory::create([
-            'user_id'       => $request->user->id,
+            'user_id'       => $request->auth_user->id,
             'report_type'   => $request->report_type,
             'patient_info'  => $request->patient_info,
             'summary'       => $request->summary,
@@ -45,7 +45,7 @@ class ReportHistoryController extends Controller {
     // DELETE /api/v1/report-history/{id}
     public function destroy(Request $request, $id) {
         $report = ReportHistory::where('id', $id)
-            ->where('user_id', $request->user->id)
+            ->where('user_id', $request->auth_user->id)
             ->first();
 
         if (!$report) {
