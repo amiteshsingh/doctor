@@ -22,6 +22,7 @@ class ReportHistoryController extends Controller {
                 'abnormal_count'=> $r->abnormal_count,
                 'sections'      => json_decode($r->sections_json, true),
                 'date'          => $r->created_at->format('d M Y, h:i A'),
+                'image_url'     => $r->image_path ? url($r->image_path) : null,
             ]);
 
         return response()->json(['status' => 200, 'data' => $reports]);
@@ -29,6 +30,14 @@ class ReportHistoryController extends Controller {
 
     // POST /api/v1/report-history
     public function store(Request $request) {
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = 'report_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/reports'), $filename);
+            $imagePath = 'uploads/reports/' . $filename;
+        }
+
         $report = ReportHistory::create([
             'user_id'       => $request->auth_user->id,
             'report_type'   => $request->report_type,
@@ -36,7 +45,8 @@ class ReportHistoryController extends Controller {
             'summary'       => $request->summary,
             'normal_count'  => $request->normal_count ?? 0,
             'abnormal_count'=> $request->abnormal_count ?? 0,
-            'sections_json' => json_encode($request->sections ?? []),
+            'sections_json' => $request->sections ?? '{}',
+            'image_path'    => $imagePath,
         ]);
 
         return response()->json(['status' => 200, 'msg' => 'Saved', 'id' => $report->id]);
