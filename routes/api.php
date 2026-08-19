@@ -9,7 +9,8 @@ use App\Http\Controllers\Api\PregnancyTrackingController;
 use App\Http\Controllers\Api\PeriodTrackingController;
 use App\Http\Controllers\Api\ChildVaccineController;
 use App\Http\Controllers\Api\PaymentController;
-use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\ReportHistoryController;
+ use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\AppKeyController;
 use App\Http\Middleware\ApiTokenMiddleware;
 
@@ -55,6 +56,9 @@ Route::prefix('v1')->group(function () {
         Route::post('/children/add',        [ChildVaccineController::class, 'addChild']);
         Route::post('/children/vaccine',    [ChildVaccineController::class, 'markVaccine']);
         Route::delete('/children/{id}',     [ChildVaccineController::class, 'deleteChild']);
+        Route::get('/report-history',        [ReportHistoryController::class, 'index']);
+        Route::post('/report-history',       [ReportHistoryController::class, 'store']);
+        Route::delete('/report-history/{id}',[ReportHistoryController::class, 'destroy']);
         Route::post('/payment/order',        [PaymentController::class, 'createOrder']);
         Route::post('/payment/verify',       [PaymentController::class, 'verifyPayment']);
     });
