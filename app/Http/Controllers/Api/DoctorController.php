@@ -222,7 +222,8 @@ class DoctorController extends Controller
         $invoice->patient_address   = $request->patient_address;
         $invoice->patient_phone_no  = $request->patient_phone_no;
         $invoice->booking_date      = $request->booking_date;
-        $invoice->booking_time      = $invoiceMaster->start_time ?? '10:00';
+        $normalizedTime             = $this->normalizeTime($invoiceMaster->start_time ?? '10:00');
+        $invoice->booking_time      = $normalizedTime;
         $invoice->queue_number      = $queueNumber;
         $invoice->created_at        = now();
         $invoice->updated_at        = now();
