@@ -89,9 +89,18 @@ class DoctorController extends Controller
 
         $invoice_master = \DB::table('invoice_master')
             ->select('id','doctor_id','hospital_clinic_name','consultation_fee', 'start_time',
-             'end_time_slot', 'duration_time_slot','booking_mode','address','phone_no')
+             'end_time_slot', 'duration_time_slot','booking_mode','address','phone_no','max_bookings','working_days')
             ->where('doctor_id', $id)
-            ->get();
+            ->get()
+            ->map(function($m) {
+                $m->working_days = $m->working_days ? json_decode($m->working_days, true) : null;
+                // count today's bookings for this slot
+                $m->booked_today = \App\Models\PrescriptionInvoice::where('invoice_master_id', $m->id)
+                    ->where('booking_date', now('Asia/Kolkata')->format('Y-m-d'))
+                    ->where(function($q){ $q->whereNull('status')->orWhere('status','!=','cancelled'); })
+                    ->count();
+                return $m;
+            });
             
 
         return response()->json([
@@ -205,6 +214,56 @@ class DoctorController extends Controller
         $invoiceMaster = $invoiceMasterId
             ? InvoiceMaster::find($invoiceMasterId)
             : InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
+
+        // ── Working day check ──
+        if ($invoiceMaster) {
+            $workingDays = $invoiceMaster->working_days
+                ? (is_string($invoiceMaster->working_days) ? json_decode($invoiceMaster->working_days, true) : $invoiceMaster->working_days)
+                : null;
+            if ($workingDays && is_array($workingDays)) {
+                $bookingDayName = \Carbon\Carbon::parse($request->booking_date)->format('l'); // e.g. Monday
+                if (!in_array($bookingDayName, $workingDays)) {
+                    return response()->json([
+                        'status' => 422,
+                        'msg'    => 'Is din doctor available nahi hai. Koi aur din chunein.',
+                    ], 422);
+                }
+            }
+        }
+
+        // ── Max bookings check ──
+        if ($invoiceMaster) {
+            $maxBookings = $invoiceMaster->max_bookings ?? 20;
+            $todayCount  = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id)
+                ->where('booking_date', $request->booking_date)
+                ->where(function($q){ $q->whereNull('status')->orWhere('status','!=','cancelled'); })
+                ->count();
+            if ($todayCount >= $maxBookings) {
+                return response()->json([
+                    'status' => 422,
+                    'msg'    => 'Is din ke liye booking full ho gayi hai.',
+                ], 422);
+            }
+        }
+
+        // ── Time window check: booking 30 min before end time nahi hogi ──
+        if ($invoiceMaster && $invoiceMaster->end_time_slot) {
+            $now = \Carbon\Carbon::now('Asia/Kolkata');
+            $bookingDate = \Carbon\Carbon::parse($request->booking_date)->format('Y-m-d');
+            $today = $now->format('Y-m-d');
+            if ($bookingDate === $today) {
+                [$eh, $em] = explode(':', $invoiceMaster->end_time_slot);
+                $endMins    = (int)$eh * 60 + (int)$em;
+                $cutoffMins = $endMins - 30;
+                $nowMins    = $now->hour * 60 + $now->minute;
+                if ($nowMins >= $cutoffMins) {
+                    return response()->json([
+                        'status' => 422,
+                        'msg'    => 'Booking band ho gayi hai. End time se 30 minute pehle booking hoti hai.',
+                    ], 422);
+                }
+            }
+        }
 
         // Duplicate booking check: same doctor + same date + same phone
         $alreadyBooked = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)

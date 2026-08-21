@@ -641,6 +641,7 @@ class DoctorMobileController extends Controller
             'start_time'           => $request->start_time   ?: null,
             'end_time_slot'        => $request->end_time_slot ?: null,
             'duration_time_slot'   => $request->duration_time_slot ?: null,
+            'max_bookings'         => $request->max_bookings ? (int)$request->max_bookings : 20,
             'booking_mode'         => $bookingMode,
             'address'              => $request->address  ?? '',
             'phone_no'             => $request->phone_no ?? '',
