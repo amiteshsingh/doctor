@@ -199,7 +199,6 @@ class DoctorController extends Controller
             'gender'           => 'required|in:Male,Female,Other',
             'patient_phone_no' => 'required|string|max:20',
             'booking_date'     => 'required|date',
-            'booking_time'     => 'required',
         ]);
 
         $invoiceMasterId = $request->input('invoice_master_id');
@@ -207,18 +206,11 @@ class DoctorController extends Controller
             ? InvoiceMaster::find($invoiceMasterId)
             : InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
 
-        // Get booking_time from any input format
-        $rawTime = $request->input('booking_time') ?? $request->booking_time;
-        $normalizedTime = $this->normalizeTime($rawTime);
-        $alreadyBooked = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
+        // Queue number: us date ke liye is doctor ke active bookings count + 1
+        $queueNumber = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
             ->where('booking_date', $request->booking_date)
-            ->whereRaw('LOWER(booking_time) = ?', [strtolower($normalizedTime)])
             ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
-            ->exists();
-
-        if ($alreadyBooked) {
-            return response()->json(['status' => 409, 'msg' => 'This slot is already booked.'], 409);
-        }
+            ->count() + 1;
 
         $invoice = new PrescriptionInvoice;
         $invoice->invoice_master_id = $invoiceMaster->id ?? null;
@@ -230,12 +222,7 @@ class DoctorController extends Controller
         $invoice->patient_address   = $request->patient_address;
         $invoice->patient_phone_no  = $request->patient_phone_no;
         $invoice->booking_date      = $request->booking_date;
-        $invoice->booking_time      = $normalizedTime;
-        // Queue number: us date ke liye is doctor ke active bookings count + 1
-        $queueNumber = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
-            ->where('booking_date', $request->booking_date)
-            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
-            ->count() + 1;
+        $invoice->booking_time      = $invoiceMaster->start_time ?? '10:00';
         $invoice->queue_number      = $queueNumber;
         $invoice->created_at        = now();
         $invoice->updated_at        = now();
