@@ -635,6 +635,11 @@ class DoctorMobileController extends Controller
             return response()->json(['status' => 404, 'msg' => 'Doctor profile not found.'], 404);
         }
 
+        $workingDays = $request->working_days ?? null;
+        if (is_array($workingDays)) {
+            $workingDays = json_encode($workingDays);
+        }
+
         $data = [
             'hospital_clinic_name' => $request->hospital_clinic_name,
             'consultation_fee'     => $request->consultation_fee,
@@ -642,6 +647,7 @@ class DoctorMobileController extends Controller
             'end_time_slot'        => $request->end_time_slot ?: null,
             'duration_time_slot'   => $request->duration_time_slot ?: null,
             'max_bookings'         => $request->max_bookings ? (int)$request->max_bookings : 20,
+            'working_days'         => $workingDays,
             'booking_mode'         => $bookingMode,
             'address'              => $request->address  ?? '',
             'phone_no'             => $request->phone_no ?? '',
