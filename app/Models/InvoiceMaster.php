@@ -21,6 +21,7 @@ class InvoiceMaster extends Model
         'end_time_slot',
         'duration_time_slot',
         'max_bookings',
+        'working_days',
     ];
 
     public function prescriptionInvoices()

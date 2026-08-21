@@ -124,6 +124,8 @@ class InvoiceMasterController extends Controller
                     $update['start_time']           = $data['start_time'] ?? null;
                     $update['end_time_slot']        = $data['end_time_slot'] ?? null;
                     $update['duration_time_slot']   = $data['duration_time_slot'] ?? null;
+                    $update['max_bookings']         = $data['max_bookings'] ?? null;
+                    $update['working_days']         = isset($data['working_days']) ? json_encode($data['working_days']) : null;
                     $update['updated_at']           = now();
                     $update['updated_by']           = Session::get('user_id');
 
@@ -145,6 +147,8 @@ class InvoiceMasterController extends Controller
                     $invoice->start_time           = $data['start_time'] ?? null;
                     $invoice->end_time_slot        = $data['end_time_slot'] ?? null;
                     $invoice->duration_time_slot   = $data['duration_time_slot'] ?? null;
+                    $invoice->max_bookings         = $data['max_bookings'] ?? null;
+                    $invoice->working_days         = isset($data['working_days']) ? json_encode($data['working_days']) : null;
                     $invoice->created_at           = now();
                     $invoice->updated_at           = now();
                     $invoice->added_by             = Session::get('user_id');
