@@ -206,6 +206,20 @@ class DoctorController extends Controller
             ? InvoiceMaster::find($invoiceMasterId)
             : InvoiceMaster::where('doctor_id', $request->doctor_id)->first();
 
+        // Duplicate booking check: same doctor + same date + same phone
+        $alreadyBooked = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
+            ->where('booking_date', $request->booking_date)
+            ->where('patient_phone_no', $request->patient_phone_no)
+            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
+            ->exists();
+
+        if ($alreadyBooked) {
+            return response()->json([
+                'status' => 409,
+                'msg'    => 'Is date pe aapki booking already exist karti hai.',
+            ], 409);
+        }
+
         // Queue number: us date ke liye is doctor ke active bookings count + 1
         $queueNumber = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
             ->where('booking_date', $request->booking_date)
