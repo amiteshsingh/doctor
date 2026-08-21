@@ -308,16 +308,17 @@ class DoctorController extends Controller
         })->first();
 
         if ($doctorUser && $doctorUser->fcm_token) {
+            $formattedDate = \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y');
             \App\Services\FirebaseNotification::send(
                 $doctorUser->fcm_token,
                 '📅 New Appointment Booked',
-                "{$request->patient_name} ne {$request->booking_date} ko {$normalizedTime} pe appointment book ki hai.",
+                "{$request->patient_name} ne {$formattedDate} ko Queue No. {$queueNumber} pe appointment book ki hai.",
                 [
                     'type'           => 'new_appointment',
                     'appointment_id' => (string)$invoice->id,
                     'patient_name'   => $request->patient_name,
                     'booking_date'   => $request->booking_date,
-                    'booking_time'   => $normalizedTime,
+                    'queue_number'   => (string)$queueNumber,
                 ]
             );
         }
