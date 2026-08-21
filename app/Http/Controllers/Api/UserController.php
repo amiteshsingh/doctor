@@ -309,6 +309,7 @@ class UserController extends Controller
                 return [
                     'id'             => $booking->id,
                     'invoice_number' => $booking->invoice_number,
+                    'queue_number'   => $booking->queue_number,
                     'patient_name'   => $booking->patient_name,
                     'age'            => $booking->age,
                     'gender'         => $booking->gender,
