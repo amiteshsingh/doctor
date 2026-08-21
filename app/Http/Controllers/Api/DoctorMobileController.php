@@ -896,6 +896,24 @@ class DoctorMobileController extends Controller
         return response()->json(['status' => 200, 'msg' => 'Availability saved.']);
     }
 
+    /** GET /api/v1/doctor/my-doctors/gallery?doctor_id=X */
+    public function getDoctorGallery(Request $request)
+    {
+        $user     = $request->auth_user;
+        $doctorId = $request->doctor_id;
+        $doctor   = DB::table('doctors')->where('id', $doctorId)->where('added_by', $user->id)->first();
+        if (!$doctor) return response()->json(['status' => 403, 'msg' => 'Unauthorized.'], 403);
+
+        $gallery = DB::table('doctor_images')
+            ->where('doctor_id', $doctorId)
+            ->get()
+            ->map(fn($g) => [
+                'id'  => $g->id,
+                'url' => asset('uploads/doctor_gallery/' . $g->image),
+            ]);
+        return response()->json(['status' => 200, 'data' => $gallery]);
+    }
+
     /** POST /api/v1/doctor/my-doctors/gallery */
     public function saveDoctorGallery(Request $request)
     {
@@ -907,7 +925,9 @@ class DoctorMobileController extends Controller
 
         $image    = $request->file('image');
         $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-        $image->storeAs('doctor_gallery', $filename, 'public');
+        $dest = public_path('uploads/doctor_gallery');
+        if (!is_dir($dest)) mkdir($dest, 0755, true);
+        $image->move($dest, $filename);
 
         $galleryId = DB::table('doctor_images')->insertGetId([
             'doctor_id'  => $request->doctor_id,
@@ -915,7 +935,7 @@ class DoctorMobileController extends Controller
             'created_at' => now(),
         ]);
 
-        return response()->json(['status' => 200, 'msg' => 'Image uploaded.', 'id' => $galleryId, 'url' => asset('storage/doctor_gallery/' . $filename)]);
+        return response()->json(['status' => 200, 'msg' => 'Image uploaded.', 'id' => $galleryId, 'url' => asset('uploads/doctor_gallery/' . $filename)]);
     }
 
     /** DELETE /api/v1/doctor/my-doctors/gallery/{id} */

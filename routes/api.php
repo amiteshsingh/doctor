@@ -139,6 +139,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/my-doctors/specializations',   [DoctorMobileController::class, 'saveDoctorSpecializations']);
         Route::post('/my-doctors/location',          [DoctorMobileController::class, 'saveDoctorLocation']);
         Route::post('/my-doctors/availability',      [DoctorMobileController::class, 'saveDoctorAvailability']);
+        Route::get('/my-doctors/gallery',            [DoctorMobileController::class, 'getDoctorGallery']);
         Route::post('/my-doctors/gallery',           [DoctorMobileController::class, 'saveDoctorGallery']);
         Route::delete('/my-doctors/gallery/{id}',    [DoctorMobileController::class, 'deleteDoctorGallery']);
         Route::post('/my-doctors/toggle/{id}',       [DoctorMobileController::class, 'toggleDoctorStatus']);
