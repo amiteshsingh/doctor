@@ -201,9 +201,9 @@ class DoctorMobileController extends Controller
     {
         return response()->json([
             'status'           => 200,
-            'version_code'     => 10,
-            'version_name'     => '1.9',
-            'min_version_code' => 10,
+            'version_code'     => 11,
+            'version_name'     => '2.0',
+            'min_version_code' => 11,
             'force_update'     => true,
             'message'          => 'Naya update available hai! Behtar experience ke liye app update karein.',
             'store_url'        => 'https://play.google.com/store/apps/details?id=com.rogisewadr',
