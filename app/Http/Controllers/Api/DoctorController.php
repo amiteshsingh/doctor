@@ -231,6 +231,12 @@ class DoctorController extends Controller
         $invoice->patient_phone_no  = $request->patient_phone_no;
         $invoice->booking_date      = $request->booking_date;
         $invoice->booking_time      = $normalizedTime;
+        // Queue number: us date ke liye is doctor ke active bookings count + 1
+        $queueNumber = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
+            ->where('booking_date', $request->booking_date)
+            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
+            ->count() + 1;
+        $invoice->queue_number      = $queueNumber;
         $invoice->created_at        = now();
         $invoice->updated_at        = now();
         $invoice->save();
@@ -256,10 +262,21 @@ class DoctorController extends Controller
         }
 
         return response()->json([
-            'status' => 200,
-            'msg'    => 'Appointment booked successfully!',
-            'booking_time_saved' => $normalizedTime,
-            'booking_time_received' => $request->booking_time,
+            'status'       => 200,
+            'msg'          => 'Appointment booked successfully!',
+            'booking'      => [
+                'id'               => $invoice->id,
+                'queue_number'     => $queueNumber,
+                'patient_name'     => $invoice->patient_name,
+                'patient_phone_no' => $invoice->patient_phone_no,
+                'age'              => $invoice->age,
+                'gender'           => $invoice->gender,
+                'patient_address'  => $invoice->patient_address,
+                'booking_date'     => $invoice->booking_date,
+                'booking_time'     => $invoice->booking_time,
+                'doctor_name'      => $invoiceMaster ? optional(\App\Models\Doctor::find($invoiceMaster->doctor_id))->name : null,
+                'clinic_name'      => $invoiceMaster->hospital_clinic_name ?? null,
+            ],
         ]);
     }
 
