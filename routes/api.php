@@ -121,7 +121,8 @@ Route::prefix('v1')->group(function () {
         // Appointments
         Route::get('/appointments',              [DoctorMobileController::class, 'appointments']);
         Route::post('/appointments/add',         [DoctorMobileController::class, 'addAppointment']);
-        Route::post('/appointments/cancel/{id}', [DoctorMobileController::class, 'cancelAppointment']);
+        Route::post('/appointments/cancel/{id}',   [DoctorMobileController::class, 'cancelAppointment']);
+        Route::post('/appointments/complete/{id}',  [DoctorMobileController::class, 'completeAppointment']);
 
         // Invoice Masters
         Route::get('/invoice-masters',           [DoctorMobileController::class, 'invoiceMasters']);

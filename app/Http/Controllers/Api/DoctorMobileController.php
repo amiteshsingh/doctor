@@ -417,6 +417,12 @@ class DoctorMobileController extends Controller
 
         if ($request->filled('date')) {
             $query->whereDate('prescription_invoice.booking_date', $request->date);
+        } elseif ($request->get('tab') === 'past') {
+            // Past tab: completed/cancelled ya purani dates
+            $query->where(function($q) {
+                $q->whereIn('prescription_invoice.status', ['completed', 'cancelled'])
+                  ->orWhereDate('prescription_invoice.booking_date', '<', now()->toDateString());
+            });
         }
         if ($request->filled('search')) {
             $s = $request->search;
@@ -509,6 +515,25 @@ class DoctorMobileController extends Controller
         }
 
         return response()->json(['status' => 200, 'msg' => 'Appointment booked successfully.', 'id' => $id, 'queue_number' => $queueNumber]);
+    }
+
+    /** POST /api/v1/doctor/appointments/complete/{id} */
+    public function completeAppointment(Request $request, $id)
+    {
+        $user = $request->auth_user;
+        $inv  = PrescriptionInvoice::with('invoiceMaster')
+            ->whereHas('invoiceMaster', fn($q) => $q->where('added_by', $user->id))
+            ->find($id);
+
+        if (!$inv) {
+            return response()->json(['status' => 404, 'msg' => 'Appointment not found.'], 404);
+        }
+
+        $inv->status     = 'completed';
+        $inv->updated_at = now();
+        $inv->save();
+
+        return response()->json(['status' => 200, 'msg' => 'Appointment marked as completed.']);
     }
 
     /** POST /api/v1/doctor/appointments/cancel/{id} */
