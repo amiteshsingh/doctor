@@ -412,6 +412,7 @@ class DoctorMobileController extends Controller
                 'doctors.profile_pic'
             )
             ->orderBy('prescription_invoice.booking_date', 'desc')
+            ->orderBy('prescription_invoice.queue_number', 'asc')
             ->orderBy('prescription_invoice.id', 'desc');
 
         if ($request->filled('date')) {
