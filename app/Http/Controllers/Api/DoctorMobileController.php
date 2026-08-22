@@ -459,7 +459,6 @@ class DoctorMobileController extends Controller
             'invoice_master_id' => 'required|integer',
             'patient_name'      => 'required|string|max:255',
             'booking_date'      => 'required|date',
-            'booking_time'      => 'required|string',
         ]);
 
         // Verify invoice_master belongs to this doctor
@@ -469,18 +468,6 @@ class DoctorMobileController extends Controller
             ->first();
         if (!$master) {
             return response()->json(['status' => 403, 'msg' => 'Invalid invoice master.'], 403);
-        }
-
-        // Duplicate slot check
-        $alreadyBooked = DB::table('prescription_invoice')
-            ->where('invoice_master_id', $request->invoice_master_id)
-            ->where('booking_date', $request->booking_date)
-            ->whereRaw('LOWER(booking_time) = ?', [strtolower($request->booking_time)])
-            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
-            ->exists();
-
-        if ($alreadyBooked) {
-            return response()->json(['status' => 409, 'msg' => 'This slot is already booked.'], 409);
         }
 
         // Queue number: us date + us clinic ke liye kitne already hain
@@ -499,7 +486,7 @@ class DoctorMobileController extends Controller
             'age'               => $request->age ? (int)$request->age : 0,
             'gender'            => $request->gender ?? null,
             'booking_date'      => $request->booking_date,
-            'booking_time'      => $request->booking_time,
+            'booking_time'      => null,
             'queue_number'      => $queueNumber,
             'created_at'        => now(),
             'updated_at'        => now(),
@@ -509,13 +496,12 @@ class DoctorMobileController extends Controller
             \App\Services\FirebaseNotification::send(
                 $user->fcm_token,
                 '📅 New Appointment Booked',
-                "{$request->patient_name} ne " . \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y') . " ko {$request->booking_time} pe appointment book ki hai. Queue No: #{$queueNumber}",
+                "{$request->patient_name} ki appointment " . \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y') . " ke liye book hui. Queue No: #{$queueNumber}",
                 [
                     'type'           => 'new_appointment',
                     'appointment_id' => (string)$id,
                     'patient_name'   => $request->patient_name,
                     'booking_date'   => $request->booking_date,
-                    'booking_time'   => $request->booking_time,
                     'queue_number'   => (string)$queueNumber,
                 ]
             );
