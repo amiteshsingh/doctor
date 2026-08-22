@@ -483,6 +483,13 @@ class DoctorMobileController extends Controller
             return response()->json(['status' => 409, 'msg' => 'This slot is already booked.'], 409);
         }
 
+        // Queue number: us date + us clinic ke liye kitne already hain
+        $queueNumber = DB::table('prescription_invoice')
+            ->where('invoice_master_id', $request->invoice_master_id)
+            ->where('booking_date', $request->booking_date)
+            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
+            ->count() + 1;
+
         $id = DB::table('prescription_invoice')->insertGetId([
             'invoice_master_id' => $request->invoice_master_id,
             'invoice_number'    => 'INV-' . now()->format('YmdHis'),
@@ -493,27 +500,28 @@ class DoctorMobileController extends Controller
             'gender'            => $request->gender ?? null,
             'booking_date'      => $request->booking_date,
             'booking_time'      => $request->booking_time,
+            'queue_number'      => $queueNumber,
             'created_at'        => now(),
             'updated_at'        => now(),
         ]);
 
-        // ── Send push notification to doctor ──
         if ($user->fcm_token) {
             \App\Services\FirebaseNotification::send(
                 $user->fcm_token,
                 '📅 New Appointment Booked',
-                "{$request->patient_name} ne " . \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y') . " ko {$request->booking_time} pe appointment book ki hai.",
+                "{$request->patient_name} ne " . \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y') . " ko {$request->booking_time} pe appointment book ki hai. Queue No: #{$queueNumber}",
                 [
-                    'type'         => 'new_appointment',
+                    'type'           => 'new_appointment',
                     'appointment_id' => (string)$id,
-                    'patient_name' => $request->patient_name,
-                    'booking_date' => $request->booking_date,
-                    'booking_time' => $request->booking_time,
+                    'patient_name'   => $request->patient_name,
+                    'booking_date'   => $request->booking_date,
+                    'booking_time'   => $request->booking_time,
+                    'queue_number'   => (string)$queueNumber,
                 ]
             );
         }
 
-        return response()->json(['status' => 200, 'msg' => 'Appointment booked successfully.', 'id' => $id]);
+        return response()->json(['status' => 200, 'msg' => 'Appointment booked successfully.', 'id' => $id, 'queue_number' => $queueNumber]);
     }
 
     /** POST /api/v1/doctor/appointments/cancel/{id} */
