@@ -19,3 +19,6 @@ Schedule::command('pregnancy:weekly-notify')->dailyAt('10:00');
 
 // Vaccine reminders - daily at 9 AM
 Schedule::command('vaccine:send-notifications')->dailyAt('09:00');
+
+// Booking OFF reminder - daily at 8 AM
+Schedule::command('doctor:booking-off-reminder')->dailyAt('08:00');
