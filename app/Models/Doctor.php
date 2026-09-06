@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\UserRole;
 
 
-
+ 
 class Doctor extends Model
 {
     use HasFactory;
