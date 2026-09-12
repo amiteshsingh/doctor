@@ -25,7 +25,7 @@ class UserController extends Controller
             'version_code' => 41,
             'version_name' => '3.9',
             'force_update' => false,
-            'message'      => 'Naya update available hai!',
+            'message'      => 'Update Is Available!',
             'store_url'    => 'https://play.google.com/store/apps/details?id=com.rogisewa',
         ]);
     }
