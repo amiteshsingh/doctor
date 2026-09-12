@@ -242,6 +242,16 @@ class UserController extends Controller
                     'RogiSewa mein aapka swagat hai! 🎉 Hum aapki sehat ka dhyan rakhne ke liye hamesha yahan hain.',
                     ['type' => 'welcome', 'screen' => 'Home']
                 );
+                DB::table('notification_logs')->insert([
+                    'user_id'     => $user->id,
+                    'title'       => "Dear {$user->name} 👋",
+                    'message'     => 'RogiSewa mein aapka swagat hai! 🎉 Hum aapki sehat ka dhyan rakhne ke liye hamesha yahan hain.',
+                    'target'      => 'specific',
+                    'target_type' => 'user',
+                    'sent_count'  => 1,
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ]);
             }
         }
         return response()->json(['status' => 200, 'message' => 'FCM token updated.']);
