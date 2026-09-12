@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Services\FirebaseNotification;
 
 class UserController extends Controller
 {
@@ -61,7 +62,7 @@ class UserController extends Controller
             'status'  => 201,
             'message' => 'Registration successful.',
             'token'   => $user->api_token,
-            'user'    => [
+            'user'         => [
                 'id'    => $user->id,
                 'name'  => $user->name,
                 'email' => $user->email,
@@ -230,8 +231,18 @@ class UserController extends Controller
     {
         $user = $request->auth_user;
         if ($request->filled('fcm_token')) {
+            $isNewUser = !$user->fcm_token && $user->created_at->diffInMinutes(now()) <= 10;
             $user->fcm_token = $request->fcm_token;
             $user->save();
+
+            if ($isNewUser) {
+                FirebaseNotification::send(
+                    $user->fcm_token,
+                    "Dear {$user->name} 👋",
+                    'RogiSewa mein aapka swagat hai! 🎉 Hum aapki sehat ka dhyan rakhne ke liye hamesha yahan hain.',
+                    ['type' => 'welcome', 'screen' => 'Home']
+                );
+            }
         }
         return response()->json(['status' => 200, 'message' => 'FCM token updated.']);
     }
