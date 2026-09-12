@@ -25,6 +25,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 
+use App\Http\Controllers\Admin\PregnancyController as AdminPregnancyController;
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -141,6 +143,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/payment-settings',  [PaymentSettingController::class, 'index'])->name('admin.payment.settings');
     Route::post('/payment-settings', [PaymentSettingController::class, 'update'])->name('admin.payment.update');
     Route::post('/payment-toggle',   [PaymentSettingController::class, 'toggle'])->name('admin.payment.toggle');
+
+    // Pregnancy Tracker
+    Route::get('/pregnancy-tracker', [AdminPregnancyController::class, 'index'])->name('admin.pregnancy.index');
 
     // Banner Management
     Route::get('/banners',              [AdminBannerController::class, 'index'])->name('admin.banner.index');
