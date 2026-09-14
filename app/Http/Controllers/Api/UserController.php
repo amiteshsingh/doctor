@@ -237,8 +237,28 @@ class UserController extends Controller
             })
             ->orderByDesc('created_at')
             ->limit(50)
-            ->get(['id','title','message','created_at']);
-        return response()->json(['status' => 200, 'notifications' => $notifications]);
+            ->get(['id','title','message','is_read','created_at']);
+
+        $unread = $notifications->where('is_read', false)->count();
+
+        return response()->json([
+            'status'        => 200,
+            'notifications' => $notifications,
+            'unread_count'  => $unread,
+        ]);
+    }
+
+    public function markAllRead(Request $request)
+    {
+        $user = $request->auth_user;
+        DB::table('notification_logs')
+            ->whereNull('deleted_at')
+            ->where('is_read', false)
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)->orWhere('target', 'all');
+            })
+            ->update(['is_read' => true]);
+        return response()->json(['status' => 200]);
     }
 
     public function deleteNotification(Request $request, $id)

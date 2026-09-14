@@ -44,6 +44,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/profile',              [UserController::class, 'profile']);
         Route::post('/profile/update',      [UserController::class, 'updateProfile']);
         Route::get('/notifications',           [UserController::class, 'notifications']);
+        Route::post('/notifications/read',       [UserController::class, 'markAllRead']);
         Route::delete('/notifications/{id}',    [UserController::class, 'deleteNotification']);
         Route::post('/fcm-token',           [UserController::class, 'updateFcmToken']);
         Route::get('/my-bookings',          [UserController::class, 'myBookings']);
