@@ -273,6 +273,34 @@ class UserController extends Controller
         return response()->json(['status' => 200, 'message' => 'Deleted.']);
     }
 
+    public function submitTicket(Request $request)
+    {
+        $request->validate([
+            'subject' => 'required|string|max:200',
+            'message' => 'required|string',
+        ]);
+        $user = $request->auth_user;
+        DB::table('support_tickets')->insert([
+            'user_id'    => $user->id,
+            'subject'    => $request->subject,
+            'message'    => $request->message,
+            'status'     => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        return response()->json(['status' => 201, 'message' => 'Ticket submitted successfully.']);
+    }
+
+    public function myTickets(Request $request)
+    {
+        $user = $request->auth_user;
+        $tickets = DB::table('support_tickets')
+            ->where('user_id', $user->id)
+            ->orderByDesc('created_at')
+            ->get(['id','subject','message','reply','status','created_at','updated_at']);
+        return response()->json(['status' => 200, 'tickets' => $tickets]);
+    }
+
     public function updateFcmToken(Request $request)
     {
         $user = $request->auth_user;
