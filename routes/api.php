@@ -48,6 +48,8 @@ Route::prefix('v1')->group(function () {
         Route::delete('/notifications/{id}',    [UserController::class, 'deleteNotification']);
         Route::post('/support',                  [UserController::class, 'submitTicket']);
         Route::get('/support',                   [UserController::class, 'myTickets']);
+        Route::get('/support/{id}',              [UserController::class, 'ticketMessages']);
+        Route::post('/support/{id}/reply',       [UserController::class, 'replyTicket']);
         Route::post('/fcm-token',           [UserController::class, 'updateFcmToken']);
         Route::get('/my-bookings',          [UserController::class, 'myBookings']);
         Route::post('/reschedule-booking',  [UserController::class, 'rescheduleBooking']);

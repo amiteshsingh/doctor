@@ -8,6 +8,12 @@
 .badge-open   { background:#fff3cd; color:#856404; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
 .badge-replied{ background:#d1e7dd; color:#0a3622; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
 .badge-closed { background:#e2e3e5; color:#41464b; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+.msg-user  { background:#f0f4ff; border-radius:12px 12px 12px 0; padding:10px 14px; margin-bottom:8px; max-width:80%; }
+.msg-admin { background:#e6fff5; border-radius:12px 12px 0 12px; padding:10px 14px; margin-bottom:8px; max-width:80%; margin-left:auto; }
+.msg-label { font-size:10px; font-weight:700; margin-bottom:3px; }
+.msg-text  { font-size:13px; color:#333; line-height:1.5; }
+.msg-time  { font-size:10px; color:#aaa; margin-top:3px; }
+.chat-box  { max-height:300px; overflow-y:auto; padding:12px; background:#fafbff; border-radius:12px; margin-bottom:14px; border:1px solid #eee; }
 </style>
 
 <div class="page-wrapper">
@@ -45,23 +51,33 @@
                 <span style="font-size:12px;color:#888;">{{ \Carbon\Carbon::parse($ticket->created_at)->format('d M Y, h:i A') }}</span>
             </div>
 
-            <div style="background:#f8f9ff;border-radius:12px;padding:14px;margin-bottom:16px;border-left:4px solid #667eea;">
-                <p style="margin:0;font-size:14px;color:#333;line-height:1.6;">{{ $ticket->message }}</p>
+            {{-- Conversation Thread --}}
+            <div class="chat-box">
+                @forelse($messages[$ticket->id] ?? [] as $msg)
+                    @if($msg->sender === 'user')
+                    <div class="msg-user">
+                        <div class="msg-label" style="color:#667eea;">👤 {{ $ticket->user_name }}</div>
+                        <div class="msg-text">{{ $msg->message }}</div>
+                        <div class="msg-time">{{ \Carbon\Carbon::parse($msg->created_at)->format('d M, h:i A') }}</div>
+                    </div>
+                    @else
+                    <div class="msg-admin">
+                        <div class="msg-label" style="color:#00b074;">✅ Admin</div>
+                        <div class="msg-text">{{ $msg->message }}</div>
+                        <div class="msg-time">{{ \Carbon\Carbon::parse($msg->created_at)->format('d M, h:i A') }}</div>
+                    </div>
+                    @endif
+                @empty
+                    <div class="text-center text-muted" style="font-size:13px;padding:10px;">Koi message nahi.</div>
+                @endforelse
             </div>
-
-            @if($ticket->reply)
-            <div style="background:#f0fff4;border-radius:12px;padding:14px;margin-bottom:16px;border-left:4px solid #00b074;">
-                <div style="font-size:12px;font-weight:700;color:#00b074;margin-bottom:6px;">✅ Admin Reply:</div>
-                <p style="margin:0;font-size:14px;color:#333;line-height:1.6;">{{ $ticket->reply }}</p>
-            </div>
-            @endif
 
             @if($ticket->status !== 'closed')
             <form action="{{ route('admin.support.reply', $ticket->id) }}" method="POST">
                 @csrf
                 <div class="d-flex gap-2">
                     <input type="text" name="reply" class="form-control" placeholder="Reply likhein..." required
-                        value="{{ $ticket->reply ?? '' }}" style="border-radius:10px;font-size:13px;">
+                        style="border-radius:10px;font-size:13px;">
                     <button type="submit" class="btn btn-primary" style="border-radius:10px;white-space:nowrap;font-weight:700;">
                         📤 Send
                     </button>

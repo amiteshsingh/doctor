@@ -280,11 +280,18 @@ class UserController extends Controller
             'message' => 'required|string',
         ]);
         $user = $request->auth_user;
-        DB::table('support_tickets')->insert([
+        $ticketId = DB::table('support_tickets')->insertGetId([
             'user_id'    => $user->id,
             'subject'    => $request->subject,
             'message'    => $request->message,
             'status'     => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('support_messages')->insert([
+            'ticket_id'  => $ticketId,
+            'sender'     => 'user',
+            'message'    => $request->message,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -296,9 +303,36 @@ class UserController extends Controller
         $user = $request->auth_user;
         $tickets = DB::table('support_tickets')
             ->where('user_id', $user->id)
-            ->orderByDesc('created_at')
-            ->get(['id','subject','message','reply','status','created_at','updated_at']);
+            ->orderByDesc('updated_at')
+            ->get(['id','subject','status','created_at','updated_at']);
         return response()->json(['status' => 200, 'tickets' => $tickets]);
+    }
+
+    public function ticketMessages(Request $request, $id)
+    {
+        $user = $request->auth_user;
+        $ticket = DB::table('support_tickets')->where('id', $id)->where('user_id', $user->id)->first();
+        if (!$ticket) return response()->json(['status' => 404, 'message' => 'Not found.']);
+        $messages = DB::table('support_messages')->where('ticket_id', $id)->orderBy('created_at')->get();
+        return response()->json(['status' => 200, 'ticket' => $ticket, 'messages' => $messages]);
+    }
+
+    public function replyTicket(Request $request, $id)
+    {
+        $request->validate(['message' => 'required|string']);
+        $user = $request->auth_user;
+        $ticket = DB::table('support_tickets')->where('id', $id)->where('user_id', $user->id)->first();
+        if (!$ticket) return response()->json(['status' => 404]);
+        if ($ticket->status === 'closed') return response()->json(['status' => 400, 'message' => 'Ticket closed hai.']);
+        DB::table('support_messages')->insert([
+            'ticket_id'  => $id,
+            'sender'     => 'user',
+            'message'    => $request->message,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('support_tickets')->where('id', $id)->update(['status' => 'open', 'updated_at' => now()]);
+        return response()->json(['status' => 200, 'message' => 'Message sent.']);
     }
 
     public function updateFcmToken(Request $request)
