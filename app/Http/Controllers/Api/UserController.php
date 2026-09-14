@@ -227,6 +227,32 @@ class UserController extends Controller
         return response()->json(['status' => 200, 'message' => 'Booking cancelled successfully.']);
     }
 
+    public function notifications(Request $request)
+    {
+        $user = $request->auth_user;
+        $notifications = DB::table('notification_logs')
+            ->whereNull('deleted_at')
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)->orWhere('target', 'all');
+            })
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get(['id','title','message','created_at']);
+        return response()->json(['status' => 200, 'notifications' => $notifications]);
+    }
+
+    public function deleteNotification(Request $request, $id)
+    {
+        $user = $request->auth_user;
+        DB::table('notification_logs')
+            ->where('id', $id)
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)->orWhere('target', 'all');
+            })
+            ->update(['deleted_at' => now()]);
+        return response()->json(['status' => 200, 'message' => 'Deleted.']);
+    }
+
     public function updateFcmToken(Request $request)
     {
         $user = $request->auth_user;
