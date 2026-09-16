@@ -355,14 +355,18 @@ class UserController extends Controller
             'hard'   => 'advanced level for serious government job aspirants (SSC CGL/UPSC)',
         ][$level];
 
-        $prompt = "Generate exactly 10 reasoning questions for Indian government job exam preparation ({$levelDesc}). Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Return ONLY a valid JSON array with no extra text. Format: [{\"question\":\"...\",\"options\":[\"A) ...\",\"B) ...\",\"C) ...\",\"D) ...\"],\"answer\":\"A\",\"explanation\":\"...\",\"topic\":\"...\"}]";
+        $prompt = "You are a JSON generator. Generate exactly 10 reasoning questions for Indian government job exam ({$levelDesc}). Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Output ONLY a raw JSON array. No explanation, no markdown, no extra text before or after. Use this exact format: [{\"question\":\"...\",\"options\":[\"A) ...\",\"B) ...\",\"C) ...\",\"D) ...\"],\"answer\":\"A\",\"explanation\":\"...\",\"topic\":\"...\"}]";
 
         $apiKey = env('GEMINI_API_KEY');
         $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}";
 
         $response = \Illuminate\Support\Facades\Http::timeout(30)->post($url, [
             'contents' => [['parts' => [['text' => $prompt]]]],
-            'generationConfig' => ['temperature' => 0.7, 'maxOutputTokens' => 2048],
+            'generationConfig' => [
+                'temperature'     => 0.3,
+                'maxOutputTokens' => 4096,
+                'responseMimeType' => 'application/json',
+            ],
         ]);
 
         if (!$response->successful()) {
