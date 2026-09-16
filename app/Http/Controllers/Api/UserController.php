@@ -350,12 +350,12 @@ class UserController extends Controller
         $level = $request->level;
 
         $levelDesc = [
-            'easy'   => 'basic level for beginners, simple questions',
-            'medium' => 'intermediate level, moderate difficulty',
-            'hard'   => 'advanced level for serious government job aspirants (SSC CGL/UPSC)',
+            'easy'   => 'basic level for beginners',
+            'medium' => 'intermediate level for SSC and Railway exams',
+            'hard'   => 'advanced level for UPSC and SSC CGL exams',
         ][$level];
 
-        $prompt = "You are a JSON generator. Generate exactly 10 reasoning questions for Indian government job exam ({$levelDesc}). Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Output ONLY a raw JSON array. No explanation, no markdown, no extra text before or after. Each explanation must not contain any quotes or special characters. Use this exact format: [{\"question\":\"...\",\"options\":[\"A) ...\",\"B) ...\",\"C) ...\",\"D) ...\"],\"answer\":\"A\",\"explanation\":\"...\",\"topic\":\"...\"}]";
+        $prompt = 'Generate 10 reasoning questions for Indian government job exam at ' . $levelDesc . '. Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Each question must have exactly 4 options labeled A B C D. Answer must be single letter only.';
 
         $apiKey = env('GEMINI_API_KEY');
         $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}";
@@ -363,9 +363,23 @@ class UserController extends Controller
         $response = \Illuminate\Support\Facades\Http::timeout(30)->post($url, [
             'contents' => [['parts' => [['text' => $prompt]]]],
             'generationConfig' => [
-                'temperature'     => 0.2,
-                'maxOutputTokens' => 4096,
-                'responseMimeType' => 'application/json',
+                'temperature'        => 0.1,
+                'maxOutputTokens'    => 4096,
+                'response_mime_type' => 'application/json',
+                'response_schema'    => [
+                    'type'  => 'array',
+                    'items' => [
+                        'type'       => 'object',
+                        'properties' => [
+                            'question'    => ['type' => 'string'],
+                            'options'     => ['type' => 'array', 'items' => ['type' => 'string']],
+                            'answer'      => ['type' => 'string'],
+                            'explanation' => ['type' => 'string'],
+                            'topic'       => ['type' => 'string'],
+                        ],
+                        'required' => ['question', 'options', 'answer', 'explanation', 'topic'],
+                    ],
+                ],
             ],
         ]);
 
@@ -373,35 +387,28 @@ class UserController extends Controller
             return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
         }
 
-        // Try to get already-parsed JSON from response body directly
-        // Use raw body string to avoid double JSON decoding issues
-        $rawBody = $response->body();
-        $body    = json_decode($rawBody, true);
-        $text    = data_get($body, 'candidates.0.content.parts.0.text', '');
+        $body = json_decode($response->body(), true);
+        $text = data_get($body, 'candidates.0.content.parts.0.text', '');
 
         if (empty($text)) {
             return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
         }
 
-        // Clean up markdown fences
+        // Strip markdown fences
         $text = preg_replace('/```json\s*/i', '', $text);
         $text = preg_replace('/```\s*/i', '', $text);
 
-        // Extract JSON array between first [ and last ]
+        // Extract first [ ... ] block
         $start = strpos($text, '[');
         $end   = strrpos($text, ']');
         if ($start !== false && $end !== false && $end > $start) {
             $text = substr($text, $start, $end - $start + 1);
         }
-        $text = trim($text);
+
+        // Remove non-printable control chars (keep newline/tab)
+        $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', trim($text));
 
         $questions = json_decode($text, true);
-
-        // Last resort: remove stray control characters and retry
-        if (!is_array($questions)) {
-            $text      = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
-            $questions = json_decode($text, true);
-        }
 
         if (!is_array($questions) || count($questions) === 0) {
             return response()->json(['status' => 500, 'message' => 'Failed to parse questions. Please try again.'], 500);
