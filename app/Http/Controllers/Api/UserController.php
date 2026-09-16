@@ -358,7 +358,7 @@ class UserController extends Controller
         $prompt = "Generate exactly 10 reasoning questions for Indian government job exam preparation ({$levelDesc}). Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Return ONLY a valid JSON array with no extra text. Format: [{\"question\":\"...\",\"options\":[\"A) ...\",\"B) ...\",\"C) ...\",\"D) ...\"],\"answer\":\"A\",\"explanation\":\"...\",\"topic\":\"...\"}]";
 
         $apiKey = env('GEMINI_API_KEY');
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}";
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}";
 
         $response = \Illuminate\Support\Facades\Http::timeout(30)->post($url, [
             'contents' => [['parts' => [['text' => $prompt]]]],
@@ -366,16 +366,7 @@ class UserController extends Controller
         ]);
 
         if (!$response->successful()) {
-            return response()->json([
-                'status'  => 500,
-                'message' => 'AI service unavailable. Please try again.',
-                'debug'   => [
-                    'http_status' => $response->status(),
-                    'api_key_set' => !empty($apiKey),
-                    'api_key_len' => strlen($apiKey ?? ''),
-                    'response'    => $response->json(),
-                ],
-            ], 500);
+            return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
         }
 
         $text = $response->json('candidates.0.content.parts.0.text', '');
