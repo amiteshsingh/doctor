@@ -68,6 +68,7 @@ Route::prefix('v1')->group(function () {
         Route::delete('/report-history/{id}',[ReportHistoryController::class, 'destroy']);
         Route::post('/payment/order',        [PaymentController::class, 'createOrder']);
         Route::post('/payment/verify',       [PaymentController::class, 'verifyPayment']);
+        Route::post('/reasoning-questions',  [UserController::class, 'generateReasoningQuestions']);
     });
 
     // One-time: migrate old doctor pics from storage to public/uploads/doctor

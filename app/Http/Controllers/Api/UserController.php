@@ -344,6 +344,45 @@ class UserController extends Controller
         return response()->json(['status' => 200, 'message' => 'Message sent.']);
     }
 
+    public function generateReasoningQuestions(Request $request)
+    {
+        $request->validate(['level' => 'required|in:easy,medium,hard']);
+        $level = $request->level;
+
+        $levelDesc = [
+            'easy'   => 'basic level for beginners, simple questions',
+            'medium' => 'intermediate level, moderate difficulty',
+            'hard'   => 'advanced level for serious government job aspirants (SSC CGL/UPSC)',
+        ][$level];
+
+        $prompt = "Generate exactly 10 reasoning questions for Indian government job exam preparation ({$levelDesc}). Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Return ONLY a valid JSON array with no extra text. Format: [{\"question\":\"...\",\"options\":[\"A) ...\",\"B) ...\",\"C) ...\",\"D) ...\"],\"answer\":\"A\",\"explanation\":\"...\",\"topic\":\"...\"}]";
+
+        $apiKey = env('GEMINI_API_KEY');
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}";
+
+        $response = \Illuminate\Support\Facades\Http::timeout(30)->post($url, [
+            'contents' => [['parts' => [['text' => $prompt]]]],
+            'generationConfig' => ['temperature' => 0.7, 'maxOutputTokens' => 2048],
+        ]);
+
+        if (!$response->successful()) {
+            return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
+        }
+
+        $text = $response->json('candidates.0.content.parts.0.text', '');
+        // Strip markdown code blocks if present
+        $text = preg_replace('/```json\s*/i', '', $text);
+        $text = preg_replace('/```\s*/i', '', $text);
+        $text = trim($text);
+
+        $questions = json_decode($text, true);
+        if (!is_array($questions) || count($questions) === 0) {
+            return response()->json(['status' => 500, 'message' => 'Failed to parse questions. Please try again.'], 500);
+        }
+
+        return response()->json(['status' => 200, 'questions' => $questions, 'level' => $level]);
+    }
+
     public function updateFcmToken(Request $request)
     {
         $user = $request->auth_user;
