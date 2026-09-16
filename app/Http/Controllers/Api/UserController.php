@@ -355,7 +355,7 @@ class UserController extends Controller
             'hard'   => 'advanced level for UPSC and SSC CGL exams',
         ][$level];
 
-        $prompt = 'Generate 10 reasoning questions for Indian government job exam at ' . $levelDesc . '. Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Each question must have exactly 4 options labeled A B C D. Answer must be single letter only.';
+        $prompt = 'Generate 10 reasoning questions for Indian government job exam at ' . $levelDesc . '. Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Each question must have exactly 4 options labeled A B C D. Answer must be single letter only. Return ONLY a JSON array, no markdown, no extra text.';
 
         $apiKey = env('GEMINI_API_KEY');
         $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}";
@@ -363,23 +363,8 @@ class UserController extends Controller
         $response = \Illuminate\Support\Facades\Http::timeout(30)->post($url, [
             'contents' => [['parts' => [['text' => $prompt]]]],
             'generationConfig' => [
-                'temperature'        => 0.1,
-                'maxOutputTokens'    => 4096,
-                'response_mime_type' => 'application/json',
-                'response_schema'    => [
-                    'type'  => 'array',
-                    'items' => [
-                        'type'       => 'object',
-                        'properties' => [
-                            'question'    => ['type' => 'string'],
-                            'options'     => ['type' => 'array', 'items' => ['type' => 'string']],
-                            'answer'      => ['type' => 'string'],
-                            'explanation' => ['type' => 'string'],
-                            'topic'       => ['type' => 'string'],
-                        ],
-                        'required' => ['question', 'options', 'answer', 'explanation', 'topic'],
-                    ],
-                ],
+                'temperature'     => 0.1,
+                'maxOutputTokens' => 4096,
             ],
         ]);
 
@@ -387,6 +372,7 @@ class UserController extends Controller
             return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
         }
 
+        // Get raw text from Gemini response
         $body = json_decode($response->body(), true);
         $text = data_get($body, 'candidates.0.content.parts.0.text', '');
 
@@ -395,18 +381,16 @@ class UserController extends Controller
         }
 
         // Strip markdown fences
-        $text = preg_replace('/```json\s*/i', '', $text);
-        $text = preg_replace('/```\s*/i', '', $text);
+        $text = preg_replace('/```json/i', '', $text);
+        $text = preg_replace('/```/', '', $text);
+        $text = trim($text);
 
-        // Extract first [ ... ] block
+        // Extract JSON array
         $start = strpos($text, '[');
         $end   = strrpos($text, ']');
         if ($start !== false && $end !== false && $end > $start) {
             $text = substr($text, $start, $end - $start + 1);
         }
-
-        // Remove non-printable control chars (keep newline/tab)
-        $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', trim($text));
 
         $questions = json_decode($text, true);
 
