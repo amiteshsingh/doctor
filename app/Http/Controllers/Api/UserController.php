@@ -50,10 +50,11 @@ class UserController extends Controller
         }
 
         $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'api_token' => Str::random(60),
+            'name'       => $request->name,
+            'email'      => $request->email,
+            'password'   => Hash::make($request->password),
+            'api_token'  => Str::random(60),
+            'ip_address' => $request->ip(),
         ]);
 
         UserRole::create(['user_id' => $user->id, 'role' => 'user']);
@@ -305,7 +306,15 @@ class UserController extends Controller
             ->where('user_id', $user->id)
             ->orderByDesc('updated_at')
             ->get(['id','subject','status','created_at','updated_at']);
-        return response()->json(['status' => 200, 'tickets' => $tickets]);
+        return response()->json(['status' => 200, 'tickets' => $tickets->map(function($t) {
+            return [
+                'id'         => $t->id,
+                'subject'    => $t->subject,
+                'status'     => $t->status,
+                'created_at' => $t->created_at ? (string)$t->created_at : null,
+                'updated_at' => $t->updated_at ? (string)$t->updated_at : null,
+            ];
+        })]);
     }
 
     public function ticketMessages(Request $request, $id)

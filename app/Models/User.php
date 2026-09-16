@@ -33,6 +33,7 @@ class User extends Authenticatable
         'dob',
         'api_token',
         'fcm_token',
+        'ip_address',
     ];
 
     protected $hidden = [
