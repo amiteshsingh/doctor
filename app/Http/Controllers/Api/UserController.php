@@ -366,7 +366,16 @@ class UserController extends Controller
         ]);
 
         if (!$response->successful()) {
-            return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
+            return response()->json([
+                'status'  => 500,
+                'message' => 'AI service unavailable. Please try again.',
+                'debug'   => [
+                    'http_status' => $response->status(),
+                    'api_key_set' => !empty($apiKey),
+                    'api_key_len' => strlen($apiKey ?? ''),
+                    'response'    => $response->json(),
+                ],
+            ], 500);
         }
 
         $text = $response->json('candidates.0.content.parts.0.text', '');
