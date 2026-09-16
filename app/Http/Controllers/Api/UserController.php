@@ -377,7 +377,11 @@ class UserController extends Controller
 
         $questions = json_decode($text, true);
         if (!is_array($questions) || count($questions) === 0) {
-            return response()->json(['status' => 500, 'message' => 'Failed to parse questions. Please try again.'], 500);
+            return response()->json([
+                'status'  => 500,
+                'message' => 'Failed to parse questions. Please try again.',
+                'raw'     => substr($text, 0, 500),
+            ], 500);
         }
 
         return response()->json(['status' => 200, 'questions' => $questions, 'level' => $level]);
