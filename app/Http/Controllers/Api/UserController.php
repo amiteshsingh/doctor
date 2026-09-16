@@ -370,17 +370,25 @@ class UserController extends Controller
         }
 
         $text = $response->json('candidates.0.content.parts.0.text', '');
+        // The text may come HTML-encoded or with escaped quotes — decode both
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        // Remove markdown code fences
         $text = preg_replace('/```json\s*/i', '', $text);
         $text = preg_replace('/```\s*/i', '', $text);
+        // Extract JSON array from the text (find first [ to last ])
+        $start = strpos($text, '[');
+        $end   = strrpos($text, ']');
+        if ($start !== false && $end !== false && $end > $start) {
+            $text = substr($text, $start, $end - $start + 1);
+        }
         $text = trim($text);
 
         $questions = json_decode($text, true);
         if (!is_array($questions) || count($questions) === 0) {
             return response()->json([
-                'status'  => 500,
-                'message' => 'Failed to parse questions. Please try again.',
-                'raw'     => substr($text, 0, 800),
+                'status'     => 500,
+                'message'    => 'Failed to parse questions. Please try again.',
+                'raw'        => substr($text, 0, 300),
                 'json_error' => json_last_error_msg(),
             ], 500);
         }
