@@ -408,7 +408,17 @@ class UserController extends Controller
         }
 
         if (!is_array($questions) || count($questions) === 0) {
-            return response()->json(['status' => 500, 'message' => 'Failed to parse questions. Please try again.'], 500);
+            return response()->json([
+                'status'     => 500,
+                'message'    => 'Failed to parse questions. Please try again.',
+                'raw'        => base64_encode(substr($text, 0, 500)),
+                'json_error' => json_last_error_msg(),
+                'text_len'   => strlen($text),
+                'q_type'     => gettype($questions),
+                'q_count'    => is_array($questions) ? count($questions) : 0,
+                'body_keys'  => is_array($body) ? array_keys($body) : 'not array',
+                'raw_body'   => base64_encode(substr(json_encode($body), 0, 500)),
+            ], 500);
         }
 
         return response()->json(['status' => 200, 'questions' => $questions, 'level' => $level]);
