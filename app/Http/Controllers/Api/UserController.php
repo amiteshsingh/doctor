@@ -355,7 +355,7 @@ class UserController extends Controller
             'hard'   => 'advanced level for serious government job aspirants (SSC CGL/UPSC)',
         ][$level];
 
-        $prompt = "You are a JSON generator. Generate exactly 10 reasoning questions for Indian government job exam ({$levelDesc}). Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Output ONLY a raw JSON array. No explanation, no markdown, no extra text before or after. Use this exact format: [{\"question\":\"...\",\"options\":[\"A) ...\",\"B) ...\",\"C) ...\",\"D) ...\"],\"answer\":\"A\",\"explanation\":\"...\",\"topic\":\"...\"}]";
+        $prompt = "You are a JSON generator. Generate exactly 10 reasoning questions for Indian government job exam ({$levelDesc}). Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Output ONLY a raw JSON array. No explanation, no markdown, no extra text before or after. Each explanation must not contain any quotes or special characters. Use this exact format: [{\"question\":\"...\",\"options\":[\"A) ...\",\"B) ...\",\"C) ...\",\"D) ...\"],\"answer\":\"A\",\"explanation\":\"...\",\"topic\":\"...\"}]";
 
         $apiKey = env('GEMINI_API_KEY');
         $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}";
@@ -363,7 +363,7 @@ class UserController extends Controller
         $response = \Illuminate\Support\Facades\Http::timeout(30)->post($url, [
             'contents' => [['parts' => [['text' => $prompt]]]],
             'generationConfig' => [
-                'temperature'     => 0.3,
+                'temperature'     => 0.2,
                 'maxOutputTokens' => 4096,
                 'responseMimeType' => 'application/json',
             ],
@@ -373,13 +373,24 @@ class UserController extends Controller
             return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
         }
 
-        $text = $response->json('candidates.0.content.parts.0.text', '');
-        // The text may come HTML-encoded or with escaped quotes — decode both
+        // Try to get already-parsed JSON from response body directly
+        $body = $response->json();
+        $text = data_get($body, 'candidates.0.content.parts.0.text', '');
+
+        // If text is empty, maybe response itself is the JSON array (responseMimeType case)
+        if (empty($text)) {
+            // Try parsing the raw body as questions directly
+            if (is_array($body) && isset($body[0]['question'])) {
+                return response()->json(['status' => 200, 'questions' => $body, 'level' => $level]);
+            }
+            return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
+        }
+
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        // Remove markdown code fences
         $text = preg_replace('/```json\s*/i', '', $text);
         $text = preg_replace('/```\s*/i', '', $text);
-        // Extract JSON array from the text (find first [ to last ])
+
+        // Extract JSON array between first [ and last ]
         $start = strpos($text, '[');
         $end   = strrpos($text, ']');
         if ($start !== false && $end !== false && $end > $start) {
@@ -388,13 +399,16 @@ class UserController extends Controller
         $text = trim($text);
 
         $questions = json_decode($text, true);
+
+        // If still failing, try to fix common JSON issues
+        if (!is_array($questions)) {
+            // Remove control characters
+            $text = preg_replace('/[\x00-\x1F\x7F](?<![\n\r\t])/', '', $text);
+            $questions = json_decode($text, true);
+        }
+
         if (!is_array($questions) || count($questions) === 0) {
-            return response()->json([
-                'status'     => 500,
-                'message'    => 'Failed to parse questions. Please try again.',
-                'raw'        => substr($text, 0, 300),
-                'json_error' => json_last_error_msg(),
-            ], 500);
+            return response()->json(['status' => 500, 'message' => 'Failed to parse questions. Please try again.'], 500);
         }
 
         return response()->json(['status' => 200, 'questions' => $questions, 'level' => $level]);
