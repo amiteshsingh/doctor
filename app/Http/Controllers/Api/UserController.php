@@ -374,19 +374,16 @@ class UserController extends Controller
         }
 
         // Try to get already-parsed JSON from response body directly
-        $body = $response->json();
-        $text = data_get($body, 'candidates.0.content.parts.0.text', '');
+        // Use raw body string to avoid double JSON decoding issues
+        $rawBody = $response->body();
+        $body    = json_decode($rawBody, true);
+        $text    = data_get($body, 'candidates.0.content.parts.0.text', '');
 
-        // If text is empty, maybe response itself is the JSON array (responseMimeType case)
         if (empty($text)) {
-            // Try parsing the raw body as questions directly
-            if (is_array($body) && isset($body[0]['question'])) {
-                return response()->json(['status' => 200, 'questions' => $body, 'level' => $level]);
-            }
             return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
         }
 
-        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        // Clean up markdown fences
         $text = preg_replace('/```json\s*/i', '', $text);
         $text = preg_replace('/```\s*/i', '', $text);
 
@@ -400,25 +397,14 @@ class UserController extends Controller
 
         $questions = json_decode($text, true);
 
-        // If still failing, try to fix common JSON issues
+        // Last resort: remove stray control characters and retry
         if (!is_array($questions)) {
-            // Remove control characters
-            $text = preg_replace('/[\x00-\x1F\x7F](?<![\n\r\t])/', '', $text);
+            $text      = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
             $questions = json_decode($text, true);
         }
 
         if (!is_array($questions) || count($questions) === 0) {
-            return response()->json([
-                'status'     => 500,
-                'message'    => 'Failed to parse questions. Please try again.',
-                'raw'        => base64_encode(substr($text, 0, 500)),
-                'json_error' => json_last_error_msg(),
-                'text_len'   => strlen($text),
-                'q_type'     => gettype($questions),
-                'q_count'    => is_array($questions) ? count($questions) : 0,
-                'body_keys'  => is_array($body) ? array_keys($body) : 'not array',
-                'raw_body'   => base64_encode(substr(json_encode($body), 0, 500)),
-            ], 500);
+            return response()->json(['status' => 500, 'message' => 'Failed to parse questions. Please try again.'], 500);
         }
 
         return response()->json(['status' => 200, 'questions' => $questions, 'level' => $level]);
