@@ -59,6 +59,23 @@ class UserController extends Controller
 
         UserRole::create(['user_id' => $user->id, 'role' => 'user']);
 
+        // IP location fetch aur update karo
+        try {
+            $location = app(\App\Services\IpLocationService::class)->fetch($request->ip());
+            if ($location) {
+                $user->update([
+                    'ip_city'    => $location['city'],
+                    'ip_region'  => $location['region'],
+                    'ip_country' => $location['country'],
+                    'ip_isp'     => $location['isp'],
+                    'ip_lat'     => $location['lat'],
+                    'ip_lng'     => $location['lng'],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // Location failure registration ko block nahi karega
+        }
+
         return response()->json([
             'status'  => 201,
             'message' => 'Registration successful.',
@@ -97,6 +114,24 @@ class UserController extends Controller
             $user->fcm_token = $request->fcm_token;
         }
         $user->save();
+
+        // IP-based location save karo (failure login ko block nahi karega)
+        try {
+            $ip = $request->ip();
+            $location = app(\App\Services\IpLocationService::class)->fetch($ip);
+            $locationData = ['ip_address' => $ip];
+            if ($location) {
+                $locationData['ip_city']    = $location['city'];
+                $locationData['ip_region']  = $location['region'];
+                $locationData['ip_country'] = $location['country'];
+                $locationData['ip_isp']     = $location['isp'];
+                $locationData['ip_lat']     = $location['lat'];
+                $locationData['ip_lng']     = $location['lng'];
+            }
+            $user->update($locationData);
+        } catch (\Throwable $e) {
+            // Location fetch fail ho to login impact na ho
+        }
 
         return response()->json([
             'status'  => 200,

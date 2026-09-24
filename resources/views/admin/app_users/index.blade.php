@@ -66,6 +66,7 @@
                         <th>FCM</th>
                         <th>Last Seen</th>
                         <th>Joined</th>
+                        <th>Location</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -92,6 +93,25 @@
                         <td style="color:#888;font-size:12px;">
                             {{ \Carbon\Carbon::parse($u->created_at)->format('d M Y') }}
                         </td>
+                        <td style="font-size:12px;min-width:160px;vertical-align:top;">
+                            @if($u->ip_city)
+                                <div style="font-weight:600;color:#1e40af;line-height:1.4;">
+                                    {{ $u->ip_city }}, {{ $u->ip_region }}, {{ $u->ip_country }}
+                                </div>
+                                @if($u->ip_isp)
+                                <div style="color:#94a3b8;font-size:11px;margin-top:2px;">{{ $u->ip_isp }}</div>
+                                @endif
+                                @if($u->ip_lat && $u->ip_lng)
+                                <a href="https://maps.google.com/?q={{ $u->ip_lat }},{{ $u->ip_lng }}"
+                                   target="_blank" rel="noopener"
+                                   style="font-size:11px;color:#0a6ebd;text-decoration:none;display:inline-block;margin-top:3px;">
+                                    📍 Map
+                                </a>
+                                @endif
+                            @else
+                                <span style="color:#94a3b8;">—</span>
+                            @endif
+                        </td>
                         <td>
                             <form method="POST" action="{{ route('admin.app-users.destroy', $u->id) }}"
                                 onsubmit="return confirm('Delete this user?')" style="display:inline;">
@@ -104,7 +124,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">
+                        <td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">
                             <i class="fa fa-users" style="font-size:32px;margin-bottom:10px;display:block;"></i>
                             No users found.
                         </td>
