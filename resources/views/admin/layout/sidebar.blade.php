@@ -33,6 +33,9 @@
                         <li class="{{ request()->routeIs('admin.payment.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.payment.settings') }}"><i class="fa fa-credit-card"></i> <span>Payment Settings</span></a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.support.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.support.index') }}"><i class="fa fa-headphones"></i> <span>Support Tickets</span></a>
+                        </li>
                         <li class="{{ request()->routeIs('admin.pregnancy.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.pregnancy.index') }}"><i class="fa fa-heart"></i> <span>Pregnancy Tracker</span></a>
                         </li>

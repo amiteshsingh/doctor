@@ -43,6 +43,13 @@ Route::prefix('v1')->group(function () {
     Route::middleware(ApiTokenMiddleware::class)->group(function () {
         Route::get('/profile',              [UserController::class, 'profile']);
         Route::post('/profile/update',      [UserController::class, 'updateProfile']);
+        Route::get('/notifications',           [UserController::class, 'notifications']);
+        Route::post('/notifications/read',       [UserController::class, 'markAllRead']);
+        Route::delete('/notifications/{id}',    [UserController::class, 'deleteNotification']);
+        Route::post('/support',                  [UserController::class, 'submitTicket']);
+        Route::get('/support',                   [UserController::class, 'myTickets']);
+        Route::get('/support/{id}',              [UserController::class, 'ticketMessages']);
+        Route::post('/support/{id}/reply',       [UserController::class, 'replyTicket']);
         Route::post('/fcm-token',           [UserController::class, 'updateFcmToken']);
         Route::get('/my-bookings',          [UserController::class, 'myBookings']);
         Route::post('/reschedule-booking',  [UserController::class, 'rescheduleBooking']);
@@ -61,6 +68,7 @@ Route::prefix('v1')->group(function () {
         Route::delete('/report-history/{id}',[ReportHistoryController::class, 'destroy']);
         Route::post('/payment/order',        [PaymentController::class, 'createOrder']);
         Route::post('/payment/verify',       [PaymentController::class, 'verifyPayment']);
+        Route::post('/reasoning-questions',  [UserController::class, 'generateReasoningQuestions']);
     });
 
     // One-time: migrate old doctor pics from storage to public/uploads/doctor

@@ -144,6 +144,11 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::post('/payment-settings', [PaymentSettingController::class, 'update'])->name('admin.payment.update');
     Route::post('/payment-toggle',   [PaymentSettingController::class, 'toggle'])->name('admin.payment.toggle');
 
+    // Support Tickets
+    Route::get('/support',            [\App\Http\Controllers\Admin\SupportController::class, 'index'])->name('admin.support.index');
+    Route::post('/support/{id}/reply',[\App\Http\Controllers\Admin\SupportController::class, 'reply'])->name('admin.support.reply');
+    Route::get('/support/{id}/close', [\App\Http\Controllers\Admin\SupportController::class, 'close'])->name('admin.support.close');
+
     // Pregnancy Tracker
     Route::get('/pregnancy-tracker', [AdminPregnancyController::class, 'index'])->name('admin.pregnancy.index');
 

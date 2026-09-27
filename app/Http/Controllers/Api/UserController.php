@@ -50,13 +50,31 @@ class UserController extends Controller
         }
 
         $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'api_token' => Str::random(60),
+            'name'       => $request->name,
+            'email'      => $request->email,
+            'password'   => Hash::make($request->password),
+            'api_token'  => Str::random(60),
+            'ip_address' => $request->ip(),
         ]);
 
         UserRole::create(['user_id' => $user->id, 'role' => 'user']);
+
+        // IP location fetch aur update karo
+        try {
+            $location = app(\App\Services\IpLocationService::class)->fetch($request->ip());
+            if ($location) {
+                $user->update([
+                    'ip_city'    => $location['city'],
+                    'ip_region'  => $location['region'],
+                    'ip_country' => $location['country'],
+                    'ip_isp'     => $location['isp'],
+                    'ip_lat'     => $location['lat'],
+                    'ip_lng'     => $location['lng'],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // Location failure registration ko block nahi karega
+        }
 
         return response()->json([
             'status'  => 201,
@@ -96,6 +114,24 @@ class UserController extends Controller
             $user->fcm_token = $request->fcm_token;
         }
         $user->save();
+
+        // IP-based location save karo (failure login ko block nahi karega)
+        try {
+            $ip = $request->ip();
+            $location = app(\App\Services\IpLocationService::class)->fetch($ip);
+            $locationData = ['ip_address' => $ip];
+            if ($location) {
+                $locationData['ip_city']    = $location['city'];
+                $locationData['ip_region']  = $location['region'];
+                $locationData['ip_country'] = $location['country'];
+                $locationData['ip_isp']     = $location['isp'];
+                $locationData['ip_lat']     = $location['lat'];
+                $locationData['ip_lng']     = $location['lng'];
+            }
+            $user->update($locationData);
+        } catch (\Throwable $e) {
+            // Location fetch fail ho to login impact na ho
+        }
 
         return response()->json([
             'status'  => 200,
@@ -225,6 +261,179 @@ class UserController extends Controller
         }
 
         return response()->json(['status' => 200, 'message' => 'Booking cancelled successfully.']);
+    }
+
+    public function notifications(Request $request)
+    {
+        $user = $request->auth_user;
+        $notifications = DB::table('notification_logs')
+            ->whereNull('deleted_at')
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)->orWhere('target', 'all');
+            })
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get(['id','title','message','is_read','created_at']);
+
+        $unread = $notifications->where('is_read', false)->count();
+
+        return response()->json([
+            'status'        => 200,
+            'notifications' => $notifications,
+            'unread_count'  => $unread,
+        ]);
+    }
+
+    public function markAllRead(Request $request)
+    {
+        $user = $request->auth_user;
+        DB::table('notification_logs')
+            ->whereNull('deleted_at')
+            ->where('is_read', false)
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)->orWhere('target', 'all');
+            })
+            ->update(['is_read' => true]);
+        return response()->json(['status' => 200]);
+    }
+
+    public function deleteNotification(Request $request, $id)
+    {
+        $user = $request->auth_user;
+        DB::table('notification_logs')
+            ->where('id', $id)
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)->orWhere('target', 'all');
+            })
+            ->update(['deleted_at' => now()]);
+        return response()->json(['status' => 200, 'message' => 'Deleted.']);
+    }
+
+    public function submitTicket(Request $request)
+    {
+        $request->validate([
+            'subject' => 'required|string|max:200',
+            'message' => 'required|string',
+        ]);
+        $user = $request->auth_user;
+        $ticketId = DB::table('support_tickets')->insertGetId([
+            'user_id'    => $user->id,
+            'subject'    => $request->subject,
+            'message'    => $request->message,
+            'status'     => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('support_messages')->insert([
+            'ticket_id'  => $ticketId,
+            'sender'     => 'user',
+            'message'    => $request->message,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        return response()->json(['status' => 201, 'message' => 'Ticket submitted successfully.']);
+    }
+
+    public function myTickets(Request $request)
+    {
+        $user = $request->auth_user;
+        $tickets = DB::table('support_tickets')
+            ->where('user_id', $user->id)
+            ->orderByDesc('updated_at')
+            ->get(['id','subject','status','created_at','updated_at']);
+        return response()->json(['status' => 200, 'tickets' => $tickets->map(function($t) {
+            return [
+                'id'         => $t->id,
+                'subject'    => $t->subject,
+                'status'     => $t->status,
+                'created_at' => $t->created_at ? (string)$t->created_at : null,
+                'updated_at' => $t->updated_at ? (string)$t->updated_at : null,
+            ];
+        })]);
+    }
+
+    public function ticketMessages(Request $request, $id)
+    {
+        $user = $request->auth_user;
+        $ticket = DB::table('support_tickets')->where('id', $id)->where('user_id', $user->id)->first();
+        if (!$ticket) return response()->json(['status' => 404, 'message' => 'Not found.']);
+        $messages = DB::table('support_messages')->where('ticket_id', $id)->orderBy('created_at')->get();
+        return response()->json(['status' => 200, 'ticket' => $ticket, 'messages' => $messages]);
+    }
+
+    public function replyTicket(Request $request, $id)
+    {
+        $request->validate(['message' => 'required|string']);
+        $user = $request->auth_user;
+        $ticket = DB::table('support_tickets')->where('id', $id)->where('user_id', $user->id)->first();
+        if (!$ticket) return response()->json(['status' => 404]);
+        if ($ticket->status === 'closed') return response()->json(['status' => 400, 'message' => 'Ticket closed hai.']);
+        DB::table('support_messages')->insert([
+            'ticket_id'  => $id,
+            'sender'     => 'user',
+            'message'    => $request->message,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('support_tickets')->where('id', $id)->update(['status' => 'open', 'updated_at' => now()]);
+        return response()->json(['status' => 200, 'message' => 'Message sent.']);
+    }
+
+    public function generateReasoningQuestions(Request $request)
+    {
+        $request->validate(['level' => 'required|in:easy,medium,hard']);
+        $level = $request->level;
+
+        $levelDesc = [
+            'easy'   => 'basic level for beginners',
+            'medium' => 'intermediate level for SSC and Railway exams',
+            'hard'   => 'advanced level for UPSC and SSC CGL exams',
+        ][$level];
+
+        $prompt = 'Generate 10 reasoning questions for Indian government job exam at ' . $levelDesc . '. Topics: Number Series, Analogy, Coding-Decoding, Blood Relations, Syllogism, Direction Sense, Ranking. Each question must have exactly 4 options labeled A B C D. Answer must be single letter only. Return ONLY a JSON array, no markdown, no extra text.';
+
+        $apiKey = env('GEMINI_API_KEY');
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}";
+
+        $response = \Illuminate\Support\Facades\Http::timeout(30)->post($url, [
+            'contents' => [['parts' => [['text' => $prompt]]]],
+            'generationConfig' => [
+                'temperature'     => 0.1,
+                'maxOutputTokens' => 4096,
+            ],
+        ]);
+
+        if (!$response->successful()) {
+            return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
+        }
+
+        // Get raw text from Gemini response
+        $body = json_decode($response->body(), true);
+        $text = data_get($body, 'candidates.0.content.parts.0.text', '');
+
+        if (empty($text)) {
+            return response()->json(['status' => 500, 'message' => 'AI service unavailable. Please try again.'], 500);
+        }
+
+        // Strip markdown fences
+        $text = preg_replace('/```json/i', '', $text);
+        $text = preg_replace('/```/', '', $text);
+        $text = trim($text);
+
+        // Extract JSON array
+        $start = strpos($text, '[');
+        $end   = strrpos($text, ']');
+        if ($start !== false && $end !== false && $end > $start) {
+            $text = substr($text, $start, $end - $start + 1);
+        }
+
+        $questions = json_decode($text, true);
+
+        if (!is_array($questions) || count($questions) === 0) {
+            return response()->json(['status' => 500, 'message' => 'Failed to parse questions. Please try again.'], 500);
+        }
+
+        return response()->json(['status' => 200, 'questions' => $questions, 'level' => $level]);
     }
 
     public function updateFcmToken(Request $request)

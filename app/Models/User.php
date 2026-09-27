@@ -33,6 +33,13 @@ class User extends Authenticatable
         'dob',
         'api_token',
         'fcm_token',
+        'ip_address',
+        'ip_city',
+        'ip_region',
+        'ip_country',
+        'ip_isp',
+        'ip_lat',
+        'ip_lng',
     ];
 
     protected $hidden = [
@@ -51,6 +58,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'ip_lat' => 'float',
+            'ip_lng' => 'float',
         ];
     }
 
