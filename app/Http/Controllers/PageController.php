@@ -234,6 +234,12 @@ class PageController extends Controller
         return view('page.faq');
     }
 
+    public function testimonial()
+    {
+        $testimonials = \App\Models\Testimonial::where('status', 1)->orderByDesc('id')->get();
+        return view('page.testimonial', compact('testimonials'));
+    }
+
 
     public function appointment()
     {

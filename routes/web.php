@@ -158,6 +158,14 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::post('/banners/toggle/{id}', [AdminBannerController::class, 'toggle'])->name('admin.banner.toggle');
     Route::delete('/banners/{id}',      [AdminBannerController::class, 'delete'])->name('admin.banner.delete');
 
+    // Testimonial Management
+    Route::get('/testimonials',              [\App\Http\Controllers\Admin\TestimonialController::class, 'index'])->name('admin.testimonial.index');
+    Route::post('/testimonials',             [\App\Http\Controllers\Admin\TestimonialController::class, 'store'])->name('admin.testimonial.store');
+    Route::get('/testimonials/{id}/edit',    [\App\Http\Controllers\Admin\TestimonialController::class, 'edit'])->name('admin.testimonial.edit');
+    Route::put('/testimonials/{id}',         [\App\Http\Controllers\Admin\TestimonialController::class, 'update'])->name('admin.testimonial.update');
+    Route::get('/testimonials/toggle/{id}',  [\App\Http\Controllers\Admin\TestimonialController::class, 'toggle'])->name('admin.testimonial.toggle');
+    Route::delete('/testimonials/{id}',      [\App\Http\Controllers\Admin\TestimonialController::class, 'destroy'])->name('admin.testimonial.destroy');
+
     // Gallery Routes
     Route::post('/gallery/upload',  [\App\Http\Controllers\Admin\GalleryController::class, 'upload'])->name('gallery.upload');
     Route::post('/gallery/delete',  [\App\Http\Controllers\Admin\GalleryController::class, 'delete'])->name('gallery.delete');

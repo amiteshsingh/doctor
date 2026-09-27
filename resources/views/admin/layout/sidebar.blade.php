@@ -42,6 +42,9 @@
                         <li class="{{ request()->routeIs('admin.banner.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.banner.index') }}"><i class="fa fa-image"></i> <span>Banners</span></a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.testimonial.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.testimonial.index') }}"><i class="fa fa-comments"></i> <span>Testimonials</span></a>
+                        </li>
                     </ul>
                 </div>
             </div>
