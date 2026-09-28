@@ -1269,9 +1269,15 @@ class DoctorMobileController extends Controller
         if ($clinic && $clinic->image) {
             $imageUrl = 'https://rogisewa.com/public/uploads/hospital/' . $clinic->image;
         }
+        // Default from user if clinic not saved yet
+        $default = [
+            'name'     => $clinic->name     ?? $user->name,
+            'phone_no' => $clinic->phone_no ?? $user->phone_no,
+            'email'    => $clinic->email    ?? $user->email,
+        ];
         return response()->json([
             'status'    => 200,
-            'data'      => $clinic,
+            'data'      => $clinic ? array_merge((array)$clinic, $default) : $default,
             'image_url' => $imageUrl,
             '_debug'    => [
                 'has_clinic'  => $clinic ? true : false,
