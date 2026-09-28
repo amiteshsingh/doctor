@@ -631,11 +631,10 @@ class DoctorMobileController extends Controller
     {
         $user = $request->auth_user;
         $request->validate([
-            'hospital_clinic_name' => 'required|string|max:255',
-            'consultation_fee'     => 'required|numeric',
-            'start_time'           => 'nullable|string',
-            'end_time_slot'        => 'nullable|string',
-            'duration_time_slot'   => 'nullable|integer|min:1',
+            'consultation_fee'   => 'required|numeric',
+            'start_time'         => 'nullable|string',
+            'end_time_slot'      => 'nullable|string',
+            'duration_time_slot' => 'nullable|integer|min:1',
         ]);
 
         // booking_mode validate & sanitize
@@ -661,7 +660,7 @@ class DoctorMobileController extends Controller
         }
 
         $data = [
-            'hospital_clinic_name' => $request->hospital_clinic_name,
+            'hospital_clinic_name' => $request->hospital_clinic_name ?? '',
             'consultation_fee'     => $request->consultation_fee,
             'start_time'           => $request->start_time   ?: null,
             'end_time_slot'        => $request->end_time_slot ?: null,
@@ -806,6 +805,29 @@ class DoctorMobileController extends Controller
             'availability'    => $availability,
             'gallery'         => $gallery,
         ]);
+    }
+
+    /** POST /api/v1/doctor/my-doctors/education */
+    public function saveDoctorEducation(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate(['doctor_id' => 'required|integer', 'degree_type' => 'required|string']);
+
+        $doctor = DB::table('doctors')->where('id', $request->doctor_id)->where('added_by', $user->id)->first();
+        if (!$doctor) return response()->json(['status' => 403, 'msg' => 'Unauthorized.'], 403);
+
+        $id = $request->doctor_id;
+        DB::table('doctor_educations')->where('doctor_id', $id)->delete();
+        DB::table('doctor_educations')->insert([
+            'doctor_id'        => $id,
+            'degree_type'      => $request->degree_type,
+            'institution_name' => '',
+            'graduation_year'  => null,
+            'details'          => $request->education_details ?? '',
+            'created_at'       => now(),
+            'updated_at'       => now(),
+        ]);
+        return response()->json(['status' => 200, 'msg' => 'Education saved.']);
     }
 
     /** POST /api/v1/doctor/my-doctors/specializations */
