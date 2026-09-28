@@ -1258,17 +1258,7 @@ class DoctorMobileController extends Controller
     // ─── DASHBOARD STATS ─────────────────────────────────────────────────────
 
     /** GET /api/v1/doctor/clinic */
-    public function getClinic(Request $request)
-    {
-        $user   = $request->auth_user;
-        $clinic = DB::table('hospitals')->where('added_by', $user->id)->first();
-        if ($clinic && $clinic->image) {
-            $clinic->image_url = asset('uploads/hospital/' . $clinic->image);
-        } else if ($clinic) {
-            $clinic->image_url = null;
-        }
-        return response()->json(['status' => 200, 'data' => $clinic]);
-    }
+    public function getClinic(Request $request) { $user = $request->auth_user; $clinic = DB::table('hospitals')->where('added_by', $user->id)->first(); $imageUrl = null; if ($clinic && $clinic->image) { $imageUrl = 'https://rogisewa.com/uploads/hospital/' . $clinic->image; } return response()->json(['status' => 200, 'data' => $clinic, 'image_url' => $imageUrl]); }
 
     /** POST /api/v1/doctor/clinic/save */
     public function saveClinic(Request $request)
@@ -1373,3 +1363,4 @@ class DoctorMobileController extends Controller
         ]);
     }
 }
+
