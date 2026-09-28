@@ -1270,13 +1270,14 @@ class DoctorMobileController extends Controller
     {
         $user = $request->auth_user;
         $data = [
-            'name'     => $request->name     ?? '',
-            'phone_no' => $request->phone_no ?? '',
-            'email'    => $request->email    ?? '',
-            'address'  => $request->address  ?? '',
-            'city'     => $request->city     ?? '',
-            'state'    => $request->state    ?? '',
-            'zip_code' => $request->zip_code ?? '',
+            'name'            => $request->name     ?? '',
+            'registration_no' => $request->registration_no ?? '',
+            'phone_no'        => $request->phone_no ?? '',
+            'email'           => $request->email    ?? '',
+            'address'         => $request->address  ?? '',
+            'city'            => $request->city     ?? '',
+            'state'           => $request->state    ?? '',
+            'zip_code'        => $request->zip_code ?? '',
         ];
         $existing = DB::table('hospitals')->where('added_by', $user->id)->first();
         if ($existing) {
