@@ -825,8 +825,6 @@ class DoctorMobileController extends Controller
                 'institution_name' => '',
                 'graduation_year'  => 0,
                 'details'          => $request->education_details ?? '',
-                'created_at'       => now(),
-                'updated_at'       => now(),
             ]);
             return response()->json(['status' => 200, 'msg' => 'Education saved.']);
         } catch (\Exception $e) {
