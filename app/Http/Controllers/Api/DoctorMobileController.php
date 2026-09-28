@@ -1270,9 +1270,10 @@ class DoctorMobileController extends Controller
             $imageUrl = 'https://rogisewa.com/public/uploads/hospital/' . $clinic->image;
         }
         // Default from user if clinic not saved yet
+        $doctor = DB::table('doctors')->where('added_by', $user->id)->first();
         $default = [
             'name'     => $clinic->name     ?? $user->name,
-            'phone_no' => $clinic->phone_no ?? $user->phone_no,
+            'phone_no' => $clinic->phone_no ?? $user->phone_no ?? $doctor->phone_no ?? '',
             'email'    => $clinic->email    ?? $user->email,
         ];
         return response()->json([
