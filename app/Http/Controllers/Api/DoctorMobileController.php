@@ -1258,7 +1258,24 @@ class DoctorMobileController extends Controller
     // ─── DASHBOARD STATS ─────────────────────────────────────────────────────
 
     /** GET /api/v1/doctor/clinic */
-    public function getClinic(Request $request) { $user = $request->auth_user; $clinic = DB::table('hospitals')->where('added_by', $user->id)->first(); $imageUrl = null; if ($clinic && $clinic->image) { $imageUrl = 'https://rogisewa.com/uploads/hospital/' . $clinic->image; } return response()->json(['status' => 200, 'data' => $clinic, 'image_url' => $imageUrl]); }
+    public function getClinic(Request $request) {
+        $user = $request->auth_user;
+        $clinic = DB::table('hospitals')->where('added_by', $user->id)->first();
+        $imageUrl = null;
+        if ($clinic && $clinic->image) {
+            $imageUrl = 'https://rogisewa.com/uploads/hospital/' . $clinic->image;
+        }
+        return response()->json([
+            'status'    => 200,
+            'data'      => $clinic,
+            'image_url' => $imageUrl,
+            '_debug'    => [
+                'has_clinic'  => $clinic ? true : false,
+                'image_field' => $clinic ? $clinic->image : null,
+                'user_id'     => $user->id,
+            ],
+        ]);
+    }
 
     /** POST /api/v1/doctor/clinic/save */
     public function saveClinic(Request $request)
@@ -1293,7 +1310,9 @@ class DoctorMobileController extends Controller
             $data['approval_status'] = 1;
             DB::table('hospitals')->insert($data);
         }
-        return response()->json(['status' => 200, 'msg' => 'Clinic saved successfully.']);
+        $saved = DB::table('hospitals')->where('added_by', $user->id)->first();
+        $imageUrl = ($saved && $saved->image) ? 'https://rogisewa.com/uploads/hospital/' . $saved->image : null;
+        return response()->json(['status' => 200, 'msg' => 'Clinic saved successfully.', 'image_url' => $imageUrl]);
     }
 
     /** GET /api/v1/doctor/dashboard */
