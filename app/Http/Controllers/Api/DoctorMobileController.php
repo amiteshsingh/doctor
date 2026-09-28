@@ -408,6 +408,7 @@ class DoctorMobileController extends Controller
                 'prescription_invoice.*',
                 'invoice_master.hospital_clinic_name',
                 'invoice_master.consultation_fee',
+                'invoice_master.doctor_id',
                 'doctors.name as doctor_name',
                 'doctors.profile_pic'
             )
