@@ -1343,7 +1343,10 @@ class DoctorMobileController extends Controller
 
         // Profile completeness check
         $doctorId           = $doctor?->id;
-        $hasSpecialization  = $doctorId && DB::table('doctor_specializations')->where('doctor_id', $doctorId)->exists();
+        $hasSpecialization  = DB::table('doctor_specializations')
+            ->join('doctors', 'doctor_specializations.doctor_id', '=', 'doctors.id')
+            ->where('doctors.added_by', $user->id)
+            ->exists();
         $hasLocation        = $doctorId && (
             DB::table('doctor_locations')->where('doctor_id', $doctorId)->exists() ||
             DB::table('hospitals')->where('added_by', $user->id)->exists()
