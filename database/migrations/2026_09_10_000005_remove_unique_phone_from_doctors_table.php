@@ -9,11 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('doctors', function (Blueprint $table) {
-            // Drop unique index on phone_no if exists
-            try {
-                $table->dropUnique(['phone_no']);
-            } catch (\Exception $e) {
-                // Index doesn't exist, ignore
+            $indexes = collect(\DB::select("SHOW INDEX FROM doctors WHERE Column_name = 'phone_no'"))
+                ->pluck('Key_name')->unique();
+            foreach ($indexes as $index) {
+                if ($index !== 'PRIMARY') {
+                    $table->dropIndex($index);
+                }
             }
         });
     }
