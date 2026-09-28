@@ -1260,8 +1260,13 @@ class DoctorMobileController extends Controller
     /** GET /api/v1/doctor/clinic */
     public function getClinic(Request $request)
     {
-        $user    = $request->auth_user;
-        $clinic  = DB::table('hospitals')->where('added_by', $user->id)->first();
+        $user   = $request->auth_user;
+        $clinic = DB::table('hospitals')->where('added_by', $user->id)->first();
+        if ($clinic && $clinic->image) {
+            $clinic->image_url = asset('uploads/hospital/' . $clinic->image);
+        } else if ($clinic) {
+            $clinic->image_url = null;
+        }
         return response()->json(['status' => 200, 'data' => $clinic]);
     }
 
@@ -1270,15 +1275,25 @@ class DoctorMobileController extends Controller
     {
         $user = $request->auth_user;
         $data = [
-            'name'            => $request->name     ?? '',
+            'name'            => $request->name            ?? '',
             'registration_no' => $request->registration_no ?? '',
-            'phone_no'        => $request->phone_no ?? '',
-            'email'           => $request->email    ?? '',
-            'address'         => $request->address  ?? '',
-            'city'            => $request->city     ?? '',
-            'state'           => $request->state    ?? '',
-            'zip_code'        => $request->zip_code ?? '',
+            'phone_no'        => $request->phone_no        ?? '',
+            'email'           => $request->email           ?? '',
+            'address'         => $request->address         ?? '',
+            'city'            => $request->city            ?? '',
+            'state'           => $request->state           ?? '',
+            'zip_code'        => $request->zip_code        ?? '',
         ];
+
+        if ($request->hasFile('image')) {
+            $file     = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $dest     = public_path('uploads/hospital');
+            if (!is_dir($dest)) mkdir($dest, 0755, true);
+            $file->move($dest, $filename);
+            $data['image'] = $filename;
+        }
+
         $existing = DB::table('hospitals')->where('added_by', $user->id)->first();
         if ($existing) {
             DB::table('hospitals')->where('id', $existing->id)->update($data);
