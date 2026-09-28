@@ -1036,6 +1036,7 @@ class DoctorMobileController extends Controller
     /** POST /api/v1/doctor/my-doctors/save */
     public function saveMyDoctor(Request $request)
     {
+        try {
         $user = $request->auth_user;
         $request->validate([
             'name'     => 'required|string|max:255',
@@ -1097,6 +1098,9 @@ class DoctorMobileController extends Controller
         }
 
         return response()->json(['status' => 200, 'msg' => $msg, 'id' => $doctorId]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 500, 'msg' => $e->getMessage(), 'line' => $e->getLine(), 'file' => basename($e->getFile())], 500);
+        }
     }
 
     /** DELETE /api/v1/doctor/my-doctors/{id} */
