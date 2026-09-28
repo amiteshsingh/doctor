@@ -1263,7 +1263,7 @@ class DoctorMobileController extends Controller
         $clinic = DB::table('hospitals')->where('added_by', $user->id)->first();
         $imageUrl = null;
         if ($clinic && $clinic->image) {
-            $imageUrl = 'https://rogisewa.com/uploads/hospital/' . $clinic->image;
+            $imageUrl = 'https://rogisewa.com/public/uploads/hospital/' . $clinic->image;
         }
         return response()->json([
             'status'    => 200,
@@ -1311,7 +1311,7 @@ class DoctorMobileController extends Controller
             DB::table('hospitals')->insert($data);
         }
         $saved = DB::table('hospitals')->where('added_by', $user->id)->first();
-        $imageUrl = ($saved && $saved->image) ? 'https://rogisewa.com/uploads/hospital/' . $saved->image : null;
+        $imageUrl = ($saved && $saved->image) ? 'https://rogisewa.com/public/uploads/hospital/' . $saved->image : null;
         return response()->json(['status' => 200, 'msg' => 'Clinic saved successfully.', 'image_url' => $imageUrl]);
     }
 
