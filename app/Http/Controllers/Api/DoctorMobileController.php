@@ -1229,6 +1229,39 @@ class DoctorMobileController extends Controller
 
     // ─── DASHBOARD STATS ─────────────────────────────────────────────────────
 
+    /** GET /api/v1/doctor/clinic */
+    public function getClinic(Request $request)
+    {
+        $user    = $request->auth_user;
+        $clinic  = DB::table('hospitals')->where('added_by', $user->id)->first();
+        return response()->json(['status' => 200, 'data' => $clinic]);
+    }
+
+    /** POST /api/v1/doctor/clinic/save */
+    public function saveClinic(Request $request)
+    {
+        $user = $request->auth_user;
+        $data = [
+            'name'     => $request->name     ?? '',
+            'phone_no' => $request->phone_no ?? '',
+            'email'    => $request->email    ?? '',
+            'address'  => $request->address  ?? '',
+            'city'     => $request->city     ?? '',
+            'state'    => $request->state    ?? '',
+            'zip_code' => $request->zip_code ?? '',
+        ];
+        $existing = DB::table('hospitals')->where('added_by', $user->id)->first();
+        if ($existing) {
+            DB::table('hospitals')->where('id', $existing->id)->update($data);
+        } else {
+            $data['added_by']        = $user->id;
+            $data['status']          = 1;
+            $data['approval_status'] = 1;
+            DB::table('hospitals')->insert($data);
+        }
+        return response()->json(['status' => 200, 'msg' => 'Clinic saved successfully.']);
+    }
+
     /** GET /api/v1/doctor/dashboard */
     public function dashboard(Request $request)
     {

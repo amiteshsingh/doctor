@@ -142,6 +142,9 @@ Route::prefix('v1')->group(function () {
         Route::post('/booked-slots',             [DoctorMobileController::class, 'bookedSlots']);
         Route::post('/fcm-token',                [DoctorMobileController::class, 'saveFcmToken']);
 
+        Route::get('/clinic',                    [DoctorMobileController::class, 'getClinic']);
+        Route::post('/clinic/save',               [DoctorMobileController::class, 'saveClinic']);
+
         // My Doctors
         Route::get('/my-doctors',                    [DoctorMobileController::class, 'myDoctors']);
         Route::post('/my-doctors/save',              [DoctorMobileController::class, 'saveMyDoctor']);
