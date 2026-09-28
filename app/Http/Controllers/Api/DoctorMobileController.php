@@ -816,18 +816,22 @@ class DoctorMobileController extends Controller
         $doctor = DB::table('doctors')->where('id', $request->doctor_id)->where('added_by', $user->id)->first();
         if (!$doctor) return response()->json(['status' => 403, 'msg' => 'Unauthorized.'], 403);
 
-        $id = $request->doctor_id;
-        DB::table('doctor_educations')->where('doctor_id', $id)->delete();
-        DB::table('doctor_educations')->insert([
-            'doctor_id'        => $id,
-            'degree_type'      => $request->degree_type,
-            'institution_name' => '',
-            'graduation_year'  => null,
-            'details'          => $request->education_details ?? '',
-            'created_at'       => now(),
-            'updated_at'       => now(),
-        ]);
-        return response()->json(['status' => 200, 'msg' => 'Education saved.']);
+        try {
+            $id = $request->doctor_id;
+            DB::table('doctor_educations')->where('doctor_id', $id)->delete();
+            DB::table('doctor_educations')->insert([
+                'doctor_id'        => $id,
+                'degree_type'      => $request->degree_type,
+                'institution_name' => '',
+                'graduation_year'  => 0,
+                'details'          => $request->education_details ?? '',
+                'created_at'       => now(),
+                'updated_at'       => now(),
+            ]);
+            return response()->json(['status' => 200, 'msg' => 'Education saved.']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 500, 'msg' => $e->getMessage()], 500);
+        }
     }
 
     /** POST /api/v1/doctor/my-doctors/specializations */
