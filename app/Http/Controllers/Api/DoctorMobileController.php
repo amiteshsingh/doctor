@@ -1003,12 +1003,15 @@ class DoctorMobileController extends Controller
     /** GET /api/v1/doctor/my-doctors */
     public function myDoctors(Request $request)
     {
-        $user    = $request->auth_user;
+        $user      = $request->auth_user;
+        $mainDoc   = DB::table('doctors')->where('added_by', $user->id)->orderBy('id','asc')->value('id');
+
         $doctors = DB::table('doctors')
             ->leftJoin('doctor_locations', 'doctors.id', '=', 'doctor_locations.doctor_id')
             ->leftJoin('doctor_specializations', 'doctors.id', '=', 'doctor_specializations.doctor_id')
             ->leftJoin('specializations', 'doctor_specializations.specialization_id', '=', 'specializations.id')
             ->where('doctors.added_by', $user->id)
+            ->when($mainDoc, fn($q) => $q->where('doctors.id', '!=', $mainDoc))
             ->select(
                 'doctors.id', 'doctors.name', 'doctors.phone_no', 'doctors.email',
                 'doctors.gender', 'doctors.status', 'doctors.experience', 'doctors.profile_pic',
