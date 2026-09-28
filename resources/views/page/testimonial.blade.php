@@ -26,7 +26,7 @@
 
         <div class="text-center mx-auto mb-5" style="max-width:550px;">
             <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Testimonials</h5>
-            <h1 class="display-4">What Our Patients Say</h1>
+            <h1 class="display-4">What Our Doctors Say</h1>
         </div>
 
         @if($testimonials->count())
