@@ -162,7 +162,7 @@ class DoctorMobileController extends Controller
                 'email'         => $user->email,
                 'phone_no'      => $user->phone_no,
                 'profile_image' => $user->profile_image
-                    ? asset('uploads/profile_images/' . $user->profile_image)
+                    ? 'https://rogisewa.com/public/uploads/profile_images/' . $user->profile_image
                     : null,
             ],
             'doctor'      => $doctor,
@@ -298,7 +298,7 @@ class DoctorMobileController extends Controller
                 'country'       => $user->country,
                 'pin_code'      => $user->pin_code      ?: ($loc->zip_code ?? ''),
                 'profile_image' => $user->profile_image
-                    ? asset('uploads/profile_images/' . $user->profile_image)
+                    ? 'https://rogisewa.com/public/uploads/profile_images/' . $user->profile_image
                     : null,
             ],
             'doctor' => $doctor,
@@ -321,7 +321,7 @@ class DoctorMobileController extends Controller
             return response()->json([
                 'status' => 200,
                 'msg'    => 'Profile image updated successfully.',
-                'profile_image' => asset('uploads/profile_images/' . $filename),
+                'profile_image' => 'https://rogisewa.com/public/uploads/profile_images/' . $filename,
             ]);
         }
 
