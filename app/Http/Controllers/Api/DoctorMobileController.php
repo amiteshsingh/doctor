@@ -294,6 +294,7 @@ class DoctorMobileController extends Controller
         $doctor = Doctor::with(['availability','educations','languages.language','specializations.specialization','locations'])
                     ->where('added_by', $user->id)->first();
         $loc    = $doctor ? DB::table('doctor_locations')->where('doctor_id', $doctor->id)->first() : null;
+        $clinic = DB::table('hospitals')->where('added_by', $user->id)->first();
 
         return response()->json([
             'status' => 200,
@@ -313,6 +314,7 @@ class DoctorMobileController extends Controller
                     : null,
             ],
             'doctor' => $doctor,
+            'clinic' => $clinic ? ['name' => $clinic->name] : null,
         ]);
     }
 
@@ -1351,6 +1353,7 @@ class DoctorMobileController extends Controller
 
         $doctor = Doctor::where('added_by', $user->id)->first();
         $membership = UserDoctorRoleMembership::where('user_id', $user->id)->first();
+        $clinic  = DB::table('hospitals')->where('added_by', $user->id)->first();
 
         // Profile completeness check
         $doctorId           = $doctor?->id;
@@ -1387,6 +1390,7 @@ class DoctorMobileController extends Controller
                     'location'       => !$hasLocation,
                 ],
                 'doctor'             => $doctor,
+                'clinic'             => $clinic ? ['name' => $clinic->name] : null,
                 'is_verified'        => $doctor && $doctor->status == 1 && $doctor->approval_status == 1,
                 'permissions'        => [
                     'attendance_permission' => $membership ? (bool)$membership->attendance_permission : false,
