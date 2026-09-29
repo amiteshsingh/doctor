@@ -100,23 +100,11 @@ class DoctorMobileController extends Controller
             'email'     => $request->email,
             'password'  => Hash::make($request->password),
             'api_token' => $token,
+            'phone_no'  => $request->phone,
         ]);
 
         // Assign doctor role
         UserRole::create(['user_id' => $user->id, 'role' => 'doctor']);
-
-        // Create doctor profile
-        $doctor = Doctor::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'phone_no' => $request->phone,
-            'added_by' => $user->id,
-            'added_on' => now(),
-            'status'   => 1,
-            'approval_status' => 1,
-        ]);
-
-        $membership = \App\Models\UserDoctorRoleMembership::where('user_id', $user->id)->first();
 
         return response()->json([
             'status' => 200,
@@ -129,10 +117,10 @@ class DoctorMobileController extends Controller
                 'phone_no'      => $request->phone,
                 'profile_image' => null,
             ],
-            'doctor' => $doctor,
+            'doctor' => null,
             'permissions' => [
-                'attendance_permission' => $membership ? (bool)$membership->attendance_permission : false,
-                'invoice_permission'    => $membership ? (bool)$membership->invoice_permission    : false,
+                'attendance_permission' => false,
+                'invoice_permission'    => false,
             ],
         ]);
     }
@@ -162,7 +150,7 @@ class DoctorMobileController extends Controller
         $user->save();
 
         $doctor   = Doctor::where('added_by', $user->id)->first();
-        $membership = UserDoctorRoleMembership::where('user_id', $user->id)->first();
+        $membership = $doctor ? UserDoctorRoleMembership::where('user_id', $user->id)->first() : null;
 
         return response()->json([
             'status' => 200,
@@ -1275,7 +1263,7 @@ class DoctorMobileController extends Controller
         $doctor = DB::table('doctors')->where('added_by', $user->id)->first();
         $default = [
             'name'     => $clinic->name     ?? $user->name,
-            'phone_no' => $clinic->phone_no ?? $user->phone_no ?? $doctor->phone_no ?? '',
+            'phone_no' => $clinic->phone_no ?? $user->phone_no ?? ($doctor->phone_no ?? ''),
             'email'    => $clinic->email    ?? $user->email,
         ];
         return response()->json([
