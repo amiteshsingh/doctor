@@ -1355,7 +1355,9 @@ class DoctorMobileController extends Controller
         );
         $profileComplete    = $hasSpecialization && $hasLocation;
 
-        $bookingOpen = DB::table('invoice_master')
+        $hasDoctor = DB::table('doctors')->where('added_by', $user->id)->exists();
+
+        $bookingOpen = $hasDoctor && DB::table('invoice_master')
             ->where('added_by', $user->id)
             ->whereIn('booking_mode', ['ONLINE', 'BOTH'])
             ->exists();
@@ -1372,6 +1374,8 @@ class DoctorMobileController extends Controller
                 'total_staff'        => $totalStaff,
                 'booking_open'       => $bookingOpen,
                 'has_time_slot'      => $hasTimeSlot,
+                'has_doctor'         => $hasDoctor,
+                'has_clinic'         => $clinic ? true : false,
                 'profile_complete'   => $profileComplete,
                 'profile_missing'    => [
                     'specialization' => !$hasSpecialization,
