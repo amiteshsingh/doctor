@@ -1001,7 +1001,7 @@ class DoctorMobileController extends Controller
             ->leftJoin('doctor_specializations', 'doctors.id', '=', 'doctor_specializations.doctor_id')
             ->leftJoin('specializations', 'doctor_specializations.specialization_id', '=', 'specializations.id')
             ->where('doctors.added_by', $user->id)
-            ->when($mainDoc, fn($q) => $q->where('doctors.id', '!=', $mainDoc))
+            //->when($mainDoc, fn($q) => $q->where('doctors.id', '!=', $mainDoc))
             ->select(
                 'doctors.id', 'doctors.name', 'doctors.phone_no', 'doctors.email',
                 'doctors.gender', 'doctors.status', 'doctors.experience', 'doctors.profile_pic',
