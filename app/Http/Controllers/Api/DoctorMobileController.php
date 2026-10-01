@@ -1309,11 +1309,28 @@ class DoctorMobileController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            $file     = $request->file('image');
+
+            $file = $request->file('image');
+
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $dest     = public_path('uploads/hospital');
-            if (!is_dir($dest)) mkdir($dest, 0755, true);
-            $file->move($dest, $filename);
+
+            // 1. Save in storage/app/public/upload/hospital
+            $file->storeAs(
+                'upload/hospital',
+                $filename,
+                'public'
+            );
+
+            // 2. Save in public/uploads/hospital
+            $dest = public_path('uploads/hospital');
+
+            if (!is_dir($dest)) {
+                mkdir($dest, 0755, true);
+            }
+
+            // Re-save the uploaded file to second location
+            $file->copy($dest . '/' . $filename);
+
             $data['image'] = $filename;
         }
 
