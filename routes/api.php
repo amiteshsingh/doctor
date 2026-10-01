@@ -32,6 +32,7 @@ Route::prefix('v1')->group(function () {
 
     // Hospitals (public)
     Route::get('/hospitals',         [HospitalController::class, 'index']);
+    Route::get('/hospital-locations',[HospitalController::class, 'locations']);
     Route::get('/hospitals/{id}',    [HospitalController::class, 'show']);
 
     // Payment (public — settings fetch)
