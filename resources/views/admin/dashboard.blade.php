@@ -310,6 +310,68 @@
         </div>
     </div>
 
+    {{-- RECENT APPOINTMENTS (Last 2 Days) --}}
+    <div class="adm-card mt-2">
+        <div class="adm-card-head" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
+            <h6><i class="fa fa-calendar-check-o"></i> Recent Appointments <span style="font-size:11px;opacity:.7;font-weight:400;">(Last 2 Days)</span></h6>
+            <span style="background:rgba(255,255,255,.2);border-radius:20px;padding:2px 12px;font-size:12px;font-weight:700;">{{ $recentAppointments->count() }} Bookings</span>
+        </div>
+        <div class="adm-card-body" style="padding:0;">
+            <div class="table-responsive">
+                <table id="appointmentsTable" class="table table-hover mb-0" style="font-size:13px;">
+                    <thead style="background:#f8fbff;">
+                        <tr>
+                            <th style="padding:12px 16px;color:#555;font-weight:700;">#</th>
+                            <th style="padding:12px 16px;color:#555;font-weight:700;">User</th>
+                            <th style="padding:12px 16px;color:#555;font-weight:700;">Patient Name</th>
+                            <th style="padding:12px 16px;color:#555;font-weight:700;">Phone</th>
+                            <th style="padding:12px 16px;color:#555;font-weight:700;">Doctor</th>
+                            <th style="padding:12px 16px;color:#555;font-weight:700;">Clinic / Hospital</th>
+                            <th style="padding:12px 16px;color:#555;font-weight:700;">Booked At</th>
+                            <th style="padding:12px 16px;color:#555;font-weight:700;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($recentAppointments as $i => $appt)
+                        <tr>
+                            <td style="padding:11px 16px;color:#888;">{{ $i + 1 }}</td>
+                            <td style="padding:11px 16px;">
+                                @if($appt->user_name)
+                                    <div style="font-weight:700;color:#1a1a2e;">{{ $appt->user_name }}</div>
+                                    <div style="font-size:11px;color:#888;">{{ $appt->user_email }}</div>
+                                @else
+                                    <span style="color:#aaa;font-size:12px;">Guest</span>
+                                @endif
+                            </td>
+                            <td style="padding:11px 16px;font-weight:600;color:#333;">{{ $appt->patient_name ?? '-' }}</td>
+                            <td style="padding:11px 16px;color:#555;">{{ $appt->patient_phone_no ?? '-' }}</td>
+                            <td style="padding:11px 16px;">
+                                <span style="font-weight:700;color:#667eea;"><i class="fa fa-user-md mr-1"></i>{{ $appt->doctor_name }}</span>
+                            </td>
+                            <td style="padding:11px 16px;color:#555;">{{ $appt->hospital_clinic_name ?? '-' }}</td>
+                            <td style="padding:11px 16px;color:#555;white-space:nowrap;">{{ \Carbon\Carbon::parse($appt->booked_at)->format('d M Y, h:i A') }}</td>
+                            <td style="padding:11px 16px;">
+                                @php
+                                    $smap = ['active'=>['#e6fff5','#00b074','Active'],'cancelled'=>['#fff0f0','#ef4444','Cancelled'],'completed'=>['#eff6ff','#3b82f6','Completed']];
+                                    $sc = $smap[$appt->status] ?? ['#f3f4f6','#888',ucfirst($appt->status ?? 'N/A')];
+                                @endphp
+                                <span style="font-size:11px;padding:3px 10px;border-radius:10px;background:{{ $sc[0] }};color:{{ $sc[1] }};font-weight:700;">{{ $sc[2] }}</span>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center py-4" style="color:#aaa;font-size:13px;">
+                                <i class="fa fa-calendar-o" style="font-size:28px;display:block;margin-bottom:8px;"></i>
+                                No appointments in the last 2 days.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 </div>
 
@@ -325,6 +387,15 @@ document.querySelectorAll('.stat-num').forEach(function(el) {
         if (current >= target) clearInterval(timer);
     }, 16);
 });
+
+// DataTable
+if (typeof $.fn.DataTable !== 'undefined') {
+    $('#appointmentsTable').DataTable({
+        order: [[6, 'desc']],
+        pageLength: 10,
+        language: { search: 'Search:', lengthMenu: 'Show _MENU_ entries' }
+    });
+}
 </script>
 
 @endsection

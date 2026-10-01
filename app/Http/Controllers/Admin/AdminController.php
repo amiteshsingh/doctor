@@ -50,10 +50,30 @@ class AdminController extends Controller
 			->orderByDesc('users.last_seen')
 			->get();
 
+		$recentAppointments = DB::table('prescription_invoice')
+			->join('invoice_master', 'prescription_invoice.invoice_master_id', '=', 'invoice_master.id')
+			->join('doctors', 'invoice_master.doctor_id', '=', 'doctors.id')
+			->leftJoin('users', 'prescription_invoice.user_id', '=', 'users.id')
+			->where('prescription_invoice.created_at', '>=', now()->subDays(2)->startOfDay())
+			->select(
+				'prescription_invoice.id',
+				'prescription_invoice.patient_name',
+				'prescription_invoice.patient_phone_no',
+				'prescription_invoice.created_at as booked_at',
+				'prescription_invoice.status',
+				'users.name as user_name',
+				'users.email as user_email',
+				'doctors.name as doctor_name',
+				'invoice_master.hospital_clinic_name'
+			)
+			->orderByDesc('prescription_invoice.created_at')
+			->get();
+
 		return view('admin.dashboard', compact(
 			'totalDoctors','totalHospitals','totalUsers',
 			'totalSpecializations','recentDoctors','recentUsers',
-			'activeMemberships','onlineDoctors','onlineDoctorsList'
+			'activeMemberships','onlineDoctors','onlineDoctorsList',
+			'recentAppointments'
 		));
 	}
 
