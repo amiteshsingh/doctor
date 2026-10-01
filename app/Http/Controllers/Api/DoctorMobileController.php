@@ -176,12 +176,15 @@ class DoctorMobileController extends Controller
     /** GET /api/v1/states */
     public function states()
     {
-        $states = DB::table('states')->orderBy('name')->select('id', 'name')->get();
-        // fallback if states table doesn't exist
-        if ($states->isEmpty()) {
-            $map = [1=>'Andhra Pradesh',2=>'Arunachal Pradesh',3=>'Assam',4=>'Bihar',5=>'Chhattisgarh',6=>'Goa',7=>'Gujarat',8=>'Haryana',9=>'Himachal Pradesh',10=>'Jharkhand',11=>'Karnataka',12=>'Kerala',13=>'Madhya Pradesh',14=>'Maharashtra',15=>'Manipur',16=>'Meghalaya',17=>'Mizoram',18=>'Nagaland',19=>'Odisha',20=>'Punjab',21=>'Rajasthan',22=>'Sikkim',23=>'Tamil Nadu',24=>'Telangana',25=>'Tripura',26=>'Uttar Pradesh',27=>'Uttarakhand',28=>'West Bengal',29=>'Andaman and Nicobar Islands',30=>'Chandigarh',31=>'Dadra and Nagar Haveli and Daman and Diu',32=>'Delhi',33=>'Jammu and Kashmir',34=>'Ladakh',35=>'Lakshadweep',36=>'Puducherry'];
-            $states = collect($map)->map(fn($name, $id) => (object)['id' => $id, 'name' => $name])->values();
+        $stateMap = [1=>'Andhra Pradesh',2=>'Arunachal Pradesh',3=>'Assam',4=>'Bihar',5=>'Chhattisgarh',6=>'Goa',7=>'Gujarat',8=>'Haryana',9=>'Himachal Pradesh',10=>'Jharkhand',11=>'Karnataka',12=>'Kerala',13=>'Madhya Pradesh',14=>'Maharashtra',15=>'Manipur',16=>'Meghalaya',17=>'Mizoram',18=>'Nagaland',19=>'Odisha',20=>'Punjab',21=>'Rajasthan',22=>'Sikkim',23=>'Tamil Nadu',24=>'Telangana',25=>'Tripura',26=>'Uttar Pradesh',27=>'Uttarakhand',28=>'West Bengal',29=>'Andaman and Nicobar Islands',30=>'Chandigarh',31=>'Dadra and Nagar Haveli and Daman and Diu',32=>'Delhi',33=>'Jammu and Kashmir',34=>'Ladakh',35=>'Lakshadweep',36=>'Puducherry'];
+
+        try {
+            $states = DB::table('states')->orderBy('name')->select('id', 'name')->get();
+            if ($states->isEmpty()) throw new \Exception('empty');
+        } catch (\Exception $e) {
+            $states = collect($stateMap)->map(fn($name, $id) => ['id' => $id, 'name' => $name])->values();
         }
+
         return response()->json(['status' => 200, 'data' => $states]);
     }
 
