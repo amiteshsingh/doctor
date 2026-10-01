@@ -1315,10 +1315,9 @@ class DoctorMobileController extends Controller
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             // 1. Save in storage/app/public/upload/hospital
-            $file->storeAs(
-                'upload/hospital',
-                $filename,
-                'public'
+            Storage::disk('public')->put(
+                'upload/hospital/' . $filename,
+                file_get_contents($file->getRealPath())
             );
 
             // 2. Save in public/uploads/hospital
@@ -1328,8 +1327,10 @@ class DoctorMobileController extends Controller
                 mkdir($dest, 0755, true);
             }
 
-            // Re-save the uploaded file to second location
-            $file->copy($dest . '/' . $filename);
+            file_put_contents(
+                $dest . '/' . $filename,
+                file_get_contents($file->getRealPath())
+            );
 
             $data['image'] = $filename;
         }
