@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Doctor;
 use App\Models\User;
 use App\Models\UserRole;
 use App\Models\UserDoctorRoleMembership;
@@ -82,19 +81,6 @@ class RegisterController extends Controller
             'user_id' => $user->id,
             'role' => 'doctor',
         ]);
-
-        // Save in doctors table
-        try {
-            Doctor::create([
-                'name'     => $data['name'],
-                'email'    => $data['email'],
-                'phone_no' => $data['phone'] ?? '',
-                'added_by' => $user->id,
-                'added_on' => now(),
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Doctor create failed: ' . $e->getMessage());
-        }
 
         UserDoctorRoleMembership::create([
             'user_id'                        => $user->id,
