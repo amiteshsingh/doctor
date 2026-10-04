@@ -174,6 +174,11 @@ textarea.dform-control { resize:vertical; min-height:80px; }
                     <i class="fa fa-image"></i> Gallery
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#tab6" data-toggle="tab">
+                    <i class="fa fa-android"></i> App Guide
+                </a>
+            </li>
             @endif
         </ul>
 
@@ -491,6 +496,292 @@ textarea.dform-control { resize:vertical; min-height:80px; }
                     'imagesRoute' => route('doctor.gallery.images'),
                 ])
             </div>
+
+            {{-- ══ TAB 6: App Guide ══ --}}
+            <div class="tab-pane" id="tab6">
+
+                <div class="sec-head">
+                    <div class="sec-icon" style="background:linear-gradient(135deg,#00b074,#38f9d7);"><i class="fa fa-android"></i></div>
+                    RogiSewa Doctor App — Complete Guide
+                </div>
+
+                {{-- Download Banner --}}
+                <div style="background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+                    <div>
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+                            <div style="width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#00b074,#38f9d7);display:flex;align-items:center;justify-content:center;font-size:26px;">
+                                <i class="fa fa-user-md" style="color:#fff;"></i>
+                            </div>
+                            <div>
+                                <div style="color:#fff;font-size:18px;font-weight:700;">RogiSewa Doctor App</div>
+                                <div style="color:rgba(255,255,255,.6);font-size:13px;">Doctors & Clinics ke liye — Free App</div>
+                            </div>
+                        </div>
+                        <p style="color:rgba(255,255,255,.75);font-size:13px;margin:0;max-width:480px;">
+                            Apni clinic manage karein, appointments track karein, prescription invoice generate karein — sab kuch ek hi app mein. Bilkul FREE!
+                        </p>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+                       style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border-radius:12px;padding:12px 24px;text-decoration:none;font-size:14px;font-weight:700;box-shadow:0 4px 16px rgba(0,176,116,.4);transition:transform .2s,box-shadow .2s;"
+                       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,176,116,.5)'"
+                       onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,176,116,.4)'">
+                        <i class="fa fa-android" style="font-size:20px;"></i>
+                        Download on Google Play
+                    </a>
+                </div>
+
+                <div class="row g-3">
+
+                    {{-- Features --}}
+                    <div class="col-lg-6">
+                        <div style="background:#f8fbff;border:1.5px solid #e2e8f0;border-radius:12px;padding:20px;height:100%;">
+                            <div style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+                                <span style="background:linear-gradient(135deg,#0a6ebd,#4da6ff);color:#fff;border-radius:8px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;"><i class="fa fa-star"></i></span>
+                                App Features / मुख्य विशेषताएँ
+                            </div>
+                            @php
+                            $features = [
+                                ['fa-id-card',          '#667eea', 'Doctor Profile Listing',       'डॉक्टर प्रोफ़ाइल लिस्टिंग'],
+                                ['fa-hospital-o',       '#f5576c', 'Hospital / Clinic Management',  'हॉस्पिटल / क्लिनिक मैनेजमेंट'],
+                                ['fa-calendar-check-o', '#4facfe', 'Appointment Management',        'अपॉइंटमेंट मैनेजमेंट'],
+                                ['fa-file-text',        '#f59e0b', 'Prescription Invoice (Free)',    'प्रिस्क्रिप्शन इनवॉइस (फ्री)'],
+                                ['fa-medkit',           '#00b074', 'Medicine Management',           'दवाई मैनेजमेंट'],
+                                ['fa-users',            '#a18cd1', 'Staff & Attendance Tracking',   'स्टाफ व अटेंडेंस ट्रैकिंग'],
+                                ['fa-bell',             '#e91e8c', 'Booking Reminders',             'बुकिंग रिमाइंडर'],
+                                ['fa-bar-chart',        '#10b981', 'Reports & Analytics',           'रिपोर्ट्स और एनालिटिक्स'],
+                            ];
+                            @endphp
+                            @foreach($features as $f)
+                            <div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+                                <div style="width:34px;height:34px;border-radius:8px;background:{{ $f[1] }}22;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fa {{ $f[0] }}" style="color:{{ $f[1] }};font-size:14px;"></i>
+                                </div>
+                                <div style="flex:1;">
+                                    <div style="font-size:13px;font-weight:600;color:#1a1a2e;">{{ $f[2] }}</div>
+                                    <div style="font-size:11px;color:#888;">{{ $f[3] }}</div>
+                                </div>
+                                <i class="fa fa-check-circle" style="color:#00b074;font-size:14px;"></i>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- How to Use Steps --}}
+                    <div class="col-lg-6">
+                        <div style="background:#f8fbff;border:1.5px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:16px;">
+                            <div style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+                                <span style="background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border-radius:8px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;"><i class="fa fa-list-ol"></i></span>
+                                How to Use / कैसे उपयोग करें
+                            </div>
+                            @php
+                            $steps = [
+                                ['Download & install from Google Play',          'Google Play से डाउनलोड करें',              '#0a6ebd'],
+                                ['Login with your registered email',              'अपने ईमेल से लॉगिन करें',                  '#e91e8c'],
+                                ['Complete your Doctor Profile',                  'डॉक्टर प्रोफ़ाइल पूरी करें',               '#f59e0b'],
+                                ['Add your Hospital / Clinic details',            'हॉस्पिटल / क्लिनिक जोड़ें',               '#00b074'],
+                                ['Set your weekly availability & time slots',     'अपनी उपलब्धता सेट करें',                  '#7c3aed'],
+                                ['Manage appointments & create invoices',         'अपॉइंटमेंट व इनवॉइस मैनेज करें',          '#10b981'],
+                                ['Track staff attendance & manage medicines',     'स्टाफ अटेंडेंस व दवाई मैनेज करें',        '#f5576c'],
+                            ];
+                            @endphp
+                            @foreach($steps as $i => $step)
+                            <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+                                <span style="width:26px;height:26px;border-radius:50%;background:{{ $step[2] }};color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">{{ $i+1 }}</span>
+                                <div>
+                                    <div style="font-size:13px;font-weight:600;color:#1a1a2e;">{{ $step[0] }}</div>
+                                    <div style="font-size:11px;color:#888;">{{ $step[1] }}</div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+
+                        {{-- Why use --}}
+                        <div style="background:#f8fbff;border:1.5px solid #e2e8f0;border-radius:12px;padding:20px;">
+                            <div style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+                                <span style="background:linear-gradient(135deg,#e91e8c,#f59e0b);color:#fff;border-radius:8px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;"><i class="fa fa-thumbs-up"></i></span>
+                                Why Use This App?
+                            </div>
+                            @foreach([
+                                ['🆓', '#00b074', 'Completely Free',          'Koi hidden charge nahi'],
+                                ['📱', '#0a6ebd', 'Easy to Use',              'Simple aur fast interface'],
+                                ['🔔', '#f59e0b', 'Smart Reminders',          'Booking alerts & notifications'],
+                                ['📄', '#7c3aed', 'PDF Prescription (Only use in Website)',         'Professional invoice PDF generate karein'],
+                                ['🌐', '#e91e8c', 'Online Visibility',        'Patients aapko RogiSewa par dhundh sakte hain'],
+                            ] as $w)
+                            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:9px 12px;margin-bottom:8px;">
+                                <span style="font-size:18px;">{{ $w[0] }}</span>
+                                <div>
+                                    <div style="font-size:13px;font-weight:600;color:{{ $w[1] }};">{{ $w[2] }}</div>
+                                    <div style="font-size:11px;color:#888;">{{ $w[3] }}</div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                </div>{{-- row --}}
+
+                {{-- ══ APPOINTMENT BOOKING INFO ══ --}}
+                <div style="margin-top:24px;">
+
+                    {{-- Section heading --}}
+                    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid #f0f4ff;padding-bottom:10px;margin-bottom:20px;">
+                        <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#e91e8c,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;">
+                            <i class="fa fa-calendar-check-o"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:14px;font-weight:700;color:#1a1a2e;">Appointment Booking — How It Works</div>
+                            <div style="font-size:12px;color:#888;">अपॉइंटमेंट बुकिंग — यह कैसे काम करता है</div>
+                        </div>
+                    </div>
+
+                    {{-- Alert info box --}}
+                    <div style="background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1.5px solid #f59e0b;border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;gap:14px;align-items:flex-start;">
+                        <div style="font-size:26px;flex-shrink:0;">📲</div>
+                        <div>
+                            <div style="font-size:14px;font-weight:700;color:#92400e;margin-bottom:4px;">
+                                Appointment booking ke liye RogiSewa Patient App zaroori hai!
+                            </div>
+                            <div style="font-size:13px;color:#78350f;line-height:1.7;">
+                                <strong>English:</strong> Patients book appointments through the <strong>RogiSewa Patient App</strong>. Once a patient books, the appointment automatically appears in your <strong>RogiSewa Doctor App</strong>. To receive and manage bookings, you must have the Doctor App installed and your profile must be active.
+                            </div>
+                            <div style="font-size:13px;color:#78350f;line-height:1.7;margin-top:6px;">
+                                <strong>Hindi:</strong> मरीज़ <strong>RogiSewa Patient App</strong> से अपॉइंटमेंट बुक करते हैं। जैसे ही मरीज़ बुकिंग करता है, वह अपॉइंटमेंट आपके <strong>RogiSewa Doctor App</strong> में अपने आप दिखने लगती है। बुकिंग पाने के लिए Doctor App इंस्टॉल होना और आपकी प्रोफ़ाइल Active होनी चाहिए।
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+
+                        {{-- Patient side --}}
+                        <div class="col-md-6">
+                            <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:12px;padding:18px;height:100%;">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                                    <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1a73e8,#0d47a1);display:flex;align-items:center;justify-content:center;">
+                                        <i class="fa fa-heartbeat" style="color:#fff;font-size:16px;"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:13px;font-weight:700;color:#1a1a2e;">Patient Side — RogiSewa Patient App</div>
+                                        <div style="font-size:11px;color:#888;">मरीज़ की तरफ से — Patient App</div>
+                                    </div>
+                                </div>
+                                @php
+                                $patientSteps = [
+                                    ['📥', '#1a73e8', 'Patient downloads RogiSewa Patient App',                    'मरीज़ RogiSewa Patient App डाउनलोड करता है'],
+                                    ['🔍', '#00b074', 'Searches for doctor by name, specialization or city',       'नाम, स्पेशलाइज़ेशन या शहर से डॉक्टर खोजता है'],
+                                    ['👤', '#7c3aed', 'Opens your doctor profile',                                 'आपकी डॉक्टर प्रोफ़ाइल खोलता है'],
+                                    ['📅', '#f59e0b', 'Selects available date & time slot',                       'उपलब्ध तारीख और टाइम स्लॉट चुनता है'],
+                                    ['✅', '#10b981', 'Confirms the appointment booking',                          'अपॉइंटमेंट बुकिंग कन्फ़र्म करता है'],
+                                    ['🔔', '#e91e8c', 'Patient receives booking confirmation notification',        'मरीज़ को बुकिंग कन्फ़र्मेशन नोटिफ़िकेशन मिलती है'],
+                                ];
+                                @endphp
+                                @foreach($patientSteps as $i => $s)
+                                <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;background:#fff;border:1px solid #d1fae5;border-radius:8px;padding:9px 12px;">
+                                    <span style="font-size:16px;flex-shrink:0;">{{ $s[0] }}</span>
+                                    <div>
+                                        <div style="font-size:12px;font-weight:600;color:#1a1a2e;">{{ $s[2] }}</div>
+                                        <div style="font-size:11px;color:#666;">{{ $s[3] }}</div>
+                                    </div>
+                                </div>
+                                @endforeach
+                                {{-- Patient app download --}}
+                                <a href="https://play.google.com/store/apps/details?id=com.rogisewa" target="_blank"
+                                   style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;border-radius:8px;padding:10px;text-decoration:none;font-size:13px;font-weight:700;margin-top:12px;">
+                                    <i class="fa fa-android" style="font-size:16px;"></i>
+                                    Patient App — Google Play
+                                </a>
+                            </div>
+                        </div>
+
+                        {{-- Doctor side --}}
+                        <div class="col-md-6">
+                            <div style="background:#f0f7ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:18px;height:100%;">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                                    <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#00b074,#38f9d7);display:flex;align-items:center;justify-content:center;">
+                                        <i class="fa fa-user-md" style="color:#fff;font-size:16px;"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:13px;font-weight:700;color:#1a1a2e;">Doctor Side — RogiSewa Doctor App</div>
+                                        <div style="font-size:11px;color:#888;">डॉक्टर की तरफ से — Doctor App</div>
+                                    </div>
+                                </div>
+                                @php
+                                $doctorSteps = [
+                                    ['📲', '#00b074', 'Doctor App install karo aur login karo',                   'Doctor App इंस्टॉल करें और लॉगिन करें'],
+                                    ['✅', '#0a6ebd', 'Profile Active rakho taaki patients book kar sakein',      'प्रोफ़ाइल Active रखें ताकि मरीज़ बुक कर सकें'],
+                                    ['🔔', '#e91e8c', 'New booking aane par instant notification milti hai',      'नई बुकिंग आने पर तुरंत नोटिफ़िकेशन मिलती है'],
+                                    ['📋', '#7c3aed', 'App mein Appointments section mein booking dikhai deti hai','App के Appointments सेक्शन में बुकिंग दिखती है'],
+                                    ['👁️', '#f59e0b', 'Patient ka naam, date, time aur details dekho',            'मरीज़ का नाम, तारीख, समय और विवरण देखें'],
+                                    ['📄', '#10b981', 'Prescription invoice generate karo — bilkul FREE',         'प्रिस्क्रिप्शन इनवॉइस बनाएं — बिल्कुल FREE'],
+                                ];
+                                @endphp
+                                @foreach($doctorSteps as $i => $s)
+                                <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;background:#fff;border:1px solid #dbeafe;border-radius:8px;padding:9px 12px;">
+                                    <span style="font-size:16px;flex-shrink:0;">{{ $s[0] }}</span>
+                                    <div>
+                                        <div style="font-size:12px;font-weight:600;color:#1a1a2e;">{{ $s[2] }}</div>
+                                        <div style="font-size:11px;color:#666;">{{ $s[3] }}</div>
+                                    </div>
+                                </div>
+                                @endforeach
+                                {{-- Doctor app download --}}
+                                <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+                                   style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border-radius:8px;padding:10px;text-decoration:none;font-size:13px;font-weight:700;margin-top:12px;">
+                                    <i class="fa fa-android" style="font-size:16px;"></i>
+                                    Doctor App — Google Play
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>{{-- row --}}
+
+                    {{-- Flow diagram --}}
+                    <div style="margin-top:20px;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:20px;">
+                        <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:16px;text-align:center;">
+                            📊 Booking Flow — बुकिंग का पूरा प्रवाह
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;">
+                            @php
+                            $flow = [
+                                ['#1a73e8', '📱', 'Patient App',       'मरीज़ App'],
+                                ['#f59e0b', '🔍', 'Doctor Search',     'डॉक्टर खोजें'],
+                                ['#7c3aed', '📅', 'Select Slot',       'स्लॉट चुनें'],
+                                ['#10b981', '✅', 'Book Confirm',      'बुकिंग कन्फ़र्म'],
+                                ['#e91e8c', '🔔', 'Notification',      'नोटिफ़िकेशन'],
+                                ['#00b074', '📋', 'Doctor App',        'Doctor App में दिखे'],
+                            ];
+                            @endphp
+                            @foreach($flow as $i => $f)
+                                <div style="text-align:center;">
+                                    <div style="background:{{ $f[0] }}15;border:2px solid {{ $f[0] }};border-radius:10px;padding:10px 14px;min-width:80px;">
+                                        <div style="font-size:20px;">{{ $f[1] }}</div>
+                                        <div style="font-size:11px;font-weight:700;color:{{ $f[0] }};margin-top:4px;">{{ $f[2] }}</div>
+                                        <div style="font-size:10px;color:#888;">{{ $f[3] }}</div>
+                                    </div>
+                                </div>
+                                @if($i < count($flow)-1)
+                                <div style="font-size:18px;color:#cbd5e1;font-weight:700;">→</div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+
+                </div>{{-- appointment section --}}
+
+                {{-- Bottom CTA --}}
+                <div style="margin-top:20px;background:linear-gradient(135deg,#00b074,#0a6ebd);border-radius:12px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                    <div>
+                        <div style="color:#fff;font-size:15px;font-weight:700;">📲 Abhi Download Karein — It's FREE!</div>
+                        <div style="color:rgba(255,255,255,.8);font-size:12px;margin-top:4px;">Package: <code style="background:rgba(255,255,255,.15);padding:2px 8px;border-radius:4px;color:#fff;">com.rogisewadr</code></div>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+                       style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:#00b074;border-radius:10px;padding:10px 22px;text-decoration:none;font-size:14px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.15);">
+                        <i class="fa fa-android" style="font-size:18px;"></i>
+                        Get it on Google Play
+                    </a>
+                </div>
+
+            </div>{{-- tab6 --}}
 
             @endif
 
