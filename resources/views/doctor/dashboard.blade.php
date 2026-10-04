@@ -122,10 +122,21 @@
             <h4 class="mb-0 fw-bold" style="color:#2d3748;">Dashboard</h4>
             <small class="text-muted">Welcome back, <strong>{{ Auth::user()->name }}</strong> 👋 &nbsp;|&nbsp; {{ now()->format('l, d M Y') }}</small>
         </div>
-        <button class="btn btn-sm" data-toggle="modal" data-target="#noteModal"
-            style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px;border:none;">
-            <i class="fa fa-bell mr-1"></i> Important Note
-        </button>
+        <div class="d-flex" style="gap:8px;flex-wrap:wrap;">
+            <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+               class="btn btn-sm d-flex align-items-center"
+               style="background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border-radius:10px;border:none;font-weight:700;">
+                <i class="fa fa-android mr-1" style="font-size:16px;"></i> RogiSewa Doctor App
+            </a>
+            <button class="btn btn-sm" data-toggle="modal" data-target="#appInfoModal"
+                style="background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#fff;border-radius:10px;border:none;font-weight:700;">
+                <i class="fa fa-question-circle mr-1"></i> App Guide
+            </button>
+            <button class="btn btn-sm" data-toggle="modal" data-target="#noteModal"
+                style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px;border:none;">
+                <i class="fa fa-bell mr-1"></i> Important Note
+            </button>
+        </div>
     </div>
 
     {{-- Profile Incomplete Banner --}}
@@ -466,6 +477,137 @@
     </div>
 
 </div>
+</div>
+
+<!-- App Info Modal -->
+<div class="modal fade" id="appInfoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header" style="background:linear-gradient(135deg,#00b074,#38f9d7);border-radius:16px 16px 0 0;">
+                <h5 class="modal-title text-white"><i class="fa fa-android mr-2"></i>RogiSewa Doctor App — How to Use / कैसे उपयोग करें</h5>
+                <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body p-4" style="max-height:75vh;overflow-y:auto;">
+
+                <div style="background:linear-gradient(135deg,#e6fff5,#f0fff8);border:2px solid #b3f0d8;border-radius:14px;padding:18px 20px;margin-bottom:20px;text-align:center;">
+                    <div style="font-size:36px;margin-bottom:8px;">📱</div>
+                    <div style="font-size:16px;font-weight:800;color:#1a1a2e;">RogiSewa Doctor App</div>
+                    <div style="font-size:13px;color:#555;margin:4px 0 2px;">
+                        <strong>EN:</strong> Patients can easily find and connect with you — Available on Google Play<br>
+                        <strong>HI:</strong> मरीज़ आसानी से आपको ढूंढ सकते हैं — Google Play पर उपलब्ध
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+                       style="display:inline-block;background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border-radius:10px;padding:10px 24px;font-weight:700;font-size:13px;text-decoration:none;margin-top:12px;">
+                        <i class="fa fa-android mr-1"></i> Download on Google Play
+                    </a>
+                </div>
+
+                <h6 style="font-weight:700;color:#1a1a2e;margin-bottom:14px;">📋 Step-by-Step Guide / चरण-दर-चरण गाइड</h6>
+
+                <div style="display:flex;flex-direction:column;gap:12px;">
+
+                    @php
+                    $appSteps = [
+                        [
+                            'step'=>'1','icon'=>'fa-download','color'=>'#667eea',
+                            'en_title'=>'Download the App',
+                            'en_desc'=>'Download "RogiSewa" app from Google Play Store and install it on your phone.',
+                            'hi_title'=>'ऐप डाउनलोड करें',
+                            'hi_desc'=>'Google Play Store से "RogiSewa" ऐप डाउनलोड करें और अपने फोन में इंस्टॉल करें।',
+                        ],
+                        [
+                            'step'=>'2','icon'=>'fa-sign-in','color'=>'#f5576c',
+                            'en_title'=>'Login to Your Account',
+                            'en_desc'=>'Open the app and login using your registered email and password.',
+                            'hi_title'=>'अपने अकाउंट में लॉगिन करें',
+                            'hi_desc'=>'ऐप खोलें और अपने रजिस्टर्ड ईमेल और पासवर्ड से लॉगिन करें।',
+                        ],
+                        [
+                            'step'=>'3','icon'=>'fa-id-card','color'=>'#00b074',
+                            'en_title'=>'Complete Your Doctor Profile',
+                            'en_desc'=>'Fill in your photo, specialization, consultation fees, and timings so patients can find you easily.',
+                            'hi_title'=>'डॉक्टर प्रोफ़ाइल पूरी करें',
+                            'hi_desc'=>'अपनी फोटो, स्पेशलाइज़ेशन, फीस और समय भरें ताकि मरीज़ आपको आसानी से ढूंढ सकें।',
+                        ],
+                        [
+                            'step'=>'4','icon'=>'fa-hospital-o','color'=>'#f59e0b',
+                            'en_title'=>'Add Your Hospital / Clinic',
+                            'en_desc'=>'Add the hospital or clinic where you practice — name, address, and visiting timings.',
+                            'hi_title'=>'अस्पताल / क्लिनिक जोड़ें',
+                            'hi_desc'=>'जिस अस्पताल या क्लिनिक में आप प्रैक्टिस करते हैं उसका नाम, पता और समय जोड़ें।',
+                        ],
+                        [
+                            'step'=>'5','icon'=>'fa-calendar-check-o','color'=>'#4facfe',
+                            'en_title'=>'View & Manage Appointments',
+                            'en_desc'=>'See patient appointments in real-time and manage them directly from the app.',
+                            'hi_title'=>'अपॉइंटमेंट देखें और मैनेज करें',
+                            'hi_desc'=>'मरीज़ों की अपॉइंटमेंट रियल-टाइम में देखें और ऐप से सीधे मैनेज करें।',
+                        ],
+                        [
+                            'step'=>'6','icon'=>'fa-file-text','color'=>'#a18cd1',
+                            'en_title'=>'Create Prescription Invoice',
+                            'en_desc'=>'Enter patient name, medicines, and fees — generate a PDF invoice and share it instantly.',
+                            'hi_title'=>'प्रिस्क्रिप्शन इनवॉइस बनाएं',
+                            'hi_desc'=>'मरीज़ का नाम, दवाइयां और फीस डालें — PDF इनवॉइस बनाएं और तुरंत शेयर करें।',
+                        ],
+                        [
+                            'step'=>'7','icon'=>'fa-users','color'=>'#fa709a',
+                            'en_title'=>'Manage Your Staff',
+                            'en_desc'=>'Add clinic staff, mark their attendance, and view attendance reports anytime.',
+                            'hi_title'=>'स्टाफ मैनेज करें',
+                            'hi_desc'=>'क्लिनिक स्टाफ को जोड़ें, उनकी अटेंडेंस मार्क करें और रिपोर्ट कभी भी देखें।',
+                        ],
+                    ];
+                    @endphp
+
+                    @foreach($appSteps as $s)
+                    <div style="background:#f8fbff;border-radius:12px;padding:14px 16px;border-left:4px solid {{ $s['color'] }};">
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+                            <div style="min-width:36px;height:36px;border-radius:50%;background:{{ $s['color'] }};display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;">
+                                <i class="fa {{ $s['icon'] }}"></i>
+                            </div>
+                            <div style="font-weight:800;font-size:13px;color:#1a1a2e;">Step {{ $s['step'] }}</div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                            <div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #e2e8f0;">
+                                <div style="font-size:10px;font-weight:700;color:#667eea;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">🇬🇧 English</div>
+                                <div style="font-weight:700;font-size:12px;color:#1a1a2e;">{{ $s['en_title'] }}</div>
+                                <div style="font-size:11px;color:#666;margin-top:3px;">{{ $s['en_desc'] }}</div>
+                            </div>
+                            <div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #e2e8f0;">
+                                <div style="font-size:10px;font-weight:700;color:#f5576c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">🇮🇳 हिंदी</div>
+                                <div style="font-weight:700;font-size:12px;color:#1a1a2e;">{{ $s['hi_title'] }}</div>
+                                <div style="font-size:11px;color:#666;margin-top:3px;">{{ $s['hi_desc'] }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+
+                <div style="background:#fff8e6;border:1.5px solid #fde68a;border-radius:10px;padding:14px 16px;margin-top:18px;font-size:13px;color:#555;">
+                    <div style="font-weight:700;color:#1a1a2e;margin-bottom:6px;"><i class="fa fa-phone" style="color:#00b074;"></i> Need Help? / मदद चाहिए?</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <a href="tel:+918002229525" style="background:#00b074;color:#fff;border-radius:8px;padding:6px 14px;font-weight:700;font-size:12px;text-decoration:none;">
+                            <i class="fa fa-phone mr-1"></i> +91 8002229525
+                        </a>
+                        <a href="https://wa.me/918002229525" target="_blank" style="background:#25d366;color:#fff;border-radius:8px;padding:6px 14px;font-weight:700;font-size:12px;text-decoration:none;">
+                            <i class="fa fa-whatsapp mr-1"></i> WhatsApp
+                        </a>
+                        <a href="mailto:rogisewa25@gmail.com" style="background:#667eea;color:#fff;border-radius:8px;padding:6px 14px;font-weight:700;font-size:12px;text-decoration:none;">
+                            <i class="fa fa-envelope mr-1"></i> Email
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+                   class="btn" style="background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;font-weight:700;">
+                    <i class="fa fa-android mr-1"></i> Download App
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Note Modal -->
