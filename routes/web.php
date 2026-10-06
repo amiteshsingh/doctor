@@ -166,6 +166,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/testimonials/toggle/{id}',  [\App\Http\Controllers\Admin\TestimonialController::class, 'toggle'])->name('admin.testimonial.toggle');
     Route::delete('/testimonials/{id}',      [\App\Http\Controllers\Admin\TestimonialController::class, 'destroy'])->name('admin.testimonial.destroy');
 
+    // Profile
+    Route::get('/edit-profile',    [AdminController::class, 'editProfile'])->name('admin.edit-profile');
+    Route::post('/update-profile', [AdminController::class, 'updateProfile'])->name('admin.update-profile');
+
     // Gallery Routes
     Route::post('/gallery/upload',  [\App\Http\Controllers\Admin\GalleryController::class, 'upload'])->name('gallery.upload');
     Route::post('/gallery/delete',  [\App\Http\Controllers\Admin\GalleryController::class, 'delete'])->name('gallery.delete');

@@ -45,6 +45,9 @@
                         <li class="{{ request()->routeIs('admin.testimonial.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.testimonial.index') }}"><i class="fa fa-comments"></i> <span>Testimonials</span></a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.edit-profile') ? 'active' : '' }}">
+                            <a href="{{ route('admin.edit-profile') }}"><i class="fa fa-user-circle"></i> <span>Edit Profile</span></a>
+                        </li>
                     </ul>
                 </div>
             </div>
