@@ -583,7 +583,7 @@
                         <img class="w-100 h-100"
                              src="{{ $doctor->profile_pic ? asset('storage/upload/doctor/'.$doctor->profile_pic) : asset('storage/upload/doctor/user.jpg') }}"
                              alt="Dr. {{ $practiceName }}"
-                             style="object-fit:cover;">
+                             style="object-fit:cover;object-position:top;image-rendering:auto;">
                     </div>
                     <div class="p-4">
                         <h6 class="fw-bold mb-1">{{ $practiceName }}</h6>
@@ -979,11 +979,11 @@ const counterObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.rs-counter').forEach(el => counterObserver.observe(el));
 
 // Registration popup after 5s
-setTimeout(() => {
-    if (typeof bootstrap !== 'undefined') {
-        new bootstrap.Modal(document.getElementById('registrationPopup')).show();
-    }
-}, 5000);
+// setTimeout(() => {
+//     if (typeof bootstrap !== 'undefined') {
+//         new bootstrap.Modal(document.getElementById('registrationPopup')).show();
+//     }
+// }, 5000);
 </script>
 
 @endsection
