@@ -56,7 +56,7 @@
             <span class="badge rounded-pill px-4 py-2 mb-3" style="background:rgba(255,255,255,.15);color:#fff;font-size:13px;letter-spacing:1px;">📱 MOBILE APP</span>
             <h2 class="text-white fw-bold" style="font-size:2rem;">RogiSewa — Ab Haath Mein!</h2>
             <p class="text-white mt-2" style="opacity:.75;max-width:600px;margin:0 auto;font-size:15px;">
-                Doctors ke liye alag app, Patients ke liye alag app — dono Google Play par available hain.
+                Separate app for Doctors, separate app for Patients — both available on Google Play.
             </p>
         </div>
 
