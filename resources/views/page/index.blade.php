@@ -400,6 +400,16 @@
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
 }
+
+/* Hero features auto-scroll */
+.hero-features-scroll {
+    animation: featScroll 18s linear infinite;
+}
+.hero-features-scroll:hover { animation-play-state: paused; }
+@keyframes featScroll {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+}
 </style>
 
 <!-- ── HERO ── -->
@@ -438,46 +448,72 @@
 
                 </div>
             </div>
-            <div class="col-lg-5 d-none d-lg-flex flex-column align-items-center gap-4">
-                <div class="hero-icon-wrap">
-                    <div class="pulse-ring"></div>
-                    <div class="pulse-ring"></div>
-                    <div class="pulse-ring"></div>
-                    <div style="width:100px;height:100px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.3);">
-                        <i class="fa fa-heartbeat" style="font-size:42px;color:#fff;"></i>
-                    </div>
-                </div>
-                <div class="d-flex gap-3 w-100">
-                    <div class="hero-card-float flex-1" style="flex:1;">
+            <div class="col-lg-5 d-none d-lg-flex flex-column gap-3">
+                <!-- Stats row -->
+                <div class="d-flex gap-3">
+                    <div class="hero-card-float" style="flex:1;">
                         <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px;">DOCTORS</div>
                         <div style="font-size:22px;font-weight:800;color:#fff;">{{ $totalDoctors }}+</div>
                         <div style="font-size:12px;color:rgba(255,255,255,.7);">Verified Experts</div>
                     </div>
-                    <div class="hero-card-float flex-1" style="flex:1;">
+                    <div class="hero-card-float" style="flex:1;">
                         <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px;">HOSPITALS</div>
                         <div style="font-size:22px;font-weight:800;color:#fff;">{{ $totalHospitals }}+</div>
                         <div style="font-size:12px;color:rgba(255,255,255,.7);">Across India</div>
                     </div>
                 </div>
-                <div class="hero-card-float w-100">
-                    <div class="d-flex align-items-center gap-3">
-                        <div style="width:40px;height:40px;background:rgba(76,175,80,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                            <i class="fa fa-mobile" style="color:#4caf50;font-size:20px;"></i>
+
+                <!-- App features scrolling card -->
+                <div class="hero-card-float w-100" style="padding:16px 18px;">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="fa fa-mobile" style="color:#4caf50;font-size:18px;"></i>
+                        <span style="color:#fff;font-weight:700;font-size:14px;">RogiSewa App Features</span>
+                        <span style="margin-left:auto;background:#4caf50;color:#fff;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;">LIVE</span>
+                    </div>
+                    <!-- Scrolling features list -->
+                    <div style="height:180px;overflow:hidden;position:relative;">
+                        <div class="hero-features-scroll">
+                            @foreach([
+                                ['📚','#1565c0','Disease Library','55+ बीमारियां, लक्षण व इलाज'],
+                                ['🧠','#6a1b9a','BrainFit','दिमाग तेज़ करें'],
+                                ['🔥','#bf360c','Calorie Burn','वजन घटाने में मदद'],
+                                ['💉','#2e7d32','Vaccine Tracker','टीकाकरण रिकॉर्ड'],
+                                ['🤱','#ad1457','Pregnancy Tracker','गर्भावस्था देखभाल'],
+                                ['🌸','#c62828','Period Tracker','मासिक धर्म ट्रैक'],
+                                ['👶','#e65100','Baby Growth','बच्चे का विकास'],
+                                ['💊','#00695c','Medicine Info','दवाई रिमाइंडर'],
+                                ['🥗','#558b2f','Food AI','AI डाइट प्लान'],
+                                ['🤖','#37474f','Sehat AI','AI स्वास्थ्य सलाह'],
+                                ['❤️','#b71c1c','Body Guide','शरीर की जानकारी'],
+                                ['💧','#0277bd','Water Reminder','पानी पीने की याद'],
+                                ['👁️','#4a148c','Eye Test','आँखों की देखभाल'],
+                                ['👨‍⚕️','#1565c0','Find Doctors','नज़दीकी डॉक्टर खोजें'],
+                                ['🏥','#00838f','Find Hospitals','हॉस्पिटल खोजें'],
+                                ['📅','#4facfe','Appointments','अपॉइंटमेंट बुक करें'],
+                                ['📋','#f59e0b','Prescription','प्रिस्क्रिप्शन इनवॉइस'],
+                                ['👥','#a18cd1','Staff Tracking','स्टाफ अटेंडेंस'],
+                            ] as $feat)
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div style="width:32px;height:32px;background:{{ $feat[1] }};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">{{ $feat[0] }}</div>
+                                <div>
+                                    <div style="color:#fff;font-size:12px;font-weight:700;line-height:1.2;">{{ $feat[2] }}</div>
+                                    <div style="color:rgba(255,255,255,.5);font-size:10px;">{{ $feat[3] }}</div>
+                                </div>
+                                <i class="fa fa-check-circle ms-auto" style="color:#4caf50;font-size:12px;"></i>
+                            </div>
+                            @endforeach
                         </div>
-                        <div>
-                            <div style="color:#fff;font-weight:700;font-size:14px;">RogiSewa App</div>
-                            <div style="color:rgba(255,255,255,.6);font-size:12px;">Available on Google Play</div>
-                        </div>
-                        <div style="margin-left:auto;display:flex;flex-direction:column;gap:5px;">
-                            <a href="https://play.google.com/store/apps/details?id=com.rogisewa" target="_blank"
-                               style="background:#4caf50;color:#fff;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">
-                                <i class="fa fa-android me-1"></i> Patient App
-                            </a>
-                            <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
-                               style="background:#1565c0;color:#fff;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">
-                                <i class="fa fa-android me-1"></i> Doctor App
-                            </a>
-                        </div>
+                    </div>
+                    <!-- Download buttons -->
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="https://play.google.com/store/apps/details?id=com.rogisewa" target="_blank"
+                           style="flex:1;background:#4caf50;color:#fff;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:700;text-decoration:none;text-align:center;">
+                            <i class="fa fa-android me-1"></i> Patient App
+                        </a>
+                        <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+                           style="flex:1;background:#1565c0;color:#fff;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:700;text-decoration:none;text-align:center;">
+                            <i class="fa fa-android me-1"></i> Doctor App
+                        </a>
                     </div>
                 </div>
             </div>
@@ -898,6 +934,106 @@
     </div>
 </section>
 
+<!-- ── APP FEATURES DETAIL SECTION ── -->
+<section class="py-5" style="background:linear-gradient(135deg,#f8fbff,#e3f2fd);">
+    <div class="container">
+        <div class="text-center mb-5 rs-animate">
+            <div class="rs-section-tag">RogiSewa App</div>
+            <h2 class="rs-section-title">Sab Kuch Ek App Mein!</h2>
+            <p class="text-muted mt-2" style="max-width:600px;margin:0 auto;">Patient app aur Doctor app — dono mein powerful features jo aapki health aur clinic ko manage karte hain.</p>
+        </div>
+
+        <!-- Patient App Features -->
+        <div class="mb-5">
+            <div class="d-flex align-items-center gap-3 mb-4 rs-animate">
+                <div style="width:48px;height:48px;background:linear-gradient(135deg,#1a73e8,#0d47a1);border-radius:14px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fa fa-heartbeat text-white" style="font-size:20px;"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-0" style="color:#0d47a1;">Patient App Features</h4>
+                    <p class="text-muted mb-0" style="font-size:13px;">आपके और आपके परिवार की सेहत का भरोसेमंद साथी</p>
+                </div>
+                <a href="https://play.google.com/store/apps/details?id=com.rogisewa" target="_blank"
+                   class="ms-auto btn fw-bold"
+                   style="background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;border-radius:12px;font-size:13px;">
+                    <i class="fa fa-android me-1"></i> Download
+                </a>
+            </div>
+            <div class="row g-3">
+                @foreach([
+                    ['📚','#1565c0','rgba(21,101,192,.08)','Disease Library','55+ बीमारियां — लक्षण, कारण, इलाज और संबंधित डॉक्टर की पूरी जानकारी एक जगह।'],
+                    ['🧠','#6a1b9a','rgba(106,27,154,.08)','BrainFit','दिमाग को तेज़ और एकाग्र बनाने के लिए मानसिक व्यायाम और टिप्स।'],
+                    ['🔥','#bf360c','rgba(191,54,12,.08)','Calorie Burn','वजन घटाने में मदद — कैलोरी ट्रैक करें और फिट रहें।'],
+                    ['💉','#2e7d32','rgba(46,125,50,.08)','Vaccine Tracker','बच्चों और बड़ों के टीकाकरण का पूरा रिकॉर्ड रखें।'],
+                    ['🤱','#ad1457','rgba(173,20,87,.08)','Pregnancy Tracker','गर्भावस्था की हर जानकारी — हफ्तेवार अपडेट और देखभाल के टिप्स।'],
+                    ['🌸','#c62828','rgba(198,40,40,.08)','Period Tracker','मासिक धर्म का सही ट्रैक रखें और अगले cycle की जानकारी पाएं।'],
+                    ['👶','#e65100','rgba(230,81,0,.08)','Baby Growth','बच्चे के विकास पर नज़र रखें — वजन, लंबाई और माइलस्टोन।'],
+                    ['💊','#00695c','rgba(0,105,92,.08)','Medicine Info','दवाइयों की जानकारी, उपयोग और रिमाइंडर सेट करें।'],
+                    ['🥗','#558b2f','rgba(85,139,47,.08)','Food AI','AI से पर्सनलाइज़्ड डाइट प्लान — आपकी सेहत के अनुसार।'],
+                    ['🚫','#4527a0','rgba(69,39,160,.08)','Food Combos','हेल्दी फूड कॉम्बिनेशन और रेसिपी जो सेहत के लिए फायदेमंद हों।'],
+                    ['❤️','#b71c1c','rgba(183,28,28,.08)','Body Guide','शरीर के हर अंग की विस्तृत जानकारी — कार्य, देखभाल और समस्याएं।'],
+                    ['💧','#0277bd','rgba(2,119,189,.08)','Water Reminder','रोज़ पर्याप्त पानी पीने की याद दिलाए — हाइड्रेटेड रहें।'],
+                    ['🤖','#37474f','rgba(55,71,79,.08)','Sehat AI','AI से पाएं व्यक्तिगत स्वास्थ्य सलाह — 24/7 उपलब्ध।'],
+                    ['👁️','#4a148c','rgba(74,20,140,.08)','Eye Test','आँखों की देखभाल, टेस्ट जानकारी और नेत्र स्वास्थ्य टिप्स।'],
+                    ['👨‍⚕️','#1565c0','rgba(21,101,192,.08)','Find Doctors','नज़दीकी वेरिफाइड डॉक्टर खोजें और अपॉइंटमेंट बुक करें।'],
+                    ['🏥','#00838f','rgba(0,131,143,.08)','Find Hospitals','नज़दीकी हॉस्पिटल और क्लिनिक खोजें — विशेषज्ञता के अनुसार।'],
+                ] as $i => $f)
+                <div class="col-md-4 col-6 rs-animate rs-delay-{{ ($i%3)+1 }}">
+                    <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.05);border:1px solid #e8f0fe;display:flex;gap:12px;align-items:flex-start;transition:all .3s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 10px 30px rgba(21,101,192,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.05)'">
+                        <div style="width:42px;height:42px;background:{{ $f[2] }};border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">{{ $f[0] }}</div>
+                        <div>
+                            <div style="font-weight:700;font-size:13px;color:#1a1a2e;margin-bottom:3px;">{{ $f[3] }}</div>
+                            <div style="font-size:11px;color:#666;line-height:1.4;">{{ $f[4] }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Doctor App Features -->
+        <div>
+            <div class="d-flex align-items-center gap-3 mb-4 rs-animate">
+                <div style="width:48px;height:48px;background:linear-gradient(135deg,#00b074,#38f9d7);border-radius:14px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fa fa-user-md text-white" style="font-size:20px;"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-0" style="color:#00695c;">Doctor App Features</h4>
+                    <p class="text-muted mb-0" style="font-size:13px;">Doctors & Clinics ke liye — manage everything digitally</p>
+                </div>
+                <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+                   class="ms-auto btn fw-bold"
+                   style="background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border-radius:12px;font-size:13px;">
+                    <i class="fa fa-android me-1"></i> Download
+                </a>
+            </div>
+            <div class="row g-3">
+                @foreach([
+                    ['🏥','#667eea','rgba(102,126,234,.08)','Doctor Profile Listing','अपनी डॉक्टर प्रोफ़ाइल बनाएं और पूरे भारत में मरीजों तक पहुँचें।'],
+                    ['🏥','#f5576c','rgba(245,87,108,.08)','Hospital / Clinic Management','अपने हॉस्पिटल या क्लिनिक की पूरी जानकारी मैनेज करें।'],
+                    ['📅','#4facfe','rgba(79,172,254,.08)','Appointment Management','मरीजों के अपॉइंटमेंट को आसानी से मैनेज और ट्रैक करें।'],
+                    ['📝','#f59e0b','rgba(245,158,11,.08)','Prescription Invoice (Free)','डिजिटल प्रिस्क्रिप्शन इनवॉइस बनाएं — बिल्कुल मुफ्त।'],
+                    ['💊','#00b074','rgba(0,176,116,.08)','Medicine Management','अपनी क्लिनिक की दवाइयों का पूरा रिकॉर्ड रखें।'],
+                    ['👥','#a18cd1','rgba(161,140,209,.08)','Staff Management','स्टाफ की जानकारी, रोल और परमिशन मैनेज करें।'],
+                    ['📊','#38f9d7','rgba(56,249,215,.08)','Attendance Tracking','स्टाफ की रोज़ाना अटेंडेंस ट्रैक करें और रिपोर्ट देखें।'],
+                    ['🔔','#ff6b6b','rgba(255,107,107,.08)','Booking Reminders','मरीजों को अपॉइंटमेंट रिमाइंडर भेजें — auto notifications।'],
+                    ['📈','#667eea','rgba(102,126,234,.08)','Analytics & Reports','क्लिनिक की performance देखें — bookings, revenue और trends।'],
+                ] as $i => $f)
+                <div class="col-md-4 col-6 rs-animate rs-delay-{{ ($i%3)+1 }}">
+                    <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.05);border:1px solid #e0f7f0;display:flex;gap:12px;align-items:flex-start;transition:all .3s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 10px 30px rgba(0,176,116,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.05)'">
+                        <div style="width:42px;height:42px;background:{{ $f[2] }};border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">{{ $f[0] }}</div>
+                        <div>
+                            <div style="font-weight:700;font-size:13px;color:#1a1a2e;margin-bottom:3px;">{{ $f[3] }}</div>
+                            <div style="font-size:11px;color:#666;line-height:1.4;">{{ $f[4] }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- ── FOR DOCTORS CTA ── -->
 <section class="rs-cta py-5">
     <div class="container text-center" style="position:relative;z-index:1;">
@@ -977,6 +1113,12 @@ const counterObserver = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.5 });
 document.querySelectorAll('.rs-counter').forEach(el => counterObserver.observe(el));
+
+// Hero features infinite scroll (JS duplicate)
+const scroller = document.querySelector('.hero-features-scroll');
+if (scroller) {
+    scroller.innerHTML += scroller.innerHTML;
+}
 
 // Registration popup after 5s
 // setTimeout(() => {
