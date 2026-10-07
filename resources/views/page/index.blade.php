@@ -1,4 +1,4 @@
-@extends('page.layouts.app')
+﻿@extends('page.layouts.app')
 
 @section('title', 'RogiSewa - Find Doctors & Hospitals Near You | Book Appointments Online')
 
@@ -47,6 +47,216 @@
     </div>
 </div>
 
+<!-- ── ROGISEWA APP SECTION ── -->
+<div class="container-fluid py-5" style="background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);">
+    <div class="container">
+
+        <!-- Section Heading -->
+        <div class="text-center mb-5">
+            <span class="badge rounded-pill px-4 py-2 mb-3" style="background:rgba(255,255,255,.15);color:#fff;font-size:13px;letter-spacing:1px;">📱 MOBILE APP</span>
+            <h2 class="text-white fw-bold" style="font-size:2rem;">RogiSewa — Ab Haath Mein!</h2>
+            <p class="text-white mt-2" style="opacity:.75;max-width:600px;margin:0 auto;font-size:15px;">
+                Doctors ke liye alag app, Patients ke liye alag app — dono Google Play par available hain.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Doctor App Card -->
+            <div class="col-lg-6">
+                <div class="rounded-4 p-4 h-100" style="background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:56px;height:56px;background:linear-gradient(135deg,#00b074,#38f9d7);font-size:26px;">
+                            <i class="fa fa-user-md text-white"></i>
+                        </div>
+                        <div>
+                            <div class="text-white fw-bold" style="font-size:18px;">RogiSewa Doctor App</div>
+                            <div style="color:rgba(255,255,255,.6);font-size:13px;">Doctors & Clinics ke liye</div>
+                        </div>
+                        <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+                           class="ms-auto btn btn-sm fw-bold"
+                           style="background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border:none;border-radius:10px;white-space:nowrap;">
+                            <i class="fa fa-android me-1"></i> Download
+                        </a>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="row g-2 mb-4">
+                        @foreach([
+                            ['icon'=>'fa-id-card',         'color'=>'#667eea', 'en'=>'Doctor Profile Listing',       'hi'=>'डॉक्टर प्रोफ़ाइल लिस्टिंग'],
+                            ['icon'=>'fa-hospital-o',      'color'=>'#f5576c', 'en'=>'Hospital / Clinic Management',  'hi'=>'हॉस्पिटल / क्लिनिक मैनेजमेंट'],
+                            ['icon'=>'fa-calendar-check-o','color'=>'#4facfe', 'en'=>'Appointment Management',       'hi'=>'अपॉइंटमेंट मैनेजमेंट'],
+                            ['icon'=>'fa-file-text',       'color'=>'#f59e0b', 'en'=>'Prescription Invoice (Free)',   'hi'=>'प्रिस्क्रिप्शन इनवॉइस (फ्री)'],
+                            ['icon'=>'fa-medkit',          'color'=>'#00b074', 'en'=>'Medicine Management',          'hi'=>'दवाई मैनेजमेंट'],
+                            ['icon'=>'fa-users',           'color'=>'#a18cd1', 'en'=>'Staff & Attendance Tracking',  'hi'=>'स्टाफ व अटेंडेंस ट्रैकिंग'],
+                        ] as $f)
+                        <div class="col-12">
+                            <div class="d-flex align-items-center gap-3 rounded-3 px-3 py-2" style="background:rgba(255,255,255,.06);">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                                     style="width:34px;height:34px;background:{{ $f['color'] }}22;">
+                                    <i class="fa {{ $f['icon'] }}" style="color:{{ $f['color'] }};font-size:14px;"></i>
+                                </div>
+                                <div style="flex:1;">
+                                    <div class="text-white" style="font-size:13px;font-weight:600;">{{ $f['en'] }}</div>
+                                    <div style="color:rgba(255,255,255,.5);font-size:11px;">{{ $f['hi'] }}</div>
+                                </div>
+                                <i class="fa fa-check-circle" style="color:#00b074;font-size:14px;"></i>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <!-- How to Use Steps -->
+                    <div class="rounded-3 p-3 mb-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);">
+                        <div class="text-white fw-bold mb-3" style="font-size:13px;">📋 How to Use / कैसे उपयोग करें</div>
+                        @foreach([
+                            ['en'=>'Download & install from Google Play',       'hi'=>'Google Play से डाउनलोड करें'],
+                            ['en'=>'Login with your registered email',           'hi'=>'अपने ईमेल से लॉगिन करें'],
+                            ['en'=>'Complete your Doctor Profile',               'hi'=>'डॉक्टर प्रोफ़ाइल पूरी करें'],
+                            ['en'=>'Add your Hospital / Clinic details',         'hi'=>'हॉस्पिटल / क्लिनिक जोड़ें'],
+                            ['en'=>'Manage appointments & create invoices',      'hi'=>'अपॉइंटमेंट व इनवॉइस मैनेज करें'],
+                        ] as $i => $step)
+                        <div class="d-flex align-items-start gap-2 mb-2">
+                            <span class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 fw-bold"
+                                  style="width:22px;height:22px;background:#00b074;color:#fff;font-size:10px;">{{ $i+1 }}</span>
+                            <div>
+                                <div class="text-white" style="font-size:12px;">{{ $step['en'] }}</div>
+                                <div style="color:rgba(255,255,255,.5);font-size:11px;">{{ $step['hi'] }}</div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
+                       class="btn w-100 fw-bold py-2"
+                       style="background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border:none;border-radius:12px;">
+                        <i class="fa fa-android me-2" style="font-size:16px;"></i>
+                        Download Doctor App on Google Play
+                    </a>
+                </div>
+            </div>
+
+            <!-- Patient App Card -->
+            <div class="col-lg-6">
+                <div class="rounded-4 p-4 h-100" style="background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);">
+
+                    <!-- Header -->
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:56px;height:56px;background:linear-gradient(135deg,#1a73e8,#0d47a1);font-size:26px;">
+                            <i class="fa fa-heartbeat text-white"></i>
+                        </div>
+                        <div>
+                            <div class="text-white fw-bold" style="font-size:18px;">RogiSewa Patient App</div>
+                            <div style="color:rgba(255,255,255,.6);font-size:12px;">आपके और आपके परिवार की सेहत का भरोसेमंद साथी &mdash; Health Made Easy</div>
+                        </div>
+                        <a href="https://play.google.com/store/apps/details?id=com.rogisewa" target="_blank"
+                           class="ms-auto btn btn-sm fw-bold"
+                           style="background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;border:none;border-radius:10px;white-space:nowrap;">
+                            <i class="fa fa-android me-1"></i> Download
+                        </a>
+                    </div>
+
+                    <!-- Tagline -->
+                    <div class="text-center rounded-3 py-2 mb-3" style="background:rgba(26,115,232,.2);border:1px solid rgba(26,115,232,.4);">
+                        <span style="color:#90caf9;font-size:12px;font-weight:600;">स्वस्थ रहें &nbsp;|&nbsp; सुरक्षित रहें &nbsp;|&nbsp; हमेशा जुड़े रहें</span>
+                    </div>
+
+                    <!-- App ki mukhya visheshataen heading -->
+                    <div class="text-white fw-bold mb-2" style="font-size:13px;letter-spacing:.5px;">📱 App की मुख्य विशेषताएँ / Key Features</div>
+
+                    <!-- Features Grid -->
+                    <div class="row g-2 mb-3">
+                        @php
+                        $patientFeatures = [
+                            ['emoji'=>'📚', 'bg'=>'#1565c0', 'en'=>'Disease Library',    'hi'=>'55+ बीमारियां • लक्षण • इलाज और डॉक्टर की जानकारी'],
+                            ['emoji'=>'🧠', 'bg'=>'#6a1b9a', 'en'=>'BrainFit',           'hi'=>'दिमाग को तेज़ और एकाग्र बनाएं'],
+                            ['emoji'=>'🔥', 'bg'=>'#bf360c', 'en'=>'Calorie Burn',       'hi'=>'वजन घटाने में मददगार'],
+                            ['emoji'=>'💉', 'bg'=>'#2e7d32', 'en'=>'Vaccine Tracker',    'hi'=>'टीकाकरण का पूरा रिकॉर्ड रखें'],
+                            ['emoji'=>'🤱', 'bg'=>'#ad1457', 'en'=>'Pregnancy',          'hi'=>'गर्भावस्था की जानकारी और देखभाल'],
+                            ['emoji'=>'🌸', 'bg'=>'#c62828', 'en'=>'Period Tracker',     'hi'=>'मासिक धर्म का सही ट्रैक रखें'],
+                            ['emoji'=>'👶', 'bg'=>'#e65100', 'en'=>'Baby Growth',        'hi'=>'बच्चे के विकास पर नज़र रखें'],
+                            ['emoji'=>'💊', 'bg'=>'#00695c', 'en'=>'Medicine',           'hi'=>'दवाइयों की जानकारी और रिमाइंडर'],
+                            ['emoji'=>'🥗', 'bg'=>'#558b2f', 'en'=>'Food AI',            'hi'=>'AI से पर्सनलाइज़्ड डाइट प्लान'],
+                            ['emoji'=>'🚫', 'bg'=>'#4527a0', 'en'=>'Food Combos',        'hi'=>'हेल्दी फूड कॉम्बिनेशन रिसिपी'],
+                            ['emoji'=>'❤️',  'bg'=>'#b71c1c', 'en'=>'Body Guide',         'hi'=>'शरीर के हर अंग की जानकारी'],
+                            ['emoji'=>'💧', 'bg'=>'#0277bd', 'en'=>'Water Reminder',     'hi'=>'रोज़ पानी पीने की याद दिलाए'],
+                            ['emoji'=>'🤖', 'bg'=>'#37474f', 'en'=>'Sehat AI',           'hi'=>'AI से पाएं व्यक्तिगत स्वास्थ्य सलाह'],
+                            ['emoji'=>'👁️', 'bg'=>'#4a148c', 'en'=>'Eye Test',     'hi'=>'आँखों की देखभाल और टेस्ट जानकारी'],
+                            ['emoji'=>'👨‍⚕️', 'bg'=>'#1565c0', 'en'=>'Find Doctors',  'hi'=>'नज़दीकी डॉक्टर खोजें व अपॉइंटमेंट बुक करें'],
+                        ];
+                        @endphp
+
+                        @foreach($patientFeatures as $f)
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 rounded-3 px-2 py-2" style="background:rgba(255,255,255,.06);">
+                                <div class="rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
+                                     style="width:30px;height:30px;background:{{ $f['bg'] }};font-size:14px;">
+                                    {{ $f['emoji'] }}
+                                </div>
+                                <div style="min-width:0;">
+                                    <div class="text-white fw-bold" style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $f['en'] }}</div>
+                                    <div style="color:rgba(255,255,255,.45);font-size:10px;line-height:1.3;">{{ $f['hi'] }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+
+                        <!-- More tag -->
+                        <div class="col-12">
+                            <div class="text-center rounded-3 py-2" style="background:rgba(255,215,0,.12);border:1px dashed rgba(255,215,0,.4);">
+                                <span style="color:#ffd700;font-size:12px;font-weight:700;">✨ और भी बहुत कुछ… सभी एक ही एप में! / And much more in one app!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Why choose -->
+                    <div class="row g-2 mb-3">
+                        @foreach([
+                            ['🛡️', 'सटीक और भरोसेमंद जानकारी / Accurate & Trusted Info'],
+                            ['👨‍👩‍👧‍👦', 'पूरे परिवार के लिए उपयोगी / Useful for Whole Family'],
+                            ['⏱️', 'आसान और तेज़ एक्सेस / Easy & Fast Access'],
+                            ['📱', 'कहीं भी, कभी भी उपयोग करें / Use Anytime, Anywhere'],
+                        ] as $w)
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 rounded-3 px-2 py-2" style="background:rgba(26,115,232,.12);">
+                                <span style="font-size:16px;">{{ $w[0] }}</span>
+                                <span style="color:rgba(255,255,255,.8);font-size:10px;line-height:1.3;">{{ $w[1] }}</span>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <a href="https://play.google.com/store/apps/details?id=com.rogisewa" target="_blank"
+                       class="btn w-100 fw-bold py-2"
+                       style="background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;border:none;border-radius:12px;font-size:14px;">
+                        <i class="fa fa-android me-2" style="font-size:16px;"></i>
+                        अभी डाउनलोड करें / Download Patient App
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact / Help Bar -->
+        <div class="rounded-4 p-4 mt-4 text-center" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);">
+            <div class="text-white fw-bold mb-3" style="font-size:15px;">📞 Need Help? / मदद चाहिए?</div>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="tel:+918002229525"
+                   style="background:#00b074;color:#fff;border-radius:10px;padding:10px 22px;font-weight:700;font-size:13px;text-decoration:none;">
+                    <i class="fa fa-phone me-2"></i>+91 8002229525
+                </a>
+                <a href="https://wa.me/918002229525" target="_blank"
+                   style="background:#25d366;color:#fff;border-radius:10px;padding:10px 22px;font-weight:700;font-size:13px;text-decoration:none;">
+                    <i class="fa fa-whatsapp me-2"></i>WhatsApp
+                </a>
+                <a href="mailto:rogisewa25@gmail.com"
+                   style="background:#667eea;color:#fff;border-radius:10px;padding:10px 22px;font-weight:700;font-size:13px;text-decoration:none;">
+                    <i class="fa fa-envelope me-2"></i>rogisewa25@gmail.com
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
 <!-- ── STATS BAR ── -->
 <div class="container mb-5">
     <div class="row text-center g-4">
@@ -319,216 +529,6 @@
     </div>
 </div>
 
-<!-- ── ROGISEWA APP SECTION ── -->
-<div class="container-fluid py-5" style="background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);">
-    <div class="container">
-
-        <!-- Section Heading -->
-        <div class="text-center mb-5">
-            <span class="badge rounded-pill px-4 py-2 mb-3" style="background:rgba(255,255,255,.15);color:#fff;font-size:13px;letter-spacing:1px;">📱 MOBILE APP</span>
-            <h2 class="text-white fw-bold" style="font-size:2rem;">RogiSewa — Ab Haath Mein!</h2>
-            <p class="text-white mt-2" style="opacity:.75;max-width:600px;margin:0 auto;font-size:15px;">
-                Doctors ke liye alag app, Patients ke liye alag app — dono Google Play par available hain.
-            </p>
-        </div>
-
-        <div class="row g-4">
-
-            <!-- Doctor App Card -->
-            <div class="col-lg-6">
-                <div class="rounded-4 p-4 h-100" style="background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);">
-                    <div class="d-flex align-items-center gap-3 mb-4">
-                        <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:56px;height:56px;background:linear-gradient(135deg,#00b074,#38f9d7);font-size:26px;">
-                            <i class="fa fa-user-md text-white"></i>
-                        </div>
-                        <div>
-                            <div class="text-white fw-bold" style="font-size:18px;">RogiSewa Doctor App</div>
-                            <div style="color:rgba(255,255,255,.6);font-size:13px;">Doctors & Clinics ke liye</div>
-                        </div>
-                        <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
-                           class="ms-auto btn btn-sm fw-bold"
-                           style="background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border:none;border-radius:10px;white-space:nowrap;">
-                            <i class="fa fa-android me-1"></i> Download
-                        </a>
-                    </div>
-
-                    <!-- Features -->
-                    <div class="row g-2 mb-4">
-                        @foreach([
-                            ['icon'=>'fa-id-card',         'color'=>'#667eea', 'en'=>'Doctor Profile Listing',       'hi'=>'डॉक्टर प्रोफ़ाइल लिस्टिंग'],
-                            ['icon'=>'fa-hospital-o',      'color'=>'#f5576c', 'en'=>'Hospital / Clinic Management',  'hi'=>'हॉस्पिटल / क्लिनिक मैनेजमेंट'],
-                            ['icon'=>'fa-calendar-check-o','color'=>'#4facfe', 'en'=>'Appointment Management',       'hi'=>'अपॉइंटमेंट मैनेजमेंट'],
-                            ['icon'=>'fa-file-text',       'color'=>'#f59e0b', 'en'=>'Prescription Invoice (Free)',   'hi'=>'प्रिस्क्रिप्शन इनवॉइस (फ्री)'],
-                            ['icon'=>'fa-medkit',          'color'=>'#00b074', 'en'=>'Medicine Management',          'hi'=>'दवाई मैनेजमेंट'],
-                            ['icon'=>'fa-users',           'color'=>'#a18cd1', 'en'=>'Staff & Attendance Tracking',  'hi'=>'स्टाफ व अटेंडेंस ट्रैकिंग'],
-                        ] as $f)
-                        <div class="col-12">
-                            <div class="d-flex align-items-center gap-3 rounded-3 px-3 py-2" style="background:rgba(255,255,255,.06);">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                     style="width:34px;height:34px;background:{{ $f['color'] }}22;">
-                                    <i class="fa {{ $f['icon'] }}" style="color:{{ $f['color'] }};font-size:14px;"></i>
-                                </div>
-                                <div style="flex:1;">
-                                    <div class="text-white" style="font-size:13px;font-weight:600;">{{ $f['en'] }}</div>
-                                    <div style="color:rgba(255,255,255,.5);font-size:11px;">{{ $f['hi'] }}</div>
-                                </div>
-                                <i class="fa fa-check-circle" style="color:#00b074;font-size:14px;"></i>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-
-                    <!-- How to Use Steps -->
-                    <div class="rounded-3 p-3 mb-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);">
-                        <div class="text-white fw-bold mb-3" style="font-size:13px;">📋 How to Use / कैसे उपयोग करें</div>
-                        @foreach([
-                            ['en'=>'Download & install from Google Play',       'hi'=>'Google Play से डाउनलोड करें'],
-                            ['en'=>'Login with your registered email',           'hi'=>'अपने ईमेल से लॉगिन करें'],
-                            ['en'=>'Complete your Doctor Profile',               'hi'=>'डॉक्टर प्रोफ़ाइल पूरी करें'],
-                            ['en'=>'Add your Hospital / Clinic details',         'hi'=>'हॉस्पिटल / क्लिनिक जोड़ें'],
-                            ['en'=>'Manage appointments & create invoices',      'hi'=>'अपॉइंटमेंट व इनवॉइस मैनेज करें'],
-                        ] as $i => $step)
-                        <div class="d-flex align-items-start gap-2 mb-2">
-                            <span class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 fw-bold"
-                                  style="width:22px;height:22px;background:#00b074;color:#fff;font-size:10px;">{{ $i+1 }}</span>
-                            <div>
-                                <div class="text-white" style="font-size:12px;">{{ $step['en'] }}</div>
-                                <div style="color:rgba(255,255,255,.5);font-size:11px;">{{ $step['hi'] }}</div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-
-                    <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
-                       class="btn w-100 fw-bold py-2"
-                       style="background:linear-gradient(135deg,#00b074,#38f9d7);color:#fff;border:none;border-radius:12px;">
-                        <i class="fa fa-android me-2" style="font-size:16px;"></i>
-                        Download Doctor App on Google Play
-                    </a>
-                </div>
-            </div>
-
-            <!-- Patient App Card -->
-            <div class="col-lg-6">
-                <div class="rounded-4 p-4 h-100" style="background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);">
-
-                    <!-- Header -->
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:56px;height:56px;background:linear-gradient(135deg,#1a73e8,#0d47a1);font-size:26px;">
-                            <i class="fa fa-heartbeat text-white"></i>
-                        </div>
-                        <div>
-                            <div class="text-white fw-bold" style="font-size:18px;">RogiSewa Patient App</div>
-                            <div style="color:rgba(255,255,255,.6);font-size:12px;">आपके और आपके परिवार की सेहत का भरोसेमंद साथी &mdash; Health Made Easy</div>
-                        </div>
-                        <a href="https://play.google.com/store/apps/details?id=com.rogisewa" target="_blank"
-                           class="ms-auto btn btn-sm fw-bold"
-                           style="background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;border:none;border-radius:10px;white-space:nowrap;">
-                            <i class="fa fa-android me-1"></i> Download
-                        </a>
-                    </div>
-
-                    <!-- Tagline -->
-                    <div class="text-center rounded-3 py-2 mb-3" style="background:rgba(26,115,232,.2);border:1px solid rgba(26,115,232,.4);">
-                        <span style="color:#90caf9;font-size:12px;font-weight:600;">स्वस्थ रहें &nbsp;|&nbsp; सुरक्षित रहें &nbsp;|&nbsp; हमेशा जुड़े रहें</span>
-                    </div>
-
-                    <!-- App ki mukhya visheshataen heading -->
-                    <div class="text-white fw-bold mb-2" style="font-size:13px;letter-spacing:.5px;">📱 App की मुख्य विशेषताएँ / Key Features</div>
-
-                    <!-- Features Grid -->
-                    <div class="row g-2 mb-3">
-                        @php
-                        $patientFeatures = [
-                            ['emoji'=>'📚', 'bg'=>'#1565c0', 'en'=>'Disease Library',    'hi'=>'55+ बीमारियां • लक्षण • इलाज और डॉक्टर की जानकारी'],
-                            ['emoji'=>'🧠', 'bg'=>'#6a1b9a', 'en'=>'BrainFit',           'hi'=>'दिमाग को तेज़ और एकाग्र बनाएं'],
-                            ['emoji'=>'🔥', 'bg'=>'#bf360c', 'en'=>'Calorie Burn',       'hi'=>'वजन घटाने में मददगार'],
-                            ['emoji'=>'💉', 'bg'=>'#2e7d32', 'en'=>'Vaccine Tracker',    'hi'=>'टीकाकरण का पूरा रिकॉर्ड रखें'],
-                            ['emoji'=>'🤱', 'bg'=>'#ad1457', 'en'=>'Pregnancy',          'hi'=>'गर्भावस्था की जानकारी और देखभाल'],
-                            ['emoji'=>'🌸', 'bg'=>'#c62828', 'en'=>'Period Tracker',     'hi'=>'मासिक धर्म का सही ट्रैक रखें'],
-                            ['emoji'=>'👶', 'bg'=>'#e65100', 'en'=>'Baby Growth',        'hi'=>'बच्चे के विकास पर नज़र रखें'],
-                            ['emoji'=>'💊', 'bg'=>'#00695c', 'en'=>'Medicine',           'hi'=>'दवाइयों की जानकारी और रिमाइंडर'],
-                            ['emoji'=>'🥗', 'bg'=>'#558b2f', 'en'=>'Food AI',            'hi'=>'AI से पर्सनलाइज़्ड डाइट प्लान'],
-                            ['emoji'=>'🚫', 'bg'=>'#4527a0', 'en'=>'Food Combos',        'hi'=>'हेल्दी फूड कॉम्बिनेशन रिसिपी'],
-                            ['emoji'=>'❤️',  'bg'=>'#b71c1c', 'en'=>'Body Guide',         'hi'=>'शरीर के हर अंग की जानकारी'],
-                            ['emoji'=>'💧', 'bg'=>'#0277bd', 'en'=>'Water Reminder',     'hi'=>'रोज़ पानी पीने की याद दिलाए'],
-                            ['emoji'=>'🤖', 'bg'=>'#37474f', 'en'=>'Sehat AI',           'hi'=>'AI से पाएं व्यक्तिगत स्वास्थ्य सलाह'],
-                            ['emoji'=>'👁️', 'bg'=>'#4a148c', 'en'=>'Eye Test',     'hi'=>'आँखों की देखभाल और टेस्ट जानकारी'],
-                            ['emoji'=>'👨‍⚕️', 'bg'=>'#1565c0', 'en'=>'Find Doctors',  'hi'=>'नज़दीकी डॉक्टर खोजें व अपॉइंटमेंट बुक करें'],
-                        ];
-                        @endphp
-
-                        @foreach($patientFeatures as $f)
-                        <div class="col-6">
-                            <div class="d-flex align-items-center gap-2 rounded-3 px-2 py-2" style="background:rgba(255,255,255,.06);">
-                                <div class="rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
-                                     style="width:30px;height:30px;background:{{ $f['bg'] }};font-size:14px;">
-                                    {{ $f['emoji'] }}
-                                </div>
-                                <div style="min-width:0;">
-                                    <div class="text-white fw-bold" style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $f['en'] }}</div>
-                                    <div style="color:rgba(255,255,255,.45);font-size:10px;line-height:1.3;">{{ $f['hi'] }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-
-                        <!-- More tag -->
-                        <div class="col-12">
-                            <div class="text-center rounded-3 py-2" style="background:rgba(255,215,0,.12);border:1px dashed rgba(255,215,0,.4);">
-                                <span style="color:#ffd700;font-size:12px;font-weight:700;">✨ और भी बहुत कुछ… सभी एक ही एप में! / And much more in one app!</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Why choose -->
-                    <div class="row g-2 mb-3">
-                        @foreach([
-                            ['🛡️', 'सटीक और भरोसेमंद जानकारी / Accurate & Trusted Info'],
-                            ['👨‍👩‍👧‍👦', 'पूरे परिवार के लिए उपयोगी / Useful for Whole Family'],
-                            ['⏱️', 'आसान और तेज़ एक्सेस / Easy & Fast Access'],
-                            ['📱', 'कहीं भी, कभी भी उपयोग करें / Use Anytime, Anywhere'],
-                        ] as $w)
-                        <div class="col-6">
-                            <div class="d-flex align-items-center gap-2 rounded-3 px-2 py-2" style="background:rgba(26,115,232,.12);">
-                                <span style="font-size:16px;">{{ $w[0] }}</span>
-                                <span style="color:rgba(255,255,255,.8);font-size:10px;line-height:1.3;">{{ $w[1] }}</span>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-
-                    <a href="https://play.google.com/store/apps/details?id=com.rogisewa" target="_blank"
-                       class="btn w-100 fw-bold py-2"
-                       style="background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;border:none;border-radius:12px;font-size:14px;">
-                        <i class="fa fa-android me-2" style="font-size:16px;"></i>
-                        अभी डाउनलोड करें / Download Patient App
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Contact / Help Bar -->
-        <div class="rounded-4 p-4 mt-4 text-center" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);">
-            <div class="text-white fw-bold mb-3" style="font-size:15px;">📞 Need Help? / मदद चाहिए?</div>
-            <div class="d-flex flex-wrap justify-content-center gap-3">
-                <a href="tel:+918002229525"
-                   style="background:#00b074;color:#fff;border-radius:10px;padding:10px 22px;font-weight:700;font-size:13px;text-decoration:none;">
-                    <i class="fa fa-phone me-2"></i>+91 8002229525
-                </a>
-                <a href="https://wa.me/918002229525" target="_blank"
-                   style="background:#25d366;color:#fff;border-radius:10px;padding:10px 22px;font-weight:700;font-size:13px;text-decoration:none;">
-                    <i class="fa fa-whatsapp me-2"></i>WhatsApp
-                </a>
-                <a href="mailto:rogisewa25@gmail.com"
-                   style="background:#667eea;color:#fff;border-radius:10px;padding:10px 22px;font-weight:700;font-size:13px;text-decoration:none;">
-                    <i class="fa fa-envelope me-2"></i>rogisewa25@gmail.com
-                </a>
-            </div>
-        </div>
-
-    </div>
-</div>
 <!-- ── FOR DOCTORS CTA ── -->
 <div class="container-fluid bg-primary py-5">
     <div class="container text-center">
