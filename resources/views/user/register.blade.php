@@ -263,7 +263,8 @@
                     <i class="fa fa-user ur-icon"></i>
                     <input type="text" name="name"
                            class="ur-input {{ $errors->has('name') ? 'is-invalid' : '' }}"
-                           value="{{ old('name') }}" placeholder="Your full name" required autofocus>
+                           value="{{ old('name') }}" placeholder="Your full name" required autofocus
+                           oninput="validateUrName(this)">
                 </div>
                 @error('name')<div class="ur-invalid"><i class="fa fa-times-circle"></i> {{ $message }}</div>@enderror
             </div>
@@ -287,7 +288,8 @@
                     <i class="fa fa-phone ur-icon"></i>
                     <input type="text" name="phone_no"
                            class="ur-input {{ $errors->has('phone_no') ? 'is-invalid' : '' }}"
-                           value="{{ old('phone_no') }}" placeholder="10-digit mobile number" required>
+                           value="{{ old('phone_no') }}" placeholder="10-digit mobile number" required
+                           maxlength="10" oninput="validateUrPhone(this)">
                 </div>
                 @error('phone_no')<div class="ur-invalid"><i class="fa fa-times-circle"></i> {{ $message }}</div>@enderror
             </div>
@@ -347,6 +349,12 @@ function toggleUrPw(fieldId, iconId) {
     var i = document.getElementById(iconId);
     f.type = f.type === 'password' ? 'text' : 'password';
     i.className = f.type === 'text' ? 'fa fa-eye-slash' : 'fa fa-eye';
+}
+function validateUrName(input) {
+    input.value = input.value.replace(/[^a-zA-Z\s\.]/g, '');
+}
+function validateUrPhone(input) {
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
 }
 </script>
 

@@ -21,9 +21,9 @@ class UserAuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:100',
+            'name'     => 'required|string|max:100|regex:/^[a-zA-Z\s\.]+$/',
             'email'    => 'required|email|unique:users,email',
-            'phone_no' => 'required|digits_between:10,15|unique:users,phone_no',
+            'phone_no' => 'required|digits:10|unique:users,phone_no',
             'password' => 'required|min:6|confirmed',
         ]);
 
