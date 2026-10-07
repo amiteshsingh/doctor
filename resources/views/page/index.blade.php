@@ -23,7 +23,7 @@
 /* ── HERO ANIMATED ── */
 .rs-hero {
     position: relative;
-    min-height: 100vh;
+    min-height: 50vh;
     background: linear-gradient(135deg, #0a2463 0%, #1565c0 40%, #0d47a1 70%, #1a237e 100%);
     overflow: hidden;
     display: flex;
@@ -63,7 +63,7 @@
     animation: fadeInDown 0.8s ease both;
 }
 .rs-hero h1 {
-    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-size: clamp(1.5rem, 4vw, 2.8rem);
     font-weight: 800;
     color: #fff;
     line-height: 1.15;
@@ -419,7 +419,7 @@
     <div class="floating-circle"></div>
     <div class="floating-circle"></div>
 
-    <div class="container py-5" style="position:relative;z-index:2;">
+    <div class="container py-3" style="position:relative;z-index:2;">
         <div class="row align-items-center g-5">
             <div class="col-lg-7">
                 <div class="rs-hero-badge">

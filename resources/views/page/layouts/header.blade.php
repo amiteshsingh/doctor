@@ -1,18 +1,19 @@
 
     <!-- Topbar Start -->
-    <div class="container-fluid py-2 border-bottom d-none d-lg-block">
+    <div class="container-fluid py-2 d-none d-lg-block" style="background:linear-gradient(135deg, #0a2463 0%, #0d6efd 50%, #13C5DD 100%);">
+
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 text-center text-lg-start mb-2 mb-lg-0">
                     <div class="d-inline-flex align-items-center">
-                        <a class="text-decoration-none text-body px-3" href="mailto:rogisewa25@gmail.com">
+                        <a class="text-decoration-none px-3" style="color:#fff;" href="mailto:rogisewa25@gmail.com">
                             <i class="bi bi-envelope me-2"></i>rogisewa25@gmail.com
                         </a>
                     </div>
                 </div>
                 <div class="col-md-6 text-center text-lg-end" style="display:flex;align-items:center;justify-content:flex-end;gap:10px;">
                     <a href="{{ route('how-to-use') }}" target="_blank" rel="noopener"
-                       style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#0d6efd,#13C5DD);color:#fff;border-radius:20px;padding:6px 16px;text-decoration:none;font-size:12px;font-weight:600;box-shadow:0 3px 10px rgba(13,110,253,.35);transition:all .2s;"
+                       style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0d6efd;border-radius:20px;padding:6px 16px;text-decoration:none;font-size:12px;font-weight:600;box-shadow:0 3px 10px rgba(0,0,0,.2);transition:all .2s;"
                        onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
                         <i class="fa fa-question-circle" style="font-size:13px;"></i>
                         <span>How to Use For Doctors</span>
