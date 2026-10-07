@@ -579,11 +579,11 @@
             @foreach($doctors as $doctor)
                 @php $practiceName = optional($doctor->locations->first())->practice_name ?? $doctor->name; @endphp
                 <div class="rs-doctor-card">
-                    <div style="height:280px;overflow:hidden;">
+                    <div style="height:280px;overflow:hidden;background:#f0f4f8;display:flex;align-items:center;justify-content:center;">
                         <img class="w-100 h-100"
                              src="{{ $doctor->profile_pic ? asset('storage/upload/doctor/'.$doctor->profile_pic) : asset('storage/upload/doctor/user.jpg') }}"
                              alt="Dr. {{ $practiceName }}"
-                             style="object-fit:cover;object-position:top;image-rendering:auto;">
+                             style="object-fit:contain;object-position:center;image-rendering:auto;">
                     </div>
                     <div class="p-4">
                         <h6 class="fw-bold mb-1">{{ $practiceName }}</h6>
