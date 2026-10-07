@@ -257,7 +257,8 @@
                         <input type="text" name="name" id="name"
                                class="f-input {{ $errors->has('name') ? 'is-invalid' : '' }}"
                                value="{{ old('name') }}"
-                               placeholder="Dr. Your Name" required autofocus>
+                               placeholder="Dr. Your Name" required autofocus
+                               oninput="validateName(this)">
                     </div>
                     @error('name')
                         <div class="invalid-msg"><i class="fa fa-times-circle"></i> {{ $message }}</div>
@@ -272,7 +273,8 @@
                         <input type="text" name="phone" id="phone"
                                class="f-input {{ $errors->has('phone') ? 'is-invalid' : '' }}"
                                value="{{ old('phone') }}"
-                               placeholder="Your phone number" required>
+                               placeholder="10-digit phone number" required
+                               maxlength="10" oninput="validatePhone(this)">
                     </div>
                     @error('phone')
                         <div class="invalid-msg"><i class="fa fa-times-circle"></i> {{ $message }}</div>
@@ -359,6 +361,12 @@ function togglePw(fieldId, iconId) {
         f.type = 'password';
         i.className = 'fa fa-eye';
     }
+}
+function validateName(input) {
+    input.value = input.value.replace(/[^a-zA-Z\s\.]/g, '');
+}
+function validatePhone(input) {
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
 }
 </script>
 
