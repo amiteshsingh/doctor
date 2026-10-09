@@ -578,18 +578,21 @@ class UserController extends Controller
                 'type'              => 'template',
                 'template' => [
                     'name'      => 'rogisewa',
-                    'language'  => ['code' => 'hi'],
+                    'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
                     'namespace' => 'cfb96646_21e8_42b0_bcb7_5b33828d2fa4',
                     'to_and_components' => [
                         [
                             'to' => [$toPhone],
-                            'components' => [
-                                [
-                                    'type'       => 'body',
-                                    'parameters' => [
-                                        ['type' => 'text', 'text' => $userName],
-                                        ['type' => 'text', 'text' => $userLocation],
-                                    ],
+                            'components' => (object)[
+                                'body_user_name' => [
+                                    'type'           => 'text',
+                                    'value'          => $userName,
+                                    'parameter_name' => 'user_name',
+                                ],
+                                'body_user_location' => [
+                                    'type'           => 'text',
+                                    'value'          => $userLocation,
+                                    'parameter_name' => 'user_location',
                                 ],
                             ],
                         ],
