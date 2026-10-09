@@ -473,14 +473,16 @@ class UserController extends Controller
         return response()->json([
             'status' => 200,
             'user'   => [
-                'id'          => $user->id,
-                'name'        => $user->name,
-                'email'       => $user->email,
-                'phone_no'    => $user->phone_no,
-                'address'     => $user->address,
-                'gender'      => $user->gender,
-                'dob'         => $user->dob,
-                'profile_image' => $this->profilePicUrl($user->profile_image),
+                'id'                      => $user->id,
+                'name'                    => $user->name,
+                'email'                   => $user->email,
+                'phone_no'                => $user->phone_no,
+                'address'                 => $user->address,
+                'gender'                  => $user->gender,
+                'dob'                     => $user->dob,
+                'profile_image'           => $this->profilePicUrl($user->profile_image),
+                'emergency_contact_name'  => $user->emergency_contact_name,
+                'emergency_contact_phone' => $user->emergency_contact_phone,
             ],
         ]);
     }
@@ -515,15 +517,101 @@ class UserController extends Controller
             'status'  => 200,
             'message' => 'Profile updated successfully.',
             'user'    => [
-                'id'          => $user->id,
-                'name'        => $user->name,
-                'email'       => $user->email,
-                'phone_no'    => $user->phone_no,
-                'address'     => $user->address,
-                'gender'      => $user->gender,
-                'dob'         => $user->dob,
-                'profile_image' => $this->profilePicUrl($user->profile_image),
+                'id'                      => $user->id,
+                'name'                    => $user->name,
+                'email'                   => $user->email,
+                'phone_no'                => $user->phone_no,
+                'address'                 => $user->address,
+                'gender'                  => $user->gender,
+                'dob'                     => $user->dob,
+                'profile_image'           => $this->profilePicUrl($user->profile_image),
+                'emergency_contact_name'  => $user->emergency_contact_name,
+                'emergency_contact_phone' => $user->emergency_contact_phone,
             ],
+        ]);
+    }
+
+    public function saveEmergencyContact(Request $request)
+    {
+        $request->validate([
+            'emergency_contact_name'  => 'required|string|max:100',
+            'emergency_contact_phone' => 'required|string|max:20',
+        ]);
+
+        $user = $request->auth_user;
+        $user->update([
+            'emergency_contact_name'  => $request->emergency_contact_name,
+            'emergency_contact_phone' => $request->emergency_contact_phone,
+        ]);
+
+        return response()->json([
+            'status'  => 200,
+            'message' => 'Emergency contact saved.',
+            'emergency_contact_name'  => $user->emergency_contact_name,
+            'emergency_contact_phone' => $user->emergency_contact_phone,
+        ]);
+    }
+
+    public function sendFallAlert(Request $request)
+    {
+        $request->validate([
+            'user_name'     => 'required|string',
+            'user_location' => 'nullable|string',
+        ]);
+
+        $user = $request->auth_user;
+
+        if (!$user->emergency_contact_phone) {
+            return response()->json(['status' => 400, 'message' => 'No emergency contact saved.'], 400);
+        }
+
+        $authkey          = env('MSG91_AUTHKEY', '443244TzrJBqfMH6761e7f8aP1');
+        $integratedNumber = '15553353740';
+        $templateName     = 'rogisewa';
+        $namespace        = 'cfb96646_21e8_42b0_bcb7_5b33828d2fa4';
+        $userName         = $request->user_name ?? $user->name;
+        $userLocation     = $request->user_location ?? 'Location not available';
+
+        $body = [
+            'integrated_number' => $integratedNumber,
+            'content_type'      => 'template',
+            'payload' => [
+                'messaging_product' => 'whatsapp',
+                'type'              => 'template',
+                'template' => [
+                    'name'      => $templateName,
+                    'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
+                    'namespace' => $namespace,
+                    'to_and_components' => [
+                        [
+                            'to' => [$user->emergency_contact_phone],
+                            'components' => [
+                                'body_user_name' => [
+                                    'type'           => 'text',
+                                    'value'          => $userName,
+                                    'parameter_name' => 'user_name',
+                                ],
+                                'body_user_location' => [
+                                    'type'           => 'text',
+                                    'value'          => $userLocation,
+                                    'parameter_name' => 'user_location',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $response = \Illuminate\Support\Facades\Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'authkey'      => $authkey,
+        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $body);
+
+        return response()->json([
+            'status'   => 200,
+            'message'  => 'Fall alert sent.',
+            'response' => $response->json(),
         ]);
     }
 

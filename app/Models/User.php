@@ -31,6 +31,8 @@ class User extends Authenticatable
         'pin_code',
         'gender',
         'dob',
+        'emergency_contact_name',
+        'emergency_contact_phone',
         'api_token',
         'fcm_token',
         'ip_address',

@@ -70,6 +70,8 @@ Route::prefix('v1')->group(function () {
         Route::delete('/report-history/{id}',[ReportHistoryController::class, 'destroy']);
         Route::post('/payment/order',        [PaymentController::class, 'createOrder']);
         Route::post('/payment/verify',       [PaymentController::class, 'verifyPayment']);
+        Route::post('/emergency-contact',       [UserController::class, 'saveEmergencyContact']);
+        Route::post('/fall-alert',               [UserController::class, 'sendFallAlert']);
         Route::post('/reasoning-questions',  [UserController::class, 'generateReasoningQuestions']);
     });
 
