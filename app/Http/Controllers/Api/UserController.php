@@ -565,36 +565,31 @@ class UserController extends Controller
             return response()->json(['status' => 400, 'message' => 'No emergency contact saved.'], 400);
         }
 
-        $authkey          = env('MSG91_AUTHKEY', '443244TzrJBqfMH6761e7f8aP1');
-        $integratedNumber = '15553353740';
-        $templateName     = 'rogisewa';
-        $namespace        = 'cfb96646_21e8_42b0_bcb7_5b33828d2fa4';
-        $userName         = $request->user_name ?? $user->name;
-        $userLocation     = $request->user_location ?? 'Location not available';
+        $authkey      = env('MSG91_AUTHKEY', '443244TzrJBqfMH6761e7f8aP1');
+        $userName     = $request->user_name ?? $user->name;
+        $userLocation = $request->user_location ?? 'Location not available';
+        $toPhone      = $user->emergency_contact_phone;
 
         $body = [
-            'integrated_number' => $integratedNumber,
+            'integrated_number' => '15553353740',
             'content_type'      => 'template',
             'payload' => [
                 'messaging_product' => 'whatsapp',
                 'type'              => 'template',
                 'template' => [
-                    'name'      => $templateName,
-                    'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
-                    'namespace' => $namespace,
+                    'name'      => 'rogisewa',
+                    'language'  => ['code' => 'hi'],
+                    'namespace' => 'cfb96646_21e8_42b0_bcb7_5b33828d2fa4',
                     'to_and_components' => [
                         [
-                            'to' => [$user->emergency_contact_phone],
+                            'to' => [$toPhone],
                             'components' => [
-                                'body_user_name' => [
-                                    'type'           => 'text',
-                                    'value'          => $userName,
-                                    'parameter_name' => 'user_name',
-                                ],
-                                'body_user_location' => [
-                                    'type'           => 'text',
-                                    'value'          => $userLocation,
-                                    'parameter_name' => 'user_location',
+                                [
+                                    'type'       => 'body',
+                                    'parameters' => [
+                                        ['type' => 'text', 'text' => $userName],
+                                        ['type' => 'text', 'text' => $userLocation],
+                                    ],
                                 ],
                             ],
                         ],
@@ -608,10 +603,13 @@ class UserController extends Controller
             'authkey'      => $authkey,
         ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $body);
 
+        $msg91Response = $response->json();
+
         return response()->json([
-            'status'   => 200,
-            'message'  => 'Fall alert sent.',
-            'response' => $response->json(),
+            'status'        => 200,
+            'message'       => 'Fall alert sent.',
+            'msg91_status'  => $response->status(),
+            'msg91_response'=> $msg91Response,
         ]);
     }
 
