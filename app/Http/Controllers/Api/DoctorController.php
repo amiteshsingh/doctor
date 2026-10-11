@@ -331,7 +331,14 @@ class DoctorController extends Controller
         }
 
         // ── WhatsApp notification to hospital/clinic ──
-        $hospitalPhone = $invoiceMaster->phone_no ?? null;
+        $hospital = null;
+        if ($invoiceMaster) {
+            $doctor = Doctor::find($invoiceMaster->doctor_id);
+            if ($doctor && $doctor->hospital_id) {
+                $hospital = \App\Models\Hospital::find($doctor->hospital_id);
+            }
+        }
+        $hospitalPhone = $hospital->phone_no ?? null;
         if ($hospitalPhone) {
             $hospitalPhone = preg_replace('/\D/', '', $hospitalPhone);
             if (strlen($hospitalPhone) === 10) $hospitalPhone = '91' . $hospitalPhone;
