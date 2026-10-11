@@ -330,6 +330,52 @@ class DoctorController extends Controller
             );
         }
 
+        // ── WhatsApp notification to hospital/clinic ──
+        $hospitalPhone = $invoiceMaster->phone_no ?? null;
+        if ($hospitalPhone) {
+            $hospitalPhone = preg_replace('/\D/', '', $hospitalPhone);
+            if (strlen($hospitalPhone) === 10) $hospitalPhone = '91' . $hospitalPhone;
+            elseif (strlen($hospitalPhone) === 11 && str_starts_with($hospitalPhone, '0')) $hospitalPhone = '91' . substr($hospitalPhone, 1);
+            $hospitalPhone = (str_starts_with($hospitalPhone, '91') && strlen($hospitalPhone) === 12) ? $hospitalPhone : null;
+            $doctorName    = $invoiceMaster ? optional(Doctor::find($invoiceMaster->doctor_id))->name ?? 'Doctor' : 'Doctor';
+            $clinicName    = $invoiceMaster->hospital_clinic_name ?? 'Clinic';
+            $formattedDate = \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y');
+            $tokenVal      = $queueNumber ? "#{$queueNumber}" : 'Pending';
+            try {
+                \Illuminate\Support\Facades\Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'authkey'      => env('MSG91_AUTHKEY'),
+                ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', [
+                    'integrated_number' => '919709707464',
+                    'content_type'      => 'template',
+                    'payload' => [
+                        'messaging_product' => 'whatsapp',
+                        'type'              => 'template',
+                        'template' => [
+                            'name'      => 'doctor',
+                            'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
+                            'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
+                            'to_and_components' => [
+                                [
+                                    'to' => [$hospitalPhone],
+                                    'components' => [
+                                        'body_1' => ['type' => 'text', 'value' => $doctorName],
+                                        'body_2' => ['type' => 'text', 'value' => $request->gender === 'Female' ? 'Ms.' : 'Mr.'],
+                                        'body_3' => ['type' => 'text', 'value' => $request->patient_name],
+                                        'body_4' => ['type' => 'text', 'value' => $formattedDate],
+                                        'body_5' => ['type' => 'text', 'value' => $tokenVal],
+                                        'body_6' => ['type' => 'text', 'value' => $queueNumber ? '' : 'Token abhi assign nahi hua hai. Kripya RogiSewa Doctor App mein token number assign karein.'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+            } catch (\Throwable $e) {
+                // WhatsApp failure booking ko block nahi karega
+            }
+        }
+
         return response()->json([
             'status'       => 200,
             'msg'          => 'Appointment booked successfully!',
