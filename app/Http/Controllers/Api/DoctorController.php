@@ -332,20 +332,22 @@ class DoctorController extends Controller
 
         // ── WhatsApp notification to hospital/clinic ──
         $doctorObj = $invoiceMaster ? Doctor::find($invoiceMaster->doctor_id) : null;
-        $hospital  = ($doctorObj && $doctorObj->hospital_id) ? \App\Models\Hospital::find($doctorObj->hospital_id) : null;
-        // hospital phone → fallback to doctor phone
-        $rawPhone = $hospital->phone_no ?? $doctorObj->phone_no ?? null;
+        // doctor.added_by se hospital dhundo, uska phone_no lo
+        $hospitalObj = ($doctorObj && $doctorObj->added_by)
+            ? \App\Models\Hospital::where('added_by', $doctorObj->added_by)->first()
+            : null;
+        $rawPhone = $hospitalObj->phone_no ?? null;
         \Illuminate\Support\Facades\Log::info('WA_DEBUG', [
-            'doctor_id'    => $invoiceMaster->doctor_id ?? null,
-            'hospital_id'  => $doctorObj->hospital_id ?? null,
-            'raw_phone'    => $rawPhone,
-            'authkey_set'  => !empty(env('MSG91_AUTHKEY')),
+            'doctor_added_by' => $doctorObj->added_by ?? null,
+            'hospital_id'     => $hospitalObj->id ?? null,
+            'raw_phone'       => $rawPhone,
+            'authkey_set'     => !empty(env('MSG91_AUTHKEY')),
         ]);
         $hospitalPhone = null;
         if ($rawPhone) {
             $p = preg_replace('/\D/', '', $rawPhone);
-            if (strlen($p) === 10)                                        $p = '91' . $p;
-            elseif (strlen($p) === 11 && str_starts_with($p, '0'))       $p = '91' . substr($p, 1);
+            if (strlen($p) === 10)                                  $p = '91' . $p;
+            elseif (strlen($p) === 11 && str_starts_with($p, '0')) $p = '91' . substr($p, 1);
             $hospitalPhone = (str_starts_with($p, '91') && strlen($p) === 12) ? $p : null;
             \Illuminate\Support\Facades\Log::info('WA_PHONE_FINAL', ['phone' => $hospitalPhone]);
         }
