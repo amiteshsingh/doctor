@@ -414,7 +414,7 @@ class DoctorMobileController extends Controller
                 'invoice_master.hospital_clinic_name',
                 'invoice_master.consultation_fee',
                 'invoice_master.doctor_id',
-                'invoice_master.token_mode',
+                DB::raw("COALESCE(invoice_master.token_mode, 'AUTOMATIC') as token_mode"),
                 'doctors.name as doctor_name',
                 'doctors.profile_pic'
             )

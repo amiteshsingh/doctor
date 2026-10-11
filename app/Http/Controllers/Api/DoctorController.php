@@ -280,10 +280,15 @@ class DoctorController extends Controller
         }
 
         // Queue number: us date ke liye is doctor ke active bookings count + 1
-        $queueNumber = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
-            ->where('booking_date', $request->booking_date)
-            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
-            ->count() + 1;
+        // MANUAL mode mein queue_number null rahega
+        $tokenMode   = $invoiceMaster->token_mode ?? 'AUTOMATIC';
+        $queueNumber = null;
+        if ($tokenMode === 'AUTOMATIC') {
+            $queueNumber = PrescriptionInvoice::where('invoice_master_id', $invoiceMaster->id ?? null)
+                ->where('booking_date', $request->booking_date)
+                ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
+                ->count() + 1;
+        }
 
         $invoice = new PrescriptionInvoice;
         $invoice->invoice_master_id = $invoiceMaster->id ?? null;
@@ -309,16 +314,18 @@ class DoctorController extends Controller
 
         if ($doctorUser && $doctorUser->fcm_token) {
             $formattedDate = \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y');
+            $tokenMsg = $queueNumber ? "Queue No. {$queueNumber}" : 'Token baad mein assign hoga.';
             \App\Services\FirebaseNotification::send(
                 $doctorUser->fcm_token,
                 '📅 New Appointment Booked',
-                "{$request->patient_name} ne {$formattedDate} ko Queue No. {$queueNumber} pe appointment book ki hai.",
+                "{$request->patient_name} ne {$formattedDate} ko appointment book ki hai. {$tokenMsg}",
                 [
                     'type'           => 'new_appointment',
                     'appointment_id' => (string)$invoice->id,
                     'patient_name'   => $request->patient_name,
                     'booking_date'   => $request->booking_date,
-                    'queue_number'   => (string)$queueNumber,
+                    'queue_number'   => (string)($queueNumber ?? ''),
+                    'screen'         => 'Appointments',
                 ]
             );
         }
