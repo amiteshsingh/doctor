@@ -565,55 +565,75 @@ class UserController extends Controller
             return response()->json(['status' => 400, 'message' => 'No emergency contact saved.'], 400);
         }
 
-        $authkey      = env('MSG91_AUTHKEY', '443244TzrJBqfMH6761e7f8aP1');
-        $userName     = $request->user_name ?? $user->name;
-        $userLocation = $request->user_location ?? 'Location not available';
-        $toPhone      = $user->emergency_contact_phone;
+        $authkey  = env('MSG91_AUTHKEY');
+        $userName = $request->user_name ?? $user->name;
+        $toPhone  = $user->emergency_contact_phone;
 
-        $body = [
-            'integrated_number' => '919709707464',
-            'content_type'      => 'template',
-            'payload' => [
-                'messaging_product' => 'whatsapp',
-                'type'              => 'template',
-                'template' => [
-                    'name'      => 'rg',
-                    'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
-                    'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
-                    'to_and_components' => [
-                        [
-                            'to' => [$toPhone],
-                            'components' => (object)[
-                                'body_user_name' => [
-                                    'type'           => 'text',
-                                    'value'          => $userName,
-                                    'parameter_name' => 'user_name',
-                                ],
-                                'body_user_location' => [
-                                    'type'           => 'text',
-                                    'value'          => $userLocation,
-                                    'parameter_name' => 'user_location',
+        // Parse lat/lng from Google Maps link
+        $lat = null;
+        $lng = null;
+        if ($request->user_location && preg_match('/q=([-\d.]+),([-\d.]+)/', $request->user_location, $m)) {
+            $lat = (float) $m[1];
+            $lng = (float) $m[2];
+        }
+
+        if ($lat && $lng) {
+            // Send native WhatsApp location pin
+            $body = [
+                'integrated_number' => '919709707464',
+                'content_type'      => 'location',
+                'payload' => [
+                    'messaging_product' => 'whatsapp',
+                    'to'                => $toPhone,
+                    'type'              => 'location',
+                    'location'          => [
+                        'latitude'  => $lat,
+                        'longitude' => $lng,
+                        'name'      => "🚨 {$userName} gir gaye!",
+                        'address'   => 'RogiSewa Fall Alert — turant madad karein',
+                    ],
+                ],
+            ];
+        } else {
+            // Fallback: template message if no GPS
+            $body = [
+                'integrated_number' => '919709707464',
+                'content_type'      => 'template',
+                'payload' => [
+                    'messaging_product' => 'whatsapp',
+                    'type'              => 'template',
+                    'template' => [
+                        'name'      => 'rg',
+                        'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
+                        'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
+                        'to_and_components' => [
+                            [
+                                'to' => [$toPhone],
+                                'components' => (object)[
+                                    'body_user_name' => [
+                                        'type'           => 'text',
+                                        'value'          => $userName,
+                                        'parameter_name' => 'user_name',
+                                    ],
+                                    'body_user_location' => [
+                                        'type'           => 'text',
+                                        'value'          => 'Location not available',
+                                        'parameter_name' => 'user_location',
+                                    ],
                                 ],
                             ],
                         ],
                     ],
                 ],
-            ],
-        ];
+            ];
+        }
 
-        $response = \Illuminate\Support\Facades\Http::withHeaders([
+        \Illuminate\Support\Facades\Http::withHeaders([
             'Content-Type' => 'application/json',
             'authkey'      => $authkey,
         ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $body);
 
-        $msg91Response = $response->json();
-
-        return response()->json([
-            'status'        => 200,
-            'message'       => 'Fall alert sent.',
-            'msg91_status'  => $response->status(),
-            'msg91_response'=> $msg91Response,
-        ]);
+        return response()->json(['status' => 200, 'message' => 'Fall alert sent.']);
     }
 
     public function myBookings(Request $request)
