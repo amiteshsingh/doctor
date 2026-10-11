@@ -756,6 +756,25 @@ class DoctorMobileController extends Controller
             ->where('id', $request->appointment_id)
             ->update(['queue_number' => $request->token_number, 'updated_at' => now()]);
 
+        // User ko notification bhejo
+        $appointment = DB::table('prescription_invoice')->where('id', $request->appointment_id)->first();
+        if ($appointment && $appointment->user_id) {
+            $patient = User::find($appointment->user_id);
+            if ($patient && $patient->fcm_token) {
+                FirebaseNotification::send(
+                    $patient->fcm_token,
+                    '🔢 Token Number Assigned',
+                    "Aapka token number #{$request->token_number} assign ho gaya hai. Apni baari ka intezaar karein.",
+                    [
+                        'type'           => 'token_assigned',
+                        'appointment_id' => (string)$request->appointment_id,
+                        'token_number'   => (string)$request->token_number,
+                        'screen'         => 'MyAppointments',
+                    ]
+                );
+            }
+        }
+
         return response()->json(['status' => 200, 'msg' => 'Token assigned successfully.', 'token_number' => $request->token_number]);
     }
 
