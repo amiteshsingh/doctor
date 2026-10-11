@@ -14,6 +14,7 @@ class InvoiceMaster extends Model
         'hospital_clinic_name',
         'consultation_fee',
         'booking_mode',
+        'token_mode',
         'address',
         'phone_no',
         'email',

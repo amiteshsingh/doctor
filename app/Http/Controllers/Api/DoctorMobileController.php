@@ -414,6 +414,7 @@ class DoctorMobileController extends Controller
                 'invoice_master.hospital_clinic_name',
                 'invoice_master.consultation_fee',
                 'invoice_master.doctor_id',
+                'invoice_master.token_mode',
                 'doctors.name as doctor_name',
                 'doctors.profile_pic'
             )
@@ -484,11 +485,16 @@ class DoctorMobileController extends Controller
         }
 
         // Queue number: us date + us clinic ke liye kitne already hain
-        $queueNumber = DB::table('prescription_invoice')
-            ->where('invoice_master_id', $request->invoice_master_id)
-            ->where('booking_date', $request->booking_date)
-            ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
-            ->count() + 1;
+        $queueNumber = null;
+        $tokenMode   = $master->token_mode ?? 'AUTOMATIC';
+
+        if ($tokenMode === 'AUTOMATIC') {
+            $queueNumber = DB::table('prescription_invoice')
+                ->where('invoice_master_id', $request->invoice_master_id)
+                ->where('booking_date', $request->booking_date)
+                ->where(function($q) { $q->whereNull('status')->orWhere('status', '!=', 'cancelled'); })
+                ->count() + 1;
+        }
 
         $id = DB::table('prescription_invoice')->insertGetId([
             'invoice_master_id' => $request->invoice_master_id,
@@ -506,16 +512,18 @@ class DoctorMobileController extends Controller
         ]);
 
         if ($user->fcm_token) {
+            $tokenMsg = $queueNumber ? "Queue No: #{$queueNumber}" : 'Token baad mein assign hoga.';
             \App\Services\FirebaseNotification::send(
                 $user->fcm_token,
                 '📅 New Appointment Booked',
-                "{$request->patient_name} ki appointment " . \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y') . " ke liye book hui. Queue No: #{$queueNumber}",
+                "{$request->patient_name} ki appointment " . \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y') . " ke liye book hui. {$tokenMsg}",
                 [
                     'type'           => 'new_appointment',
                     'appointment_id' => (string)$id,
                     'patient_name'   => $request->patient_name,
                     'booking_date'   => $request->booking_date,
-                    'queue_number'   => (string)$queueNumber,
+                    'queue_number'   => (string)($queueNumber ?? ''),
+                    'screen'         => 'Appointments',
                 ]
             );
         }
@@ -649,6 +657,11 @@ class DoctorMobileController extends Controller
             $bookingMode = 'ONLINE';
         }
 
+        $tokenMode = $request->token_mode ?? 'AUTOMATIC';
+        if (!in_array($tokenMode, ['AUTOMATIC', 'MANUAL'])) {
+            $tokenMode = 'AUTOMATIC';
+        }
+
         $doctor = null;
         if ($request->filled('doctor_id')) {
             $doctor = DB::table('doctors')->where('id', $request->doctor_id)->where('added_by', $user->id)->first();
@@ -674,6 +687,7 @@ class DoctorMobileController extends Controller
             'max_bookings'         => $request->max_bookings ? (int)$request->max_bookings : 20,
             'working_days'         => $workingDays,
             'booking_mode'         => $bookingMode,
+            'token_mode'           => $tokenMode,
             'address'              => $request->address  ?? '',
             'phone_no'             => $request->phone_no ?? '',
             'email'                => $request->email    ?? '',
@@ -702,6 +716,33 @@ class DoctorMobileController extends Controller
         $user = $request->auth_user;
         DB::table('invoice_master')->where('id', $id)->where('added_by', $user->id)->delete();
         return response()->json(['status' => 200, 'msg' => 'Clinic deleted successfully.']);
+    }
+
+    /** POST /api/v1/doctor/appointments/assign-token */
+    public function assignToken(Request $request)
+    {
+        $user = $request->auth_user;
+        $request->validate([
+            'appointment_id' => 'required|integer',
+            'token_number'   => 'required|integer|min:1',
+        ]);
+
+        $inv = DB::table('prescription_invoice')
+            ->join('invoice_master', 'prescription_invoice.invoice_master_id', '=', 'invoice_master.id')
+            ->where('prescription_invoice.id', $request->appointment_id)
+            ->where('invoice_master.added_by', $user->id)
+            ->select('prescription_invoice.id')
+            ->first();
+
+        if (!$inv) {
+            return response()->json(['status' => 404, 'msg' => 'Appointment not found.'], 404);
+        }
+
+        DB::table('prescription_invoice')
+            ->where('id', $request->appointment_id)
+            ->update(['queue_number' => $request->token_number, 'updated_at' => now()]);
+
+        return response()->json(['status' => 200, 'msg' => 'Token assigned successfully.', 'token_number' => $request->token_number]);
     }
 
     // ─── BOOKED SLOTS ─────────────────────────────────────────────────────────
