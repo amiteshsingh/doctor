@@ -612,28 +612,12 @@ class UserController extends Controller
             ],
         ];
 
-        $msg91Response = \Illuminate\Support\Facades\Http::withHeaders([
+        \Illuminate\Support\Facades\Http::withHeaders([
             'Content-Type' => 'application/json',
             'authkey'      => $authkey,
         ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $body);
 
-        \Illuminate\Support\Facades\Log::info('FallAlert MSG91 request', [
-            'to'       => $toPhone,
-            'lat'      => $lat,
-            'lng'      => $lng,
-            'body'     => $body,
-        ]);
-        \Illuminate\Support\Facades\Log::info('FallAlert MSG91 response', [
-            'status'   => $msg91Response->status(),
-            'body'     => $msg91Response->body(),
-        ]);
-
-        return response()->json([
-            'status'        => 200,
-            'message'       => 'Fall alert sent.',
-            'msg91_status'  => $msg91Response->status(),
-            'msg91_body'    => $msg91Response->json(),
-        ]);
+        return response()->json(['status' => 200, 'message' => 'Fall alert sent.']);
     }
 
     public function myBookings(Request $request)
