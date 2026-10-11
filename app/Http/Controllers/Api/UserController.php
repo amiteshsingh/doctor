@@ -577,7 +577,7 @@ class UserController extends Controller
                 'messaging_product' => 'whatsapp',
                 'type'              => 'template',
                 'template' => [
-                    'name'      => 'rogisewa',
+                    'name'      => 'rg',
                     'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
                     'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
                     'to_and_components' => [
