@@ -410,7 +410,21 @@ class DoctorMobileController extends Controller
             ->join('doctors', 'invoice_master.doctor_id', '=', 'doctors.id')
             ->where('invoice_master.added_by', $user->id)
             ->select(
-                'prescription_invoice.*',
+                'prescription_invoice.id',
+                'prescription_invoice.invoice_master_id',
+                'prescription_invoice.invoice_number',
+                'prescription_invoice.patient_name',
+                'prescription_invoice.patient_phone_no',
+                'prescription_invoice.patient_address',
+                'prescription_invoice.age',
+                'prescription_invoice.gender',
+                'prescription_invoice.booking_date',
+                'prescription_invoice.booking_time',
+                'prescription_invoice.queue_number',
+                'prescription_invoice.status',
+                'prescription_invoice.user_id',
+                'prescription_invoice.created_at',
+                'prescription_invoice.updated_at',
                 'invoice_master.hospital_clinic_name',
                 'invoice_master.consultation_fee',
                 'invoice_master.doctor_id',
