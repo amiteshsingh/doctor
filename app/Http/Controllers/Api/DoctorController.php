@@ -331,25 +331,31 @@ class DoctorController extends Controller
         }
 
         // ── WhatsApp notification to hospital/clinic ──
-        $hospital = null;
-        if ($invoiceMaster) {
-            $doctor = Doctor::find($invoiceMaster->doctor_id);
-            if ($doctor && $doctor->hospital_id) {
-                $hospital = \App\Models\Hospital::find($doctor->hospital_id);
-            }
+        $doctorObj = $invoiceMaster ? Doctor::find($invoiceMaster->doctor_id) : null;
+        $hospital  = ($doctorObj && $doctorObj->hospital_id) ? \App\Models\Hospital::find($doctorObj->hospital_id) : null;
+        // hospital phone → fallback to doctor phone
+        $rawPhone = $hospital->phone_no ?? $doctorObj->phone_no ?? null;
+        \Illuminate\Support\Facades\Log::info('WA_DEBUG', [
+            'doctor_id'    => $invoiceMaster->doctor_id ?? null,
+            'hospital_id'  => $doctorObj->hospital_id ?? null,
+            'raw_phone'    => $rawPhone,
+            'authkey_set'  => !empty(env('MSG91_AUTHKEY')),
+        ]);
+        $hospitalPhone = null;
+        if ($rawPhone) {
+            $p = preg_replace('/\D/', '', $rawPhone);
+            if (strlen($p) === 10)                                        $p = '91' . $p;
+            elseif (strlen($p) === 11 && str_starts_with($p, '0'))       $p = '91' . substr($p, 1);
+            $hospitalPhone = (str_starts_with($p, '91') && strlen($p) === 12) ? $p : null;
+            \Illuminate\Support\Facades\Log::info('WA_PHONE_FINAL', ['phone' => $hospitalPhone]);
         }
-        $hospitalPhone = $hospital->phone_no ?? null;
         if ($hospitalPhone) {
-            $hospitalPhone = preg_replace('/\D/', '', $hospitalPhone);
-            if (strlen($hospitalPhone) === 10) $hospitalPhone = '91' . $hospitalPhone;
-            elseif (strlen($hospitalPhone) === 11 && str_starts_with($hospitalPhone, '0')) $hospitalPhone = '91' . substr($hospitalPhone, 1);
-            $hospitalPhone = (str_starts_with($hospitalPhone, '91') && strlen($hospitalPhone) === 12) ? $hospitalPhone : null;
-            $doctorName    = $invoiceMaster ? optional(Doctor::find($invoiceMaster->doctor_id))->name ?? 'Doctor' : 'Doctor';
+            $doctorName    = $doctorObj->name ?? 'Doctor';
             $clinicName    = $invoiceMaster->hospital_clinic_name ?? 'Clinic';
             $formattedDate = \Carbon\Carbon::parse($request->booking_date)->format('d/m/Y');
             $tokenVal      = $queueNumber ? "#{$queueNumber}" : 'Pending';
             try {
-                \Illuminate\Support\Facades\Http::withHeaders([
+                $waResponse = \Illuminate\Support\Facades\Http::withHeaders([
                     'Content-Type' => 'application/json',
                     'authkey'      => env('MSG91_AUTHKEY'),
                 ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', [
@@ -371,15 +377,19 @@ class DoctorController extends Controller
                                         'body_3' => ['type' => 'text', 'value' => $request->patient_name],
                                         'body_4' => ['type' => 'text', 'value' => $formattedDate],
                                         'body_5' => ['type' => 'text', 'value' => $tokenVal],
-                                        'body_6' => ['type' => 'text', 'value' => $queueNumber ? '' : 'Token abhi assign nahi hua hai. Kripya RogiSewa Doctor App mein token number assign karein.'],
+                                        'body_6' => ['type' => 'text', 'value' => $queueNumber ? "Token number:  $queueNumber" : 'Token abhi assign nahi hua hai. Kripya RogiSewa Doctor App mein token number assign karein.'],
                                     ],
                                 ],
                             ],
                         ],
                     ],
                 ]);
+                \Illuminate\Support\Facades\Log::info('WA_RESPONSE', [
+                    'status' => $waResponse->status(),
+                    'body'   => $waResponse->body(),
+                ]);
             } catch (\Throwable $e) {
-                // WhatsApp failure booking ko block nahi karega
+                \Illuminate\Support\Facades\Log::error('WA_ERROR', ['msg' => $e->getMessage()]);
             }
         }
 
