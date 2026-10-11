@@ -571,7 +571,7 @@ class UserController extends Controller
         $toPhone      = $user->emergency_contact_phone;
 
         $body = [
-            'integrated_number' => '15553353740',
+            'integrated_number' => '919709707464',
             'content_type'      => 'template',
             'payload' => [
                 'messaging_product' => 'whatsapp',
@@ -579,7 +579,7 @@ class UserController extends Controller
                 'template' => [
                     'name'      => 'rogisewa',
                     'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
-                    'namespace' => 'cfb96646_21e8_42b0_bcb7_5b33828d2fa4',
+                    'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
                     'to_and_components' => [
                         [
                             'to' => [$toPhone],
