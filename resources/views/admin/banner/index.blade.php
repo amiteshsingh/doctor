@@ -75,6 +75,20 @@
                         </div>
 
                         <div class="form-group">
+                            <label style="font-weight:700;font-size:12px;color:#555;">Button Text <small class="text-muted">(Optional)</small></label>
+                            <input type="text" name="button_text" class="form-control" placeholder="Jaise: Book Now, Learn More"
+                                   style="border-radius:10px;border:1.5px solid #e0e0e0;padding:10px;">
+                            <small class="text-muted">Slider mein button dikhana ho to fill karein</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight:700;font-size:12px;color:#555;">Button URL <small class="text-muted">(Optional)</small></label>
+                            <input type="text" name="button_url" class="form-control" placeholder="https://rogisewa.com/doctors"
+                                   style="border-radius:10px;border:1.5px solid #e0e0e0;padding:10px;">
+                            <small class="text-muted">Button click par kahan jayega</small>
+                        </div>
+
+                        <div class="form-group">
                             <label style="font-weight:700;font-size:12px;color:#555;">Sort Order</label>
                             <input type="number" name="sort_order" class="form-control" value="0" min="0"
                                    style="border-radius:10px;border:1.5px solid #e0e0e0;padding:10px;">
@@ -131,6 +145,13 @@
                                     {{ $banner->is_active ? '✅ Active' : '❌ Inactive' }}
                                 </span>
                             </div>
+                            @if($banner->button_text)
+                            <div class="mt-1">
+                                <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;background:#e3f2fd;color:#1565c0;">
+                                    🔘 {{ $banner->button_text }}
+                                </span>
+                            </div>
+                            @endif
                         </div>
                         <div class="d-flex" style="gap:8px;">
                             <form method="POST" action="{{ route('admin.banner.toggle', $banner->id) }}">

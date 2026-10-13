@@ -15,11 +15,13 @@ class BannerController extends Controller
 
     public function store(Request $request) {
         $request->validate([
-            'title'    => 'nullable|string|max:100',
-            'subtitle' => 'nullable|string|max:200',
-            'icon'     => 'nullable|string|max:10',
-            'color'    => 'required|string',
-            'image'    => 'nullable|image|max:2048',
+            'title'       => 'nullable|string|max:100',
+            'subtitle'    => 'nullable|string|max:200',
+            'icon'        => 'nullable|string|max:10',
+            'color'       => 'required|string',
+            'image'       => 'nullable|image|max:2048',
+            'button_text' => 'nullable|string|max:100',
+            'button_url'  => 'nullable|string|max:500',
         ]);
 
         $imageUrl = null;
@@ -34,14 +36,16 @@ class BannerController extends Controller
         }
 
         Banner::create([
-            'title'      => $request->title,
-            'subtitle'   => $request->subtitle,
-            'icon'       => $request->icon,
-            'color'      => $request->color,
-            'image'      => $imageUrl,
-            'link'       => $request->link,
-            'is_active'  => $request->has('is_active'),
-            'sort_order' => $request->sort_order ?? 0,
+            'title'       => $request->title,
+            'subtitle'    => $request->subtitle,
+            'icon'        => $request->icon,
+            'color'       => $request->color,
+            'image'       => $imageUrl,
+            'link'        => $request->link,
+            'button_text' => $request->button_text ?: null,
+            'button_url'  => $request->button_url ?: null,
+            'is_active'   => $request->has('is_active'),
+            'sort_order'  => $request->sort_order ?? 0,
         ]);
 
         return back()->with('success', 'Banner add ho gaya!');
