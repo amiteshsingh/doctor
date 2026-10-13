@@ -41,9 +41,9 @@ class DoctorMobileController extends Controller
         $to      = $request->email;
         $subject = 'RogiSewa Doctor - Password Reset OTP';
         $message = "Dear {$user->name},\n\nYour OTP for password reset is: {$otp}\n\nThis OTP is valid for 10 minutes.\n\nRegards,\nRogiSewa Team";
-        $headers = 'From: rogisewa25@gmail.com' . "\r\n" . 'X-Mailer: PHP/' . phpversion();
+        // $headers = 'From: rogisewa25@gmail.com' . "\r\n" . 'X-Mailer: PHP/' . phpversion();
 
-        $sent = mail($to, $subject, $message, $headers);
+        $sent = mail($to, $subject, $message);
 
         if (!$sent) {
             \Log::error('Password reset OTP email failed', [
