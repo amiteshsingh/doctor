@@ -43,9 +43,23 @@ class DoctorMobileController extends Controller
         $message = "Dear {$user->name},\n\nYour OTP for password reset is: {$otp}\n\nThis OTP is valid for 10 minutes.\n\nRegards,\nRogiSewa Team";
         $headers = 'From: rogisewa25@gmail.com' . "\r\n" . 'X-Mailer: PHP/' . phpversion();
 
-        mail($to, $subject, $message, $headers);
+        $sent = mail($to, $subject, $message, $headers);
 
-        return response()->json(['status' => 200, 'msg' => 'OTP sent to your email.']);
+        if (!$sent) {
+            \Log::error('Password reset OTP email failed', [
+                'email' => $to,
+            ]);
+
+            return response()->json([
+                'status' => 500,
+                'msg' => 'Unable to send OTP email. Please try again later.'
+            ], 500);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'msg' => 'OTP sent to your email.'
+        ]);
     }
 
     /** POST /api/v1/doctor/verify-otp */
