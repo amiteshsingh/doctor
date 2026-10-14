@@ -93,8 +93,10 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset']);
 //Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
 // Admin Routes
-Route::middleware(['admin'])->prefix('admin')->group(function () {
-    Route::any('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::middleware(['admin', 'admin.permission'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/permissions', [\App\Http\Controllers\Admin\AdminPermissionController::class, 'index'])->name('admin.permissions.index');
+    Route::put('/permissions/{admin}', [\App\Http\Controllers\Admin\AdminPermissionController::class, 'update'])->whereNumber('admin')->name('admin.permissions.update');
     
     Route::any('/hospital', [HospitalController::class, 'index'])->name('admin.hospital');
     Route::any('/hospital/add', [HospitalController::class, 'add'])->name('admin.hospital.add');

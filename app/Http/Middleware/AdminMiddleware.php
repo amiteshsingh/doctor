@@ -5,7 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
+use App\Support\AdminModules;
 
 class AdminMiddleware
 {
@@ -17,7 +19,15 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check() && Auth::user()->isAdmin()) {
-            return $next($request);
+            $permissions = AdminModules::permissionsFor((int) Auth::id());
+            $request->attributes->set('adminModulePermissions', $permissions);
+            View::share('adminModulePermissions', $permissions);
+
+            try {
+                return $next($request);
+            } finally {
+                View::share('adminModulePermissions', []);
+            }
         }
         return redirect('/login')->with('error', 'Unauthorized Access.');
     }

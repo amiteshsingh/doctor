@@ -127,14 +127,14 @@
 
     {{-- ── STAT CARDS ── --}}
     <div class="row mb-4" style="row-gap:16px;">
-        @foreach([
-            ['label'=>'Total Doctors',       'val'=>$totalDoctors,       'icon'=>'fa-user-md',    'class'=>'s1', 'link'=>route('admin.doctor'),         'delay'=>'.05s'],
-            ['label'=>'Total Hospitals',      'val'=>$totalHospitals,     'icon'=>'fa-hospital-o', 'class'=>'s2', 'link'=>route('admin.hospital'),        'delay'=>'.12s'],
-            ['label'=>'Registered Users',     'val'=>$totalUsers,         'icon'=>'fa-users',      'class'=>'s3', 'link'=>route('admin.user'),            'delay'=>'.19s'],
-            ['label'=>'Specializations',      'val'=>$totalSpecializations,'icon'=>'fa-stethoscope','class'=>'s4','link'=>route('admin.specialization'),  'delay'=>'.26s'],
-            ['label'=>'Active Memberships',   'val'=>$activeMemberships,  'icon'=>'fa-star',       'class'=>'s5', 'link'=>route('admin.user'),            'delay'=>'.33s'],
-            ['label'=>'Online Doctors',        'val'=>$onlineDoctors,      'icon'=>'fa-circle',     'class'=>'s1', 'link'=>route('admin.user'),            'delay'=>'.40s'],
-        ] as $stat)
+        @foreach(array_filter([
+            ['module'=>'doctors', 'label'=>'Total Doctors',       'val'=>$totalDoctors,       'icon'=>'fa-user-md',    'class'=>'s1', 'link'=>route('admin.doctor'),         'delay'=>'.05s'],
+            ['module'=>'hospitals', 'label'=>'Total Hospitals',      'val'=>$totalHospitals,     'icon'=>'fa-hospital-o', 'class'=>'s2', 'link'=>route('admin.hospital'),        'delay'=>'.12s'],
+            ['module'=>'users', 'label'=>'Registered Users',     'val'=>$totalUsers,         'icon'=>'fa-users',      'class'=>'s3', 'link'=>route('admin.user'),            'delay'=>'.19s'],
+            ['module'=>'specializations', 'label'=>'Specializations',      'val'=>$totalSpecializations,'icon'=>'fa-stethoscope','class'=>'s4','link'=>route('admin.specialization'),  'delay'=>'.26s'],
+            ['module'=>'users', 'label'=>'Active Memberships',   'val'=>$activeMemberships,  'icon'=>'fa-star',       'class'=>'s5', 'link'=>route('admin.user'),            'delay'=>'.33s'],
+            ['module'=>'doctors', 'label'=>'Online Doctors',        'val'=>$onlineDoctors,      'icon'=>'fa-circle',     'class'=>'s1', 'link'=>route('admin.doctor'),            'delay'=>'.40s'],
+        ], fn($stat) => $canViewModules[$stat['module']]) as $stat)
         <div class="col-xl col-lg-4 col-sm-6">
             <a href="{{ $stat['link'] }}" style="text-decoration:none;">
                 <div class="adm-stat {{ $stat['class'] }} shadow-sm" style="animation-delay:{{ $stat['delay'] }};">
@@ -155,6 +155,7 @@
 
     <div class="row" style="row-gap:20px;">
 
+        @if($canViewModules['doctors'])
         {{-- ── RECENT DOCTORS ── --}}
         <div class="col-lg-4">
             <div class="adm-card">
@@ -186,7 +187,9 @@
                 </div>
             </div>
         </div>
+        @endif
 
+        @if($canViewModules['users'])
         {{-- ── RECENT USERS ── --}}
         <div class="col-lg-4">
             <div class="adm-card">
@@ -210,7 +213,9 @@
                 </div>
             </div>
         </div>
+        @endif
 
+        @if($canViewModules['doctors'])
         {{-- ── ONLINE DOCTORS ── --}}
         <div class="col-lg-4">
             <div class="adm-card">
@@ -253,6 +258,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         {{-- ── RIGHT COLUMN ── --}}
         <div class="col-lg-4">
@@ -264,14 +270,14 @@
                 </div>
                 <div class="adm-card-body">
                     <div class="ql-grid">
-                        @foreach([
-                            ['url'=>route('admin.doctor.add'),        'icon'=>'fa-user-plus',   'label'=>'Add Doctor',   'color'=>'#667eea', 'delay'=>'.1s'],
-                            ['url'=>route('admin.hospital.add'),      'icon'=>'fa-plus-square', 'label'=>'Add Hospital', 'color'=>'#f5576c', 'delay'=>'.15s'],
-                            ['url'=>route('admin.specialization.add'),'icon'=>'fa-stethoscope', 'label'=>'Add Spec.',    'color'=>'#4facfe', 'delay'=>'.2s'],
-                            ['url'=>route('admin.user.add'),          'icon'=>'fa-user',        'label'=>'Add User',     'color'=>'#43e97b', 'delay'=>'.25s'],
-                            ['url'=>route('admin.blog.add'),          'icon'=>'fa-newspaper-o', 'label'=>'Add Blog',     'color'=>'#fa709a', 'delay'=>'.3s'],
-                            ['url'=>route('admin.user'),              'icon'=>'fa-star',        'label'=>'Memberships',  'color'=>'#f59e0b', 'delay'=>'.35s'],
-                        ] as $ql)
+                        @foreach(array_filter([
+                            ['module'=>'doctors', 'url'=>route('admin.doctor.add'),        'icon'=>'fa-user-plus',   'label'=>'Add Doctor',   'color'=>'#667eea', 'delay'=>'.1s'],
+                            ['module'=>'hospitals', 'url'=>route('admin.hospital.add'),      'icon'=>'fa-plus-square', 'label'=>'Add Hospital', 'color'=>'#f5576c', 'delay'=>'.15s'],
+                            ['module'=>'specializations', 'url'=>route('admin.specialization.add'),'icon'=>'fa-stethoscope', 'label'=>'Add Spec.',    'color'=>'#4facfe', 'delay'=>'.2s'],
+                            ['module'=>'users', 'url'=>route('admin.user.add'),          'icon'=>'fa-user',        'label'=>'Add User',     'color'=>'#43e97b', 'delay'=>'.25s'],
+                            ['module'=>'blogs', 'url'=>route('admin.blog.add'),          'icon'=>'fa-newspaper-o', 'label'=>'Add Blog',     'color'=>'#fa709a', 'delay'=>'.3s'],
+                            ['module'=>'users', 'needs_view'=>true, 'url'=>route('admin.user'), 'icon'=>'fa-star', 'label'=>'Memberships', 'color'=>'#f59e0b', 'delay'=>'.35s'],
+                        ], fn($action) => $canAccessModules[$action['module']] && (!($action['needs_view'] ?? false) || $canViewModules[$action['module']])) as $ql)
                         <a href="{{ $ql['url'] }}" class="ql-item" style="animation-delay:{{ $ql['delay'] }};">
                             <i class="fa {{ $ql['icon'] }}" style="color:{{ $ql['color'] }};"></i>
                             <span>{{ $ql['label'] }}</span>
@@ -288,13 +294,13 @@
                 </div>
                 <div class="adm-card-body">
                     @php $maxVal = max($totalDoctors, $totalHospitals, $totalUsers, $totalSpecializations, 1); @endphp
-                    @foreach([
-                        ['label'=>'Doctors',       'val'=>$totalDoctors,        'color'=>'#667eea'],
-                        ['label'=>'Hospitals',     'val'=>$totalHospitals,      'color'=>'#f5576c'],
-                        ['label'=>'Users',         'val'=>$totalUsers,          'color'=>'#4facfe'],
-                        ['label'=>'Specializations','val'=>$totalSpecializations,'color'=>'#43e97b'],
-                        ['label'=>'Memberships',   'val'=>$activeMemberships,   'color'=>'#f59e0b'],
-                    ] as $bar)
+                    @foreach(array_filter([
+                        ['module'=>'doctors', 'label'=>'Doctors',       'val'=>$totalDoctors,        'color'=>'#667eea'],
+                        ['module'=>'hospitals', 'label'=>'Hospitals',     'val'=>$totalHospitals,      'color'=>'#f5576c'],
+                        ['module'=>'users', 'label'=>'Users',         'val'=>$totalUsers,          'color'=>'#4facfe'],
+                        ['module'=>'specializations', 'label'=>'Specializations','val'=>$totalSpecializations,'color'=>'#43e97b'],
+                        ['module'=>'users', 'label'=>'Memberships',   'val'=>$activeMemberships,   'color'=>'#f59e0b'],
+                    ], fn($bar) => $canViewModules[$bar['module']]) as $bar)
                     <div class="mb-3">
                         <div class="d-flex justify-content-between" style="font-size:12px;color:#555;margin-bottom:3px;">
                             <span>{{ $bar['label'] }}</span><span style="font-weight:700;">{{ $bar['val'] }}</span>
@@ -310,6 +316,7 @@
         </div>
     </div>
 
+    @if($canViewModules['doctors'] && $canViewModules['users'])
     {{-- RECENT APPOINTMENTS (Last 2 Days) --}}
     <div class="adm-card mt-2">
         <div class="adm-card-head" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
@@ -371,6 +378,7 @@
             </div>
         </div>
     </div>
+    @endif
 
 </div>
 </div>

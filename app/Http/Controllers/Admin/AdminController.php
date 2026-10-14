@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use App\Support\AdminModules;
 
 
 class AdminController extends Controller
@@ -21,7 +22,7 @@ class AdminController extends Controller
     use AuthenticatesUsers;
 
 
-	public function dashboard()
+	public function dashboard(Request $request)
 	{
 		$user = Auth::user();
 		$userRole = UserRole::where('user_id', $user->id)->first();
@@ -30,27 +31,36 @@ class AdminController extends Controller
 			return redirect('/');
 		}
 
-		$totalDoctors         = DB::table('doctors')->count();
-		$totalHospitals       = DB::table('hospitals')->count();
-		$totalUsers           = DB::table('users')->join('user_roles','users.id','=','user_roles.user_id')->where('user_roles.role','doctor')->count();
-		$totalSpecializations = DB::table('specializations')->count();
-		$recentDoctors        = DB::table('doctors')->orderByDesc('id')->limit(5)->get();
-		$recentUsers          = DB::table('users')->join('user_roles','users.id','=','user_roles.user_id')->where('user_roles.role','doctor')->orderByDesc('users.id')->limit(5)->get();
-		$activeMemberships    = DB::table('user_doctor_role_membership')->where('membership_subscription_end_date','>=',now()->toDateString())->count();
-		$onlineDoctors        = DB::table('users')
+		$permissions = $request->attributes->get('adminModulePermissions', []);
+		$canViewModules = [];
+		$canAccessModules = [];
+		foreach (AdminModules::MODULES as $module => $details) {
+			$canViewModules[$module] = AdminModules::allows((int) $user->id, $permissions, $module, 'access')
+				&& AdminModules::allows((int) $user->id, $permissions, $module, 'view');
+			$canAccessModules[$module] = AdminModules::allows((int) $user->id, $permissions, $module, 'access');
+		}
+
+		$totalDoctors         = $canViewModules['doctors'] ? DB::table('doctors')->count() : 0;
+		$totalHospitals       = $canViewModules['hospitals'] ? DB::table('hospitals')->count() : 0;
+		$totalUsers           = $canViewModules['users'] ? DB::table('users')->join('user_roles','users.id','=','user_roles.user_id')->where('user_roles.role','doctor')->count() : 0;
+		$totalSpecializations = $canViewModules['specializations'] ? DB::table('specializations')->count() : 0;
+		$recentDoctors        = $canViewModules['doctors'] ? DB::table('doctors')->orderByDesc('id')->limit(5)->get() : collect();
+		$recentUsers          = $canViewModules['users'] ? DB::table('users')->join('user_roles','users.id','=','user_roles.user_id')->where('user_roles.role','doctor')->orderByDesc('users.id')->limit(5)->get() : collect();
+		$activeMemberships    = $canViewModules['users'] ? DB::table('user_doctor_role_membership')->where('membership_subscription_end_date','>=',now()->toDateString())->count() : 0;
+		$onlineDoctors        = $canViewModules['doctors'] ? DB::table('users')
 			->join('user_roles','users.id','=','user_roles.user_id')
 			->where('user_roles.role','doctor')
 			->where('users.last_seen','>=',now()->subMinutes(5))
-			->count();
-		$onlineDoctorsList    = DB::table('users')
+			->count() : 0;
+		$onlineDoctorsList    = $canViewModules['doctors'] ? DB::table('users')
 			->join('user_roles','users.id','=','user_roles.user_id')
 			->where('user_roles.role','doctor')
 			->where('users.last_seen','>=',now()->subMinutes(5))
 			->select('users.id','users.name','users.email','users.profile_image','users.last_seen')
 			->orderByDesc('users.last_seen')
-			->get();
+			->get() : collect();
 
-		$recentAppointments = DB::table('prescription_invoice')
+		$recentAppointments = $canViewModules['doctors'] && $canViewModules['users'] ? DB::table('prescription_invoice')
 			->join('invoice_master', 'prescription_invoice.invoice_master_id', '=', 'invoice_master.id')
 			->join('doctors', 'invoice_master.doctor_id', '=', 'doctors.id')
 			->leftJoin('users', 'prescription_invoice.user_id', '=', 'users.id')
@@ -67,13 +77,13 @@ class AdminController extends Controller
 				'invoice_master.hospital_clinic_name'
 			)
 			->orderByDesc('prescription_invoice.created_at')
-			->get();
+			->get() : collect();
 
 		return view('admin.dashboard', compact(
 			'totalDoctors','totalHospitals','totalUsers',
 			'totalSpecializations','recentDoctors','recentUsers',
 			'activeMemberships','onlineDoctors','onlineDoctorsList',
-			'recentAppointments'
+			'recentAppointments','canViewModules','canAccessModules'
 		));
 	}
 

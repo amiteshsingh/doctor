@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\App\Http\Middleware\UpdateLastSeen::class);
         $middleware->alias([
             'admin'  => \App\Http\Middleware\AdminMiddleware::class,
+            'admin.permission' => \App\Http\Middleware\AdminModulePermissionMiddleware::class,
             'doctor' => \App\Http\Middleware\DoctorMiddleware::class,
             'user'   => \App\Http\Middleware\UserMiddleware::class,
         ]);
