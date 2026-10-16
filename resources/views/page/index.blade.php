@@ -20,119 +20,101 @@
 @endverbatim
 
 <style>
-/* ── HERO ANIMATED ── */
-.rs-hero {
-    position: relative;
-    min-height: 50vh;
-    background: linear-gradient(135deg, #0a2463 0%, #1565c0 40%, #0d47a1 70%, #1a237e 100%);
-    overflow: hidden;
+/* ── HOME BANNER SLIDER ── */
+.rs-hero { background: #edf6ff; }
+.rs-banner-slider { position: relative; overflow: hidden; background: #eaf4ff; }
+.rs-banner-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .5s ease; }
+.rs-banner-slide.is-active { position: relative; opacity: 1; pointer-events: auto; }
+.rs-banner-slide img { display: block; width: 100%; height: auto; }
+.rs-banner-navigation {
     display: flex;
     align-items: center;
-}
-.rs-hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-.rs-hero .floating-circle {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-    animation: floatUp 8s ease-in-out infinite;
-}
-.rs-hero .floating-circle:nth-child(1) { width:300px;height:300px;top:-80px;right:-60px;animation-delay:0s; }
-.rs-hero .floating-circle:nth-child(2) { width:200px;height:200px;bottom:10%;left:-50px;animation-delay:2s; }
-.rs-hero .floating-circle:nth-child(3) { width:150px;height:150px;top:30%;right:15%;animation-delay:4s; }
-.rs-hero .floating-circle:nth-child(4) { width:80px;height:80px;top:60%;right:30%;animation-delay:1s; }
-@keyframes floatUp {
-    0%,100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-30px) scale(1.05); }
-}
-.rs-hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 50px;
-    padding: 8px 20px;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-    animation: fadeInDown 0.8s ease both;
-}
-.rs-hero h1 {
-    font-size: clamp(1.5rem, 4vw, 2.8rem);
-    font-weight: 800;
-    color: #fff;
-    line-height: 1.15;
-    animation: fadeInUp 0.9s ease 0.2s both;
-}
-.rs-hero h1 span { color: #64b5f6; }
-.rs-hero p {
-    color: rgba(255,255,255,0.85);
-    font-size: 17px;
-    animation: fadeInUp 0.9s ease 0.4s both;
-}
-.rs-hero-btns { animation: fadeInUp 0.9s ease 0.6s both; }
-.rs-hero-btns .btn-hero-primary {
+    justify-content: center;
+    gap: 14px;
+    padding: 10px 16px;
     background: #fff;
-    color: #1565c0;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 36px;
-    font-weight: 700;
-    font-size: 15px;
-    transition: all 0.3s;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
-.rs-hero-btns .btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(0,0,0,0.3); }
-.rs-hero-btns .btn-hero-outline {
-    background: transparent;
-    color: #fff;
-    border: 2px solid rgba(255,255,255,0.6);
-    border-radius: 50px;
-    padding: 14px 36px;
-    font-weight: 700;
-    font-size: 15px;
-    transition: all 0.3s;
-}
-.rs-hero-btns .btn-hero-outline:hover { background: rgba(255,255,255,0.15); transform: translateY(-3px); }
-
-/* Pulse ring on hero icon */
-.hero-icon-wrap {
-    position: relative;
+.rs-banner-arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    animation: fadeInRight 1s ease 0.3s both;
-}
-.hero-icon-wrap .pulse-ring {
-    position: absolute;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #d7e7f8;
     border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.3);
-    animation: pulseRing 2.5s ease-out infinite;
+    background: #f4f9ff;
+    color: #1565c0;
 }
-.hero-icon-wrap .pulse-ring:nth-child(2) { animation-delay: 0.8s; }
-.hero-icon-wrap .pulse-ring:nth-child(3) { animation-delay: 1.6s; }
-@keyframes pulseRing {
-    0% { width:80px;height:80px;opacity:1; }
-    100% { width:200px;height:200px;opacity:0; }
+.rs-banner-arrow:hover, .rs-banner-arrow:focus-visible { background: #1565c0; color: #fff; }
+.rs-banner-dots { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.rs-banner-dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #b8cce2;
 }
-.hero-card-float {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 16px;
-    padding: 14px 20px;
+.rs-banner-dot.is-active { width: 24px; border-radius: 10px; background: #1565c0; }
+
+/* ── HOME BANNER FEATURE STRIP ── */
+.rs-feature-footer { padding: 16px 0 20px; background: linear-gradient(110deg, #0d47a1, #1565c0); color: #fff; }
+.rs-feature-footer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: 1320px;
+    margin: 0 auto 12px;
+    padding: 0 24px;
+}
+.rs-feature-footer-title { font-size: 14px; font-weight: 800; letter-spacing: .3px; }
+.rs-feature-pause {
+    border: 1px solid rgba(255,255,255,.4);
+    border-radius: 20px;
+    padding: 4px 12px;
+    background: transparent;
     color: #fff;
-    animation: floatCard 4s ease-in-out infinite;
+    font-size: 12px;
 }
-.hero-card-float:nth-child(2) { animation-delay: 1.5s; }
-@keyframes floatCard {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+.rs-feature-pause:hover, .rs-feature-pause:focus-visible { background: rgba(255,255,255,.15); }
+.rs-feature-viewport { overflow: hidden; }
+.rs-feature-track { display: flex; width: max-content; animation: rs-feature-scroll-right 42s linear infinite; }
+.rs-feature-viewport:hover .rs-feature-track,
+.rs-feature-viewport:focus-within .rs-feature-track,
+.rs-feature-viewport.is-paused .rs-feature-track { animation-play-state: paused; }
+.rs-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 225px;
+    min-height: 62px;
+    margin-right: 14px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 12px;
+    background: rgba(255,255,255,.1);
+}
+.rs-feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 10px;
+    font-size: 19px;
+}
+.rs-feature-name { color: #fff; font-size: 12px; font-weight: 800; line-height: 1.2; }
+.rs-feature-description { margin-top: 3px; color: rgba(255,255,255,.76); font-size: 10px; line-height: 1.2; }
+@keyframes rs-feature-scroll-right {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .rs-banner-slide { transition: none; }
+    .rs-feature-track { animation: none; }
+    .rs-feature-viewport { overflow-x: auto; }
 }
 
 /* ── STATS ANIMATED ── */
@@ -401,121 +383,89 @@
     100% { transform: translateX(-50%); }
 }
 
-/* Hero features auto-scroll */
-.hero-features-scroll {
-    animation: featScroll 18s linear infinite;
-}
-.hero-features-scroll:hover { animation-play-state: paused; }
-@keyframes featScroll {
-    0%   { transform: translateY(0); }
-    100% { transform: translateY(-50%); }
-}
 </style>
 
-<!-- ── HERO ── -->
-<section class="rs-hero">
-    <div class="floating-circle"></div>
-    <div class="floating-circle"></div>
-    <div class="floating-circle"></div>
-    <div class="floating-circle"></div>
+@php
+    $heroSlides = [
+        ['image' => 'img/banners/RogiSewa_ Trusted Doctors Near You.png', 'alt' => 'Find trusted doctors near you with RogiSewa'],
+        ['image' => 'img/banners/BrainFit_ Sharper Minds, Brighter Lives.png', 'alt' => 'BrainFit mental wellness and brain training'],
+        ['image' => 'img/banners/RogiSewa Staff Tracking Dashboard.png', 'alt' => 'RogiSewa hospital staff tracking dashboard'],
+        ['image' => 'img/banners/preg.jpeg', 'alt' => 'RogiSewa pregnancy tracker and care'],
+    ];
+    $appFeatures = [
+        ['📚', '#1565c0', 'Disease Library', '55+ बीमारियां, लक्षण व इलाज'],
+        ['🧠', '#6a1b9a', 'BrainFit', 'दिमाग तेज़ करें'],
+        ['🔥', '#bf360c', 'Calorie Burn', 'वजन घटाने में मदद'],
+        ['💉', '#2e7d32', 'Vaccine Tracker', 'टीकाकरण रिकॉर्ड'],
+        ['🤱', '#ad1457', 'Pregnancy Tracker', 'गर्भावस्था देखभाल'],
+        ['🌸', '#c62828', 'Period Tracker', 'मासिक धर्म ट्रैक'],
+        ['👶', '#e65100', 'Baby Growth', 'बच्चे का विकास'],
+        ['💊', '#00695c', 'Medicine Info', 'दवाई रिमाइंडर'],
+        ['🥗', '#558b2f', 'Food AI', 'AI डाइट प्लान'],
+        ['🤖', '#37474f', 'Sehat AI', 'AI स्वास्थ्य सलाह'],
+        ['❤️', '#b71c1c', 'Body Guide', 'शरीर की जानकारी'],
+        ['💧', '#0277bd', 'Water Reminder', 'पानी पीने की याद'],
+        ['👁️', '#4a148c', 'Eye Test', 'आँखों की देखभाल'],
+        ['👨‍⚕️', '#1565c0', 'Find Doctors', 'नज़दीकी डॉक्टर खोजें'],
+        ['🏥', '#00838f', 'Find Hospitals', 'हॉस्पिटल खोजें'],
+        ['📅', '#4facfe', 'Appointments', 'अपॉइंटमेंट बुक करें'],
+        ['📋', '#f59e0b', 'Prescription', 'प्रिस्क्रिप्शन इनवॉइस'],
+        ['👥', '#a18cd1', 'Staff Tracking', 'स्टाफ अटेंडेंस'],
+    ];
+@endphp
 
-    <div class="container py-3" style="position:relative;z-index:2;">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-7">
-                <div class="rs-hero-badge">
-                    <span style="width:8px;height:8px;background:#4caf50;border-radius:50%;display:inline-block;animation:blink 1s infinite;"></span>
-                    India's Trusted Healthcare Platform
-                </div>
-                <h1>Find <span class="rs-gradient-text">Trusted Doctors</span><br>&amp; Hospitals Near You</h1>
-                <p class="my-4">Search verified doctors by specialization, compare clinics, and book appointments — all in one place. Serving patients across India.</p>
-                <div class="rs-hero-btns d-flex flex-wrap gap-3">
-                    <a href="{{ url('doctors') }}" class="btn-hero-primary">
-                        <i class="fa fa-search me-2"></i> Find Doctor
-                    </a>
-                    <a href="{{ url('hospitals') }}" class="btn-hero-outline">
-                        <i class="fa fa-hospital-o me-2"></i> Find Hospital
-                    </a>
-                </div>
-                <div class="d-flex flex-wrap gap-4 mt-4" style="animation:fadeInUp 0.9s ease 0.8s both;">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="fa fa-check-circle" style="color:#4caf50;font-size:18px;"></i>
-                        <span style="color:rgba(255,255,255,.85);font-size:14px;">Verified Profiles</span>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="fa fa-check-circle" style="color:#4caf50;font-size:18px;"></i>
-                        <span style="color:rgba(255,255,255,.85);font-size:14px;">Free Prescription</span>
-                    </div>
-
-                </div>
+<section class="rs-hero" aria-label="RogiSewa home banner">
+    <div class="rs-banner-slider" data-banner-slider aria-roledescription="carousel" aria-label="RogiSewa highlights">
+        <div class="rs-banner-slides" aria-live="off">
+            @foreach($heroSlides as $slide)
+            <div class="rs-banner-slide{{ $loop->first ? ' is-active' : '' }}"
+                 data-banner-slide
+                 role="group"
+                 aria-roledescription="slide"
+                 aria-label="{{ $loop->iteration }} of {{ count($heroSlides) }}"
+                 aria-hidden="{{ $loop->first ? 'false' : 'true' }}">
+                <img src="{{ asset($slide['image']) }}"
+                     alt="{{ $slide['alt'] }}"
+                     loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                     fetchpriority="{{ $loop->first ? 'high' : 'auto' }}">
             </div>
-            <div class="col-lg-5 d-none d-lg-flex flex-column gap-3">
-                <!-- Stats row -->
-                <div class="d-flex gap-3">
-                    <div class="hero-card-float" style="flex:1;">
-                        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px;">DOCTORS</div>
-                        <div style="font-size:22px;font-weight:800;color:#fff;">{{ $totalDoctors }}+</div>
-                        <div style="font-size:12px;color:rgba(255,255,255,.7);">Verified Experts</div>
-                    </div>
-                    <div class="hero-card-float" style="flex:1;">
-                        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px;">HOSPITALS</div>
-                        <div style="font-size:22px;font-weight:800;color:#fff;">{{ $totalHospitals }}+</div>
-                        <div style="font-size:12px;color:rgba(255,255,255,.7);">Across India</div>
-                    </div>
-                </div>
+            @endforeach
+        </div>
+        <div class="rs-banner-navigation">
+            <button class="rs-banner-arrow" type="button" data-banner-prev aria-label="Previous banner">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+            </button>
+            <div class="rs-banner-dots" aria-label="Choose a banner">
+                @foreach($heroSlides as $slide)
+                <button class="rs-banner-dot{{ $loop->first ? ' is-active' : '' }}"
+                        type="button"
+                        data-banner-dot="{{ $loop->index }}"
+                        aria-label="Show banner {{ $loop->iteration }}"
+                        aria-current="{{ $loop->first ? 'true' : 'false' }}"></button>
+                @endforeach
+            </div>
+            <button class="rs-banner-arrow" type="button" data-banner-next aria-label="Next banner">
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
 
-                <!-- App features scrolling card -->
-                <div class="hero-card-float w-100" style="padding:16px 18px;">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <i class="fa fa-mobile" style="color:#4caf50;font-size:18px;"></i>
-                        <span style="color:#fff;font-weight:700;font-size:14px;">RogiSewa App Features</span>
-                        <span style="margin-left:auto;background:#4caf50;color:#fff;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;">LIVE</span>
-                    </div>
-                    <!-- Scrolling features list -->
-                    <div style="height:180px;overflow:hidden;position:relative;">
-                        <div class="hero-features-scroll">
-                            @foreach([
-                                ['📚','#1565c0','Disease Library','55+ बीमारियां, लक्षण व इलाज'],
-                                ['🧠','#6a1b9a','BrainFit','दिमाग तेज़ करें'],
-                                ['🔥','#bf360c','Calorie Burn','वजन घटाने में मदद'],
-                                ['💉','#2e7d32','Vaccine Tracker','टीकाकरण रिकॉर्ड'],
-                                ['🤱','#ad1457','Pregnancy Tracker','गर्भावस्था देखभाल'],
-                                ['🌸','#c62828','Period Tracker','मासिक धर्म ट्रैक'],
-                                ['👶','#e65100','Baby Growth','बच्चे का विकास'],
-                                ['💊','#00695c','Medicine Info','दवाई रिमाइंडर'],
-                                ['🥗','#558b2f','Food AI','AI डाइट प्लान'],
-                                ['🤖','#37474f','Sehat AI','AI स्वास्थ्य सलाह'],
-                                ['❤️','#b71c1c','Body Guide','शरीर की जानकारी'],
-                                ['💧','#0277bd','Water Reminder','पानी पीने की याद'],
-                                ['👁️','#4a148c','Eye Test','आँखों की देखभाल'],
-                                ['👨‍⚕️','#1565c0','Find Doctors','नज़दीकी डॉक्टर खोजें'],
-                                ['🏥','#00838f','Find Hospitals','हॉस्पिटल खोजें'],
-                                ['📅','#4facfe','Appointments','अपॉइंटमेंट बुक करें'],
-                                ['📋','#f59e0b','Prescription','प्रिस्क्रिप्शन इनवॉइस'],
-                                ['👥','#a18cd1','Staff Tracking','स्टाफ अटेंडेंस'],
-                            ] as $feat)
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <div style="width:32px;height:32px;background:{{ $feat[1] }};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">{{ $feat[0] }}</div>
-                                <div>
-                                    <div style="color:#fff;font-size:12px;font-weight:700;line-height:1.2;">{{ $feat[2] }}</div>
-                                    <div style="color:rgba(255,255,255,.5);font-size:10px;">{{ $feat[3] }}</div>
-                                </div>
-                                <i class="fa fa-check-circle ms-auto" style="color:#4caf50;font-size:12px;"></i>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <!-- Download buttons -->
-                    <div class="d-flex gap-2 mt-3">
-                        <a href="https://play.google.com/store/apps/details?id=com.rogisewa" target="_blank"
-                           style="flex:1;background:#4caf50;color:#fff;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:700;text-decoration:none;text-align:center;">
-                            <i class="fa fa-android me-1"></i> Patient App
-                        </a>
-                        <a href="https://play.google.com/store/apps/details?id=com.rogisewadr" target="_blank"
-                           style="flex:1;background:#1565c0;color:#fff;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:700;text-decoration:none;text-align:center;">
-                            <i class="fa fa-android me-1"></i> Doctor App
-                        </a>
+    <div class="rs-feature-footer">
+        <div class="rs-feature-footer-head">
+            <div class="rs-feature-footer-title"><i class="fa fa-mobile me-2" aria-hidden="true"></i>RogiSewa App Features</div>
+            <button class="rs-feature-pause" type="button" data-feature-toggle aria-pressed="false">Pause slider</button>
+        </div>
+        <div class="rs-feature-viewport" data-feature-viewport>
+            <div class="rs-feature-track">
+                @foreach(array_merge($appFeatures, $appFeatures) as $feature)
+                <div class="rs-feature-item" @if($loop->iteration > count($appFeatures)) aria-hidden="true" @endif>
+                    <div class="rs-feature-icon" style="background:{{ $feature[1] }};" aria-hidden="true">{{ $feature[0] }}</div>
+                    <div>
+                        <div class="rs-feature-name">{{ $feature[2] }}</div>
+                        <div class="rs-feature-description">{{ $feature[3] }}</div>
                     </div>
                 </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -1114,10 +1064,78 @@ const counterObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 document.querySelectorAll('.rs-counter').forEach(el => counterObserver.observe(el));
 
-// Hero features infinite scroll (JS duplicate)
-const scroller = document.querySelector('.hero-features-scroll');
-if (scroller) {
-    scroller.innerHTML += scroller.innerHTML;
+const bannerSlider = document.querySelector('[data-banner-slider]');
+if (bannerSlider) {
+    const slides = Array.from(bannerSlider.querySelectorAll('[data-banner-slide]'));
+    const dots = Array.from(bannerSlider.querySelectorAll('[data-banner-dot]'));
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let activeIndex = 0;
+    let bannerTimer;
+
+    const showBanner = (index) => {
+        activeIndex = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => {
+            const isActive = slideIndex === activeIndex;
+            slide.classList.toggle('is-active', isActive);
+            slide.setAttribute('aria-hidden', String(!isActive));
+        });
+        dots.forEach((dot, dotIndex) => {
+            const isActive = dotIndex === activeIndex;
+            dot.classList.toggle('is-active', isActive);
+            dot.setAttribute('aria-current', String(isActive));
+        });
+    };
+
+    const stopBannerTimer = () => {
+        window.clearInterval(bannerTimer);
+        bannerTimer = undefined;
+    };
+
+    const startBannerTimer = () => {
+        if (prefersReducedMotion || slides.length < 2 || document.hidden ||
+            bannerSlider.matches(':hover') || bannerSlider.contains(document.activeElement)) {
+            return;
+        }
+        stopBannerTimer();
+        bannerTimer = window.setInterval(() => showBanner(activeIndex + 1), 5000);
+    };
+
+    bannerSlider.querySelector('[data-banner-prev]').addEventListener('click', () => {
+        showBanner(activeIndex - 1);
+        startBannerTimer();
+    });
+    bannerSlider.querySelector('[data-banner-next]').addEventListener('click', () => {
+        showBanner(activeIndex + 1);
+        startBannerTimer();
+    });
+    dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+            showBanner(Number(dot.dataset.bannerDot));
+            startBannerTimer();
+        });
+    });
+    bannerSlider.addEventListener('mouseenter', stopBannerTimer);
+    bannerSlider.addEventListener('mouseleave', startBannerTimer);
+    bannerSlider.addEventListener('focusin', stopBannerTimer);
+    bannerSlider.addEventListener('focusout', startBannerTimer);
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopBannerTimer();
+        } else {
+            startBannerTimer();
+        }
+    });
+    startBannerTimer();
+}
+
+const featureViewport = document.querySelector('[data-feature-viewport]');
+const featureToggle = document.querySelector('[data-feature-toggle]');
+if (featureViewport && featureToggle) {
+    featureToggle.addEventListener('click', () => {
+        const isPaused = featureViewport.classList.toggle('is-paused');
+        featureToggle.setAttribute('aria-pressed', String(isPaused));
+        featureToggle.textContent = isPaused ? 'Resume slider' : 'Pause slider';
+    });
 }
 
 // Registration popup after 5s
