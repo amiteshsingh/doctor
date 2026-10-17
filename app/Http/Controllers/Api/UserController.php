@@ -581,7 +581,7 @@ class UserController extends Controller
         $locationText = ($lat && $lng)
             ? "https://maps.google.com/?q={$lat},{$lng}"
             : 'Location not available';
-        if($request->user_name=='hn'){
+        if($request->user_lang=='hi'){
             $body = [
                 'integrated_number' => '919709707464',
                 'content_type'      => 'template',
