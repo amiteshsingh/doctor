@@ -557,6 +557,7 @@ class UserController extends Controller
         $request->validate([
             'user_name'     => 'required|string',
             'user_location' => 'nullable|string',
+            'user_lang' => 'nullable|string',
         ]);
 
         $user = $request->auth_user;
@@ -580,37 +581,69 @@ class UserController extends Controller
         $locationText = ($lat && $lng)
             ? "https://maps.google.com/?q={$lat},{$lng}"
             : 'Location not available';
-
-        $body = [
-            'integrated_number' => '919709707464',
-            'content_type'      => 'template',
-            'payload' => [
-                'messaging_product' => 'whatsapp',
-                'type'              => 'template',
-                'template' => [
-                    'name'      => 'rg',
-                    'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
-                    'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
-                    'to_and_components' => [
-                        [
-                            'to' => [$toPhone],
-                            'components' => (object)[
-                                'body_user_name' => [
-                                    'type'           => 'text',
-                                    'value'          => $userName,
-                                    'parameter_name' => 'user_name',
-                                ],
-                                'body_user_location' => [
-                                    'type'           => 'text',
-                                    'value'          => $locationText,
-                                    'parameter_name' => 'user_location',
+        if($request->user_name=='hn'){
+            $body = [
+                'integrated_number' => '919709707464',
+                'content_type'      => 'template',
+                'payload' => [
+                    'messaging_product' => 'whatsapp',
+                    'type'              => 'template',
+                    'template' => [
+                        'name'      => 'rg',
+                        'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
+                        'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
+                        'to_and_components' => [
+                            [
+                                'to' => [$toPhone],
+                                'components' => (object)[
+                                    'body_user_name' => [
+                                        'type'           => 'text',
+                                        'value'          => $userName,
+                                        'parameter_name' => 'user_name',
+                                    ],
+                                    'body_user_location' => [
+                                        'type'           => 'text',
+                                        'value'          => $locationText,
+                                        'parameter_name' => 'user_location',
+                                    ],
                                 ],
                             ],
                         ],
                     ],
                 ],
-            ],
-        ];
+            ];
+        }else {
+            $body = [
+                'integrated_number' => '919709707464',
+                'content_type'      => 'template',
+                'payload' => [
+                    'messaging_product' => 'whatsapp',
+                    'type'              => 'template',
+                    'template' => [
+                        'name'      => 'rg',
+                        'language'  => ['code' => 'en', 'policy' => 'deterministic'],
+                        'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
+                        'to_and_components' => [
+                            [
+                                'to' => [$toPhone],
+                                'components' => (object)[
+                                    'body_user_name' => [
+                                        'type'           => 'text',
+                                        'value'          => $userName,
+                                        'parameter_name' => 'user_name',
+                                    ],
+                                    'body_user_location' => [
+                                        'type'           => 'text',
+                                        'value'          => $locationText,
+                                        'parameter_name' => 'user_location',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+        }
 
         \Illuminate\Support\Facades\Http::withHeaders([
             'Content-Type' => 'application/json',
