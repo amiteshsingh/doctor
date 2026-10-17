@@ -559,7 +559,7 @@ class UserController extends Controller
             'user_location' => 'nullable|string',
             'user_lang' => 'nullable|string',
         ]);
-
+        $body = [];
         $user = $request->auth_user;
 
         if (!$user->emergency_contact_phone) {
@@ -589,7 +589,7 @@ class UserController extends Controller
                     'messaging_product' => 'whatsapp',
                     'type'              => 'template',
                     'template' => [
-                        'name'      => 'rg',
+                        'name'      => 'rogisewa_hindi',
                         'language'  => ['code' => 'hi', 'policy' => 'deterministic'],
                         'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
                         'to_and_components' => [
@@ -620,7 +620,7 @@ class UserController extends Controller
                     'messaging_product' => 'whatsapp',
                     'type'              => 'template',
                     'template' => [
-                        'name'      => 'rg',
+                        'name'      => 'rogisewa_english',
                         'language'  => ['code' => 'en', 'policy' => 'deterministic'],
                         'namespace' => '03eefb2d_d363_43ca_aaef_4d78bf4754d5',
                         'to_and_components' => [
