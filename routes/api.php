@@ -57,8 +57,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/reschedule-booking',  [UserController::class, 'rescheduleBooking']);
         Route::post('/cancel-booking',      [UserController::class, 'cancelBooking']);
         Route::post('/book-appointment',    [DoctorController::class, 'bookAppointment']);
-        Route::get('/period-tracking',      [PeriodTrackingController::class, 'get']);
-        Route::post('/period-tracking',     [PeriodTrackingController::class, 'save']);
+        Route::get('/period-tracking',         [PeriodTrackingController::class, 'get']);
+        Route::post('/period-tracking',          [PeriodTrackingController::class, 'save']);
+        Route::get('/period-tracking/history',   [PeriodTrackingController::class, 'history']);
+        Route::post('/period-tracking/log',      [PeriodTrackingController::class, 'logDay']);
         Route::get('/pregnancy-tracking',   [PregnancyTrackingController::class, 'get']);
         Route::post('/pregnancy-tracking',  [PregnancyTrackingController::class, 'save']);
         Route::get('/children',             [ChildVaccineController::class, 'getChildren']);

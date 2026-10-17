@@ -24,6 +24,48 @@ class PeriodTrackingController extends Controller
         return response()->json(['status' => 200, 'data' => array_merge((array)$record, $analysis)]);
     }
 
+    public function history(Request $request)
+    {
+        $user = $request->auth_user;
+        $logs = DB::table('period_logs')
+            ->where('user_id', $user->id)
+            ->orderBy('log_date', 'desc')
+            ->limit(180)
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'date'     => $row->log_date,
+                    'symptoms' => $row->symptoms ? json_decode($row->symptoms, true) : [],
+                    'flow'     => $row->flow,
+                ];
+            });
+
+        return response()->json(['status' => 200, 'data' => $logs]);
+    }
+
+    public function logDay(Request $request)
+    {
+        $request->validate([
+            'log_date' => 'required|date',
+            'symptoms' => 'nullable|array',
+            'flow'     => 'nullable|string|in:light,medium,heavy',
+        ]);
+
+        $user = $request->auth_user;
+
+        DB::table('period_logs')->updateOrInsert(
+            ['user_id' => $user->id, 'log_date' => $request->log_date],
+            [
+                'symptoms'   => json_encode($request->symptoms ?? []),
+                'flow'       => $request->flow,
+                'updated_at' => now(),
+                'created_at' => now(),
+            ]
+        );
+
+        return response()->json(['status' => 200, 'message' => 'Log saved.']);
+    }
+
     public function save(Request $request)
     {
         $request->validate([
