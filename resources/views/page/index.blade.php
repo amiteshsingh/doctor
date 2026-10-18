@@ -391,6 +391,9 @@
         ['image' => 'img/banners/BrainFit_ Sharper Minds, Brighter Lives.png', 'alt' => 'BrainFit mental wellness and brain training'],
         ['image' => 'img/banners/RogiSewa Staff Tracking Dashboard.png', 'alt' => 'RogiSewa hospital staff tracking dashboard'],
         ['image' => 'img/banners/preg.jpeg', 'alt' => 'RogiSewa pregnancy tracker and care'],
+        ['image' => 'img/banners/RogiSewa Water Reminder Banner.png', 'alt' => 'RogiSewa water reminder'],
+        ['image' => 'img/banners/RogiSewa Disease Library Banner.png', 'alt' => 'RogiSewa disease library'],
+        ['image' => 'img/banners/RogiSewa Body Guide Health Banner.png', 'alt' => 'RogiSewa body guide and health information'],
     ];
     $appFeatures = [
         ['📚', '#1565c0', 'Disease Library', '55+ बीमारियां, लक्षण व इलाज'],
