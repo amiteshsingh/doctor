@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserRole;
+use App\Services\LoginAlertService;
 
 class LoginController extends Controller
 {
@@ -76,6 +77,7 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             
             $user = Auth::user();
+            app(LoginAlertService::class)->send($request, 'success', $user->email);
             $userRole = UserRole::where('user_id', $user->id)->first();
 
             // Store user data in session
@@ -87,6 +89,8 @@ class LoginController extends Controller
 
             return redirect()->intended($this->redirectTo());
         }
+
+        app(LoginAlertService::class)->send($request, 'failure', $request->input('email'));
 
         return back()->withErrors(['email' => 'Invalid credentials']);
     }

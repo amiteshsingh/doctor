@@ -39,4 +39,6 @@ return [
         'server_key' => env('FIREBASE_SERVER_KEY'),
     ],
 
+    'login_alert_email' => env('LOGIN_ALERT_EMAIL', 'rogisewa25@gmail.com'),
+
 ];
