@@ -27,6 +27,7 @@ test('admin route names map to the intended module', function () {
     expect(AdminModules::moduleForRoute('admin.doctor.notification.index'))->toBe('doctor_notifications')
         ->and(AdminModules::moduleForRoute('admin.doctor_availability'))->toBe('doctors')
         ->and(AdminModules::moduleForRoute('admin.app-users.destroy'))->toBe('app_users')
+        ->and(AdminModules::moduleForRoute('admin.database-backup.download'))->toBe('database_backups')
         ->and(AdminModules::modulesForRoute('gallery.delete'))->toBe(['hospitals', 'doctors'])
         ->and(AdminModules::moduleForRoute('admin.permissions.index'))->toBeNull();
 });
@@ -34,5 +35,6 @@ test('admin route names map to the intended module', function () {
 test('admin route actions distinguish viewing editing and deleting', function () {
     expect(AdminModules::abilityForRoute('admin.hospital', 'POST', 'admin/hospital'))->toBe('view')
         ->and(AdminModules::abilityForRoute('admin.blog.add', 'GET', 'admin/blog/add'))->toBe('access')
-        ->and(AdminModules::abilityForRoute('admin.blog.delete', 'DELETE', 'admin/blog/delete/1'))->toBe('delete');
+        ->and(AdminModules::abilityForRoute('admin.blog.delete', 'DELETE', 'admin/blog/delete/1'))->toBe('delete')
+        ->and(AdminModules::abilityForRoute('admin.database-backup.download', 'GET', 'admin/database-backup/download'))->toBe('view');
 });

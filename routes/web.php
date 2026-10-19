@@ -97,6 +97,8 @@ Route::middleware(['admin', 'admin.permission'])->prefix('admin')->group(functio
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/permissions', [\App\Http\Controllers\Admin\AdminPermissionController::class, 'index'])->name('admin.permissions.index');
     Route::put('/permissions/{admin}', [\App\Http\Controllers\Admin\AdminPermissionController::class, 'update'])->whereNumber('admin')->name('admin.permissions.update');
+    Route::get('/database-backup', [\App\Http\Controllers\Admin\DatabaseBackupController::class, 'index'])->name('admin.database-backup.index');
+    Route::get('/database-backup/download', [\App\Http\Controllers\Admin\DatabaseBackupController::class, 'download'])->name('admin.database-backup.download');
     
     Route::any('/hospital', [HospitalController::class, 'index'])->name('admin.hospital');
     Route::any('/hospital/add', [HospitalController::class, 'add'])->name('admin.hospital.add');

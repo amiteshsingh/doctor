@@ -18,6 +18,7 @@ class AdminModules
         'payment_settings' => ['label' => 'Payment Settings', 'route' => 'admin.payment'],
         'support_tickets' => ['label' => 'Support Tickets', 'route' => 'admin.support'],
         'pregnancy_tracker' => ['label' => 'Pregnancy Tracker', 'route' => 'admin.pregnancy'],
+        'database_backups' => ['label' => 'Database Backup', 'route' => 'admin.database-backup.index'],
         'banners' => ['label' => 'Banners', 'route' => 'admin.banner'],
         'testimonials' => ['label' => 'Testimonials', 'route' => 'admin.testimonial'],
     ];
@@ -62,6 +63,7 @@ class AdminModules
             'admin.specialization' => 'specializations',
             'admin.testimonial' => 'testimonials',
             'admin.pregnancy' => 'pregnancy_tracker',
+            'admin.database-backup' => 'database_backups',
             'admin.notification' => 'notifications',
             'admin.payment' => 'payment_settings',
             'admin.support' => 'support_tickets',

@@ -71,6 +71,11 @@
                             <a href="{{ route('admin.testimonial.index') }}"><i class="fa fa-comments"></i> <span>Testimonials</span></a>
                         </li>
                         @endif
+                        @if(\App\Support\AdminModules::allows((int) Auth::id(), $adminModulePermissions ?? [], 'database_backups', 'access') && \App\Support\AdminModules::allows((int) Auth::id(), $adminModulePermissions ?? [], 'database_backups', 'view'))
+                        <li class="{{ request()->routeIs('admin.database-backup.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.database-backup.index') }}"><i class="fa fa-database"></i> <span>Database Backup</span></a>
+                        </li>
+                        @endif
                         @if((int) Auth::id() === 1)
                         <li class="{{ request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.permissions.index') }}"><i class="fa fa-lock"></i> <span>Admin Permissions</span></a>
