@@ -3,7 +3,7 @@
 @section('title', 'RogiSewa - Find Doctors & Hospitals Near You | Book Appointments Online')
 
 @section('content')
-
+ 
 {{-- Schema Markup for SEO --}}
 @verbatim
 <script type="application/ld+json">
