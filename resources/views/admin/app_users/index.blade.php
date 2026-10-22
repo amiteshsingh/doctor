@@ -67,7 +67,7 @@
                         <th>Last Seen</th>
                         <th>Joined</th>
                         <th>Location</th>
-                        <th>Action</th>
+                        <!-- <th>Action</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -91,7 +91,7 @@
                             {{ $u->last_seen ? \Carbon\Carbon::parse($u->last_seen)->diffForHumans() : '—' }}
                         </td>
                         <td style="color:#888;font-size:12px;">
-                            {{ \Carbon\Carbon::parse($u->created_at)->format('d M Y') }}
+                            {{ \Carbon\Carbon::parse($u->created_at)->format('d M Y h:i A') }}
                         </td>
                         <td style="font-size:12px;min-width:160px;vertical-align:top;">
                             @if($u->ip_city)
@@ -112,7 +112,7 @@
                                 <span style="color:#94a3b8;">—</span>
                             @endif
                         </td>
-                        <td>
+                        <!-- <td>
                             <form method="POST" action="{{ route('admin.app-users.destroy', $u->id) }}"
                                 onsubmit="return confirm('Delete this user?')" style="display:inline;">
                                 @csrf @method('DELETE')
@@ -120,7 +120,7 @@
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </form>
-                        </td>
+                        </td> -->
                     </tr>
                     @empty
                     <tr>
