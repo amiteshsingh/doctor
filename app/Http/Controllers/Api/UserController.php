@@ -531,6 +531,59 @@ class UserController extends Controller
         ]);
     }
 
+    public function saveStepCount(Request $request)
+    {
+        $request->validate([
+            'date'  => 'required|date_format:Y-m-d',
+            'steps' => 'required|integer|min:0',
+        ]);
+        $user = $request->auth_user;
+        DB::table('user_step_logs')->upsert(
+            [['user_id' => $user->id, 'date' => $request->date, 'steps' => $request->steps, 'created_at' => now(), 'updated_at' => now()]],
+            ['user_id', 'date'],
+            ['steps', 'updated_at']
+        );
+        return response()->json(['status' => 200, 'message' => 'Steps saved.']);
+    }
+
+    public function getStepStats(Request $request)
+    {
+        $user = $request->auth_user;
+        $today = now()->toDateString();
+
+        // Daily — last 30 days
+        $daily = DB::table('user_step_logs')
+            ->where('user_id', $user->id)
+            ->where('date', '>=', now()->subDays(29)->toDateString())
+            ->orderBy('date')
+            ->get(['date', 'steps']);
+
+        // Weekly — last 12 weeks (sum per week)
+        $weekly = DB::table('user_step_logs')
+            ->where('user_id', $user->id)
+            ->where('date', '>=', now()->subWeeks(11)->startOfWeek()->toDateString())
+            ->selectRaw('YEARWEEK(date, 1) as week_key, MIN(date) as week_start, SUM(steps) as steps')
+            ->groupBy('week_key')
+            ->orderBy('week_key')
+            ->get();
+
+        // Monthly — last 12 months (sum per month)
+        $monthly = DB::table('user_step_logs')
+            ->where('user_id', $user->id)
+            ->where('date', '>=', now()->subMonths(11)->startOfMonth()->toDateString())
+            ->selectRaw('DATE_FORMAT(date, "%Y-%m") as month_key, SUM(steps) as steps')
+            ->groupBy('month_key')
+            ->orderBy('month_key')
+            ->get();
+
+        return response()->json([
+            'status'  => 200,
+            'daily'   => $daily,
+            'weekly'  => $weekly,
+            'monthly' => $monthly,
+        ]);
+    }
+
     public function saveEmergencyContact(Request $request)
     {
         $request->validate([

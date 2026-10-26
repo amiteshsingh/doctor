@@ -74,6 +74,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/payment/verify',       [PaymentController::class, 'verifyPayment']);
         Route::post('/emergency-contact',       [UserController::class, 'saveEmergencyContact']);
         Route::post('/fall-alert',               [UserController::class, 'sendFallAlert']);
+        Route::post('/steps/save',               [UserController::class, 'saveStepCount']);
+        Route::get('/steps/stats',               [UserController::class, 'getStepStats']);
         Route::post('/reasoning-questions',  [UserController::class, 'generateReasoningQuestions']);
     });
 
