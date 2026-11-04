@@ -77,7 +77,21 @@
                         <td>
                             <div style="font-weight:700;color:#134e4a;">{{ $u->name }}</div>
                         </td>
-                        <td style="color:#555;">{{ $u->email ?? '—' }}</td>
+                        <td style="color:#555;">
+                            @if($u->email)
+                                @php
+                                    $parts  = explode('@', $u->email);
+                                    $local  = $parts[0];
+                                    $domain = $parts[1] ?? '';
+                                    $masked = strlen($local) > 2
+                                        ? substr($local, 0, 2) . str_repeat('X', strlen($local) - 2)
+                                        : str_repeat('X', strlen($local));
+                                @endphp
+                                {{ $masked . '@' . $domain }}
+                            @else
+                                —
+                            @endif
+                        </td>
                         <td style="color:#555;">{{ $u->phone_no ?? '—' }}</td>
                         <td>{{ $u->gender ?? '—' }}</td>
                         <td>
