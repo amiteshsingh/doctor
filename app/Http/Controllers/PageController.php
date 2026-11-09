@@ -12,7 +12,7 @@ use App\Models\DoctorLocation;
 use App\Models\Blog;
 use App\Models\PrescriptionInvoice;
 use App\Models\InvoiceMaster;
-use Illuminate\Support\Facades\Mail;
+use App\Models\UserRole;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -59,8 +59,16 @@ class PageController extends Controller
         ->where('approval_status', 1)
         ->limit(10)
         ->get();
-    
-        return View::make('page.about', compact('doctors'));
+
+        // Dynamic stats for about page
+        $stats = [
+            'doctors'      => Doctor::where('status', 1)->where('approval_status', 1)->count(),
+            'hospitals'    => Hospital::count(),
+            'appointments' => InvoiceMaster::count(),
+            'users'        => UserRole::where('role', 'user')->count(),
+        ];
+
+        return View::make('page.about', compact('doctors', 'stats'));
     }
 
     
@@ -264,22 +272,38 @@ class PageController extends Controller
             ]);
 
             try {
-                Mail::send('page.contact', $validated, function ($mail) use ($validated) {
-                    $mail->to('rogisewa25@gmail.com')
-                        ->subject('New Contact Message - RogiSewa')
-                        ->replyTo($validated['email'], $validated['name']);
-                });
+                $to      = 'rogisewa25@gmail.com';
+                $subject = 'New Contact Message - RogiSewa';
+
+                $body  = "Name    : {$validated['name']}\r\n";
+                $body .= "Email   : {$validated['email']}\r\n";
+                $body .= "Phone   : " . ($validated['phone'] ?? 'N/A') . "\r\n";
+                $body .= "Subject : {$validated['subject']}\r\n\r\n";
+                $body .= "Message :\r\n{$validated['message']}";
+
+                $headers  = "From: RogiSewa <{$validated['email']}>\r\n";
+                $headers .= "Reply-To: {$validated['name']} <{$validated['email']}>\r\n";
+                $headers .= "X-Mailer: PHP/" . phpversion();
+
+                $sent = mail($to, $subject, $body, $headers);
+
+                if ($sent) {
+                    return response()->json([
+                        'status'  => true,
+                        'message' => 'Thank you! Your message has been sent successfully.'
+                    ]);
+                }
 
                 return response()->json([
-                    'status' => true,
-                    'message' => 'Thank you! Your message has been sent successfully.'
-                ]);
+                    'status'  => false,
+                    'message' => 'Sorry, mail could not be sent. Please try again later.'
+                ], 500);
 
             } catch (\Exception $e) {
 
                 return response()->json([
-                    'status' => false,
-                    'message' => 'Mail error: '.$e->getMessage()
+                    'status'  => false,
+                    'message' => 'Mail error: ' . $e->getMessage()
                 ], 500);
             }
         }
