@@ -170,6 +170,16 @@ Route::middleware(['admin', 'admin.permission'])->prefix('admin')->group(functio
     Route::get('/testimonials/toggle/{id}',  [\App\Http\Controllers\Admin\TestimonialController::class, 'toggle'])->name('admin.testimonial.toggle');
     Route::delete('/testimonials/{id}',      [\App\Http\Controllers\Admin\TestimonialController::class, 'destroy'])->name('admin.testimonial.destroy');
 
+    // Daily Quiz
+    Route::get('/daily-quiz',              [\App\Http\Controllers\Admin\DailyQuizController::class, 'index'])->name('admin.daily-quiz.index');
+    Route::get('/daily-quiz/add',          [\App\Http\Controllers\Admin\DailyQuizController::class, 'create'])->name('admin.daily-quiz.create');
+    Route::post('/daily-quiz',             [\App\Http\Controllers\Admin\DailyQuizController::class, 'store'])->name('admin.daily-quiz.store');
+    Route::get('/daily-quiz/{id}/edit',    [\App\Http\Controllers\Admin\DailyQuizController::class, 'edit'])->name('admin.daily-quiz.edit');
+    Route::put('/daily-quiz/{id}',         [\App\Http\Controllers\Admin\DailyQuizController::class, 'update'])->name('admin.daily-quiz.update');
+    Route::delete('/daily-quiz/{id}',      [\App\Http\Controllers\Admin\DailyQuizController::class, 'destroy'])->name('admin.daily-quiz.destroy');
+    Route::get('/daily-quiz/{id}/toggle',  [\App\Http\Controllers\Admin\DailyQuizController::class, 'toggle'])->name('admin.daily-quiz.toggle');
+    Route::get('/daily-quiz/{id}/results', [\App\Http\Controllers\Admin\DailyQuizController::class, 'results'])->name('admin.daily-quiz.results');
+
     // Profile
     Route::get('/edit-profile',    [AdminController::class, 'editProfile'])->name('admin.edit-profile');
     Route::post('/update-profile', [AdminController::class, 'updateProfile'])->name('admin.update-profile');

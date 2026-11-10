@@ -84,6 +84,9 @@
                         <li class="{{ request()->routeIs('admin.edit-profile') ? 'active' : '' }}">
                             <a href="{{ route('admin.edit-profile') }}"><i class="fa fa-user-circle"></i> <span>Edit Profile</span></a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.daily-quiz.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.daily-quiz.index') }}"><i class="fa fa-question-circle"></i> <span>Daily Quiz</span></a>
+                        </li>
                     </ul>
                 </div>
             </div>

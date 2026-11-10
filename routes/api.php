@@ -77,6 +77,11 @@ Route::prefix('v1')->group(function () {
         Route::post('/steps/save',               [UserController::class, 'saveStepCount']);
         Route::get('/steps/stats',               [UserController::class, 'getStepStats']);
         Route::post('/reasoning-questions',  [UserController::class, 'generateReasoningQuestions']);
+
+        // Daily Quiz
+        Route::get('/daily-quiz/today',   [\App\Http\Controllers\Api\DailyQuizController::class, 'today']);
+        Route::post('/daily-quiz/submit', [\App\Http\Controllers\Api\DailyQuizController::class, 'submit']);
+        Route::get('/daily-quiz/history', [\App\Http\Controllers\Api\DailyQuizController::class, 'history']);
     });
 
     // One-time: migrate old doctor pics from storage to public/uploads/doctor
