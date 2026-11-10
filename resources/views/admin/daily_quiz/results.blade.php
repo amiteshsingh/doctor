@@ -5,7 +5,10 @@
     <div class="content">
         <div class="row">
             <div class="col-sm-8">
-                <h4 class="page-title">Quiz Results — {{ $question->quiz_date->format('d M Y') }}</h4>
+                <h4 class="page-title">Quiz Results — {{ $batch->title ?: 'Batch #'.$batch->id }}</h4>
+                <small class="text-muted">
+                    {{ $batch->starts_at->format('d M Y, h:i A') }} → {{ $batch->ends_at->format('d M Y, h:i A') }}
+                </small>
             </div>
             <div class="col-sm-4 text-right m-b-30">
                 <a href="{{ route('admin.daily-quiz.index') }}" class="btn btn-default btn-rounded float-right">
@@ -14,63 +17,77 @@
             </div>
         </div>
 
-        {{-- Question Card --}}
+        {{-- Batch Stats --}}
         <div class="row mb-4">
-            <div class="col-md-8">
-                <div class="card" style="border-left:4px solid #1A237E;">
-                    <div class="card-body">
-                        <h5 style="color:#1A237E;">{{ $question->question }}</h5>
-                        <div class="row mt-3">
-                            @foreach(['A'=>$question->option_a,'B'=>$question->option_b,'C'=>$question->option_c,'D'=>$question->option_d] as $key=>$val)
-                            <div class="col-md-6 mb-2">
-                                <span class="badge {{ $key == $question->correct_answer ? 'badge-success' : 'badge-secondary' }}" style="font-size:13px;padding:6px 10px;">
-                                    {{ $key }}: {{ $val }}
-                                    @if($key == $question->correct_answer) &#10003; Correct @endif
-                                </span>
-                            </div>
-                            @endforeach
-                        </div>
-                        @if($question->explanation)
-                        <div class="alert alert-info mt-3 mb-0">
-                            <strong>Explanation:</strong> {{ $question->explanation }}
-                        </div>
-                        @endif
+            <div class="col-md-3">
+                <div class="card text-center" style="background:#E8F5E9;">
+                    <div class="card-body py-3">
+                        <h3 style="color:#2E7D32;margin:0;">{{ $stats['total'] }}</h3>
+                        <small>Total Attempts</small>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="card text-center" style="background:#E8F5E9;">
-                            <div class="card-body py-3">
-                                <h3 style="color:#2E7D32;margin:0;">{{ $stats['total'] }}</h3>
-                                <small>Total Attempts</small>
-                            </div>
-                        </div>
+            <div class="col-md-3">
+                <div class="card text-center" style="background:#E3F2FD;">
+                    <div class="card-body py-3">
+                        <h3 style="color:#1565C0;margin:0;">{{ $stats['correct'] }}</h3>
+                        <small>Correct Answers</small>
                     </div>
-                    <div class="col-6">
-                        <div class="card text-center" style="background:#E3F2FD;">
-                            <div class="card-body py-3">
-                                <h3 style="color:#1565C0;margin:0;">{{ $stats['correct'] }}</h3>
-                                <small>Correct</small>
-                            </div>
-                        </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center" style="background:#FFF3E0;">
+                    <div class="card-body py-3">
+                        <h3 style="color:#E65100;margin:0;">
+                            {{ $stats['total'] > 0 ? round(($stats['correct']/$stats['total'])*100) : 0 }}%
+                        </h3>
+                        <small>Accuracy</small>
                     </div>
-                    <div class="col-12 mt-2">
-                        <div class="card text-center" style="background:#FFF3E0;">
-                            <div class="card-body py-3">
-                                <h3 style="color:#E65100;margin:0;">
-                                    {{ $stats['total'] > 0 ? round(($stats['correct']/$stats['total'])*100) : 0 }}%
-                                </h3>
-                                <small>Accuracy</small>
-                            </div>
-                        </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center" style="background:#F3E5F5;">
+                    <div class="card-body py-3">
+                        <h3 style="color:#6A1B9A;margin:0;">{{ $batch->questions->count() }}</h3>
+                        <small>Questions</small>
                     </div>
                 </div>
             </div>
         </div>
 
+        {{-- Per-Question Summary --}}
+        @foreach($batch->questions as $qi => $q)
+        @php
+            $qAttempts = $q->attempts()->count();
+            $qCorrect  = $q->attempts()->where('is_correct', true)->count();
+        @endphp
+        <div class="card mb-2" style="border-left:4px solid #1A237E;">
+            <div class="card-body py-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Q{{ $qi+1 }}:</strong> {{ Str::limit($q->question, 100) }}
+                        <span class="badge badge-secondary ml-2">{{ $q->category }}</span>
+                        <span class="badge badge-info ml-1">{{ $q->time_limit }}s</span>
+                    </div>
+                    <div class="text-right" style="min-width:160px;">
+                        <span class="badge badge-success">✓ {{ $qCorrect }}</span>
+                        <span class="badge badge-danger ml-1">✗ {{ $qAttempts - $qCorrect }}</span>
+                        <span class="badge badge-primary ml-1">{{ $qAttempts }} total</span>
+                    </div>
+                </div>
+                <div class="mt-1">
+                    @foreach(['A'=>$q->option_a,'B'=>$q->option_b,'C'=>$q->option_c,'D'=>$q->option_d] as $key=>$val)
+                    <span class="badge {{ $key == $q->correct_answer ? 'badge-success' : 'badge-light' }}" style="font-size:11px;margin-right:4px;">
+                        {{ $key }}: {{ $val }} @if($key == $q->correct_answer) ✓ @endif
+                    </span>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endforeach
+
         {{-- Attempts Table --}}
+        <h5 class="mt-4 mb-3">All Attempts</h5>
         <div class="row">
             <div class="col-md-12">
                 <div class="table-responsive">
@@ -79,7 +96,8 @@
                             <tr>
                                 <th>#</th>
                                 <th>User</th>
-                                <th>Selected Answer</th>
+                                <th>Question</th>
+                                <th>Selected</th>
                                 <th>Result</th>
                                 <th>Time Taken</th>
                                 <th>Attempted At</th>
@@ -90,14 +108,9 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $a->user->name ?? 'Unknown' }}<br><small class="text-muted">{{ $a->user->phone ?? '' }}</small></td>
+                                <td><small>{{ Str::limit($a->question->question ?? '', 50) }}</small></td>
                                 <td>
-                                    <span class="badge badge-secondary" style="font-size:13px;">
-                                        {{ $a->selected_answer }}:
-                                        @php
-                                            $opts = ['A'=>$question->option_a,'B'=>$question->option_b,'C'=>$question->option_c,'D'=>$question->option_d];
-                                        @endphp
-                                        {{ $opts[$a->selected_answer] ?? '' }}
-                                    </span>
+                                    <span class="badge badge-secondary">{{ $a->selected_answer }}</span>
                                 </td>
                                 <td>
                                     @if($a->is_correct)
@@ -111,7 +124,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted">No attempts yet.</td>
+                                <td colspan="7" class="text-center text-muted">No attempts yet.</td>
                             </tr>
                             @endforelse
                         </tbody>

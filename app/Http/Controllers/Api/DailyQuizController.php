@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DailyQuizBatch;
 use App\Models\DailyQuizQuestion;
 use App\Models\DailyQuizAttempt;
 use Illuminate\Http\Request;
@@ -12,46 +13,59 @@ class DailyQuizController extends Controller
     // GET /v1/daily-quiz/today
     public function today(Request $request)
     {
-        $question = DailyQuizQuestion::todayQuestion();
+        $batch = DailyQuizBatch::activeBatch();
 
-        if (!$question) {
-            return response()->json(['status' => false, 'message' => 'No quiz for today'], 404);
+        if (!$batch) {
+            return response()->json(['status' => false, 'message' => 'No active quiz right now'], 404);
         }
 
         $userId = $request->auth_user->id ?? null;
-        $attempted = false;
-        $myAnswer  = null;
 
-        if ($userId) {
-            $attempt = DailyQuizAttempt::where('user_id', $userId)
-                ->where('question_id', $question->id)
-                ->first();
-            if ($attempt) {
-                $attempted = true;
-                $myAnswer  = $attempt->selected_answer;
-            }
-        }
+        $questions = $batch->questions()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get()
+            ->map(function ($q) use ($userId) {
+                $attempted = false;
+                $myAnswer  = null;
+
+                if ($userId) {
+                    $attempt = DailyQuizAttempt::where('user_id', $userId)
+                        ->where('question_id', $q->id)
+                        ->first();
+                    if ($attempt) {
+                        $attempted = true;
+                        $myAnswer  = $attempt->selected_answer;
+                    }
+                }
+
+                return [
+                    'id'             => $q->id,
+                    'question'       => $q->question,
+                    'category'       => $q->category,
+                    'time_limit'     => $q->time_limit,
+                    'options'        => [
+                        'A' => $q->option_a,
+                        'B' => $q->option_b,
+                        'C' => $q->option_c,
+                        'D' => $q->option_d,
+                    ],
+                    'attempted'      => $attempted,
+                    'my_answer'      => $myAnswer,
+                    'correct_answer' => $attempted ? $q->correct_answer : null,
+                    'explanation'    => $attempted ? $q->explanation : null,
+                ];
+            });
 
         return response()->json([
             'status' => true,
-            'data'   => [
-                'id'             => $question->id,
-                'question'       => $question->question,
-                'category'       => $question->category,
-                'time_limit'     => $question->time_limit,
-                'quiz_date'      => $question->quiz_date->format('Y-m-d'),
-                'options'        => [
-                    'A' => $question->option_a,
-                    'B' => $question->option_b,
-                    'C' => $question->option_c,
-                    'D' => $question->option_d,
-                ],
-                'attempted'      => $attempted,
-                'my_answer'      => $myAnswer,
-                // Only reveal correct answer if already attempted
-                'correct_answer' => $attempted ? $question->correct_answer : null,
-                'explanation'    => $attempted ? $question->explanation : null,
+            'batch'  => [
+                'id'        => $batch->id,
+                'title'     => $batch->title,
+                'ends_at'   => $batch->ends_at->toIso8601String(),
+                'starts_at' => $batch->starts_at->toIso8601String(),
             ],
+            'data' => $questions,
         ]);
     }
 
@@ -67,7 +81,14 @@ class DailyQuizController extends Controller
         $userId   = $request->auth_user->id;
         $question = DailyQuizQuestion::findOrFail($request->question_id);
 
-        // Prevent double attempt
+        // Check batch is still active
+        if ($question->batch_id) {
+            $batch = DailyQuizBatch::find($question->batch_id);
+            if (!$batch || !now()->between($batch->starts_at, $batch->ends_at) || !$batch->is_active) {
+                return response()->json(['status' => false, 'message' => 'Quiz has ended'], 403);
+            }
+        }
+
         $existing = DailyQuizAttempt::where('user_id', $userId)
             ->where('question_id', $question->id)
             ->first();
@@ -86,13 +107,12 @@ class DailyQuizController extends Controller
             'time_taken'      => $request->time_taken ?? 0,
         ]);
 
-        // Stats
         $total   = DailyQuizAttempt::where('question_id', $question->id)->count();
         $correct = DailyQuizAttempt::where('question_id', $question->id)->where('is_correct', true)->count();
 
         return response()->json([
-            'status'     => true,
-            'is_correct' => $isCorrect,
+            'status'         => true,
+            'is_correct'     => $isCorrect,
             'correct_answer' => $question->correct_answer,
             'explanation'    => $question->explanation,
             'stats' => [
@@ -115,13 +135,13 @@ class DailyQuizController extends Controller
 
         $data = $attempts->map(function ($a) {
             return [
-                'date'            => $a->question->quiz_date->format('Y-m-d'),
-                'question'        => $a->question->question,
-                'category'        => $a->question->category,
+                'question'        => $a->question->question ?? '',
+                'category'        => $a->question->category ?? '',
                 'selected_answer' => $a->selected_answer,
-                'correct_answer'  => $a->question->correct_answer,
+                'correct_answer'  => $a->question->correct_answer ?? '',
                 'is_correct'      => $a->is_correct,
                 'time_taken'      => $a->time_taken,
+                'attempted_at'    => $a->created_at->toIso8601String(),
             ];
         });
 

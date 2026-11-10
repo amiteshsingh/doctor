@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\DailyQuizBatch;
 use App\Models\DailyQuizQuestion;
 use App\Models\DailyQuizAttempt;
 use Illuminate\Http\Request;
@@ -11,8 +12,8 @@ class DailyQuizController extends Controller
 {
     public function index()
     {
-        $questions = DailyQuizQuestion::latest('quiz_date')->paginate(20);
-        return view('admin.daily_quiz.index', compact('questions'));
+        $batches = DailyQuizBatch::withCount('questions')->latest()->paginate(15);
+        return view('admin.daily_quiz.index', compact('batches'));
     }
 
     public function create()
@@ -23,75 +24,130 @@ class DailyQuizController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'question'       => 'required|string|max:500',
-            'option_a'       => 'required|string|max:255',
-            'option_b'       => 'required|string|max:255',
-            'option_c'       => 'required|string|max:255',
-            'option_d'       => 'required|string|max:255',
-            'correct_answer' => 'required|in:A,B,C,D',
-            'explanation'    => 'nullable|string|max:1000',
-            'category'       => 'required|string|max:100',
-            'quiz_date'      => 'required|date|unique:daily_quiz_questions,quiz_date',
-            'time_limit'     => 'required|integer|min:10|max:120',
+            'title'      => 'nullable|string|max:200',
+            'starts_at'  => 'required|date',
+            'ends_at'    => 'required|date|after:starts_at',
+            'questions'              => 'required|array|min:1',
+            'questions.*.question'   => 'required|string|max:500',
+            'questions.*.option_a'   => 'required|string|max:255',
+            'questions.*.option_b'   => 'required|string|max:255',
+            'questions.*.option_c'   => 'required|string|max:255',
+            'questions.*.option_d'   => 'required|string|max:255',
+            'questions.*.correct_answer' => 'required|in:A,B,C,D',
+            'questions.*.category'   => 'required|string|max:100',
+            'questions.*.time_limit' => 'required|integer|min:10|max:300',
+            'questions.*.explanation'=> 'nullable|string|max:1000',
         ]);
 
-        DailyQuizQuestion::create($request->all());
+        $batch = DailyQuizBatch::create([
+            'title'     => $request->title,
+            'starts_at' => $request->starts_at,
+            'ends_at'   => $request->ends_at,
+        ]);
 
-        return redirect()->route('admin.daily-quiz.index')->with('success', 'Quiz question added successfully!');
+        foreach ($request->questions as $i => $q) {
+            DailyQuizQuestion::create([
+                'batch_id'       => $batch->id,
+                'question'       => $q['question'],
+                'option_a'       => $q['option_a'],
+                'option_b'       => $q['option_b'],
+                'option_c'       => $q['option_c'],
+                'option_d'       => $q['option_d'],
+                'correct_answer' => $q['correct_answer'],
+                'explanation'    => $q['explanation'] ?? null,
+                'category'       => $q['category'],
+                'time_limit'     => $q['time_limit'],
+                'sort_order'     => $i,
+                'quiz_date'      => now()->toDateString(),
+            ]);
+        }
+
+        return redirect()->route('admin.daily-quiz.index')
+            ->with('success', count($request->questions) . ' questions added in batch #' . $batch->id . '!');
     }
 
     public function edit($id)
     {
-        $question = DailyQuizQuestion::findOrFail($id);
-        return view('admin.daily_quiz.add', compact('question'));
+        $batch = DailyQuizBatch::with('questions')->findOrFail($id);
+        return view('admin.daily_quiz.add', compact('batch'));
     }
 
     public function update(Request $request, $id)
     {
-        $question = DailyQuizQuestion::findOrFail($id);
+        $batch = DailyQuizBatch::findOrFail($id);
 
         $request->validate([
-            'question'       => 'required|string|max:500',
-            'option_a'       => 'required|string|max:255',
-            'option_b'       => 'required|string|max:255',
-            'option_c'       => 'required|string|max:255',
-            'option_d'       => 'required|string|max:255',
-            'correct_answer' => 'required|in:A,B,C,D',
-            'explanation'    => 'nullable|string|max:1000',
-            'category'       => 'required|string|max:100',
-            'quiz_date'      => 'required|date|unique:daily_quiz_questions,quiz_date,' . $id,
-            'time_limit'     => 'required|integer|min:10|max:120',
+            'title'     => 'nullable|string|max:200',
+            'starts_at' => 'required|date',
+            'ends_at'   => 'required|date|after:starts_at',
+            'questions'              => 'required|array|min:1',
+            'questions.*.question'   => 'required|string|max:500',
+            'questions.*.option_a'   => 'required|string|max:255',
+            'questions.*.option_b'   => 'required|string|max:255',
+            'questions.*.option_c'   => 'required|string|max:255',
+            'questions.*.option_d'   => 'required|string|max:255',
+            'questions.*.correct_answer' => 'required|in:A,B,C,D',
+            'questions.*.category'   => 'required|string|max:100',
+            'questions.*.time_limit' => 'required|integer|min:10|max:300',
+            'questions.*.explanation'=> 'nullable|string|max:1000',
         ]);
 
-        $question->update($request->all());
+        $batch->update([
+            'title'     => $request->title,
+            'starts_at' => $request->starts_at,
+            'ends_at'   => $request->ends_at,
+        ]);
 
-        return redirect()->route('admin.daily-quiz.index')->with('success', 'Quiz question updated successfully!');
+        // Delete old questions and re-insert
+        $batch->questions()->delete();
+
+        foreach ($request->questions as $i => $q) {
+            DailyQuizQuestion::create([
+                'batch_id'       => $batch->id,
+                'question'       => $q['question'],
+                'option_a'       => $q['option_a'],
+                'option_b'       => $q['option_b'],
+                'option_c'       => $q['option_c'],
+                'option_d'       => $q['option_d'],
+                'correct_answer' => $q['correct_answer'],
+                'explanation'    => $q['explanation'] ?? null,
+                'category'       => $q['category'],
+                'time_limit'     => $q['time_limit'],
+                'sort_order'     => $i,
+                'quiz_date'      => now()->toDateString(),
+            ]);
+        }
+
+        return redirect()->route('admin.daily-quiz.index')->with('success', 'Batch updated successfully!');
     }
 
     public function destroy($id)
     {
-        DailyQuizQuestion::findOrFail($id)->delete();
-        return redirect()->route('admin.daily-quiz.index')->with('success', 'Question deleted.');
+        $batch = DailyQuizBatch::findOrFail($id);
+        $batch->questions()->delete();
+        $batch->delete();
+        return redirect()->route('admin.daily-quiz.index')->with('success', 'Batch deleted.');
     }
 
     public function toggle($id)
     {
-        $q = DailyQuizQuestion::findOrFail($id);
-        $q->update(['is_active' => !$q->is_active]);
+        $batch = DailyQuizBatch::findOrFail($id);
+        $batch->update(['is_active' => !$batch->is_active]);
         return back()->with('success', 'Status updated.');
     }
 
     public function results($id)
     {
-        $question = DailyQuizQuestion::with('attempts.user')->findOrFail($id);
-        $attempts = DailyQuizAttempt::with('user')
-            ->where('question_id', $id)
+        $batch = DailyQuizBatch::with('questions')->findOrFail($id);
+        $questionIds = $batch->questions->pluck('id');
+        $attempts = DailyQuizAttempt::with(['user', 'question'])
+            ->whereIn('question_id', $questionIds)
             ->latest()
             ->paginate(30);
         $stats = [
-            'total'   => $attempts->total(),
-            'correct' => DailyQuizAttempt::where('question_id', $id)->where('is_correct', true)->count(),
+            'total'   => DailyQuizAttempt::whereIn('question_id', $questionIds)->count(),
+            'correct' => DailyQuizAttempt::whereIn('question_id', $questionIds)->where('is_correct', true)->count(),
         ];
-        return view('admin.daily_quiz.results', compact('question', 'attempts', 'stats'));
+        return view('admin.daily_quiz.results', compact('batch', 'attempts', 'stats'));
     }
 }

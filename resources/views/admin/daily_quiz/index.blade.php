@@ -9,7 +9,7 @@
             </div>
             <div class="col-sm-4 col-7 text-right m-b-30">
                 <a href="{{ route('admin.daily-quiz.create') }}" class="btn btn-primary btn-rounded float-right">
-                    <i class="fa fa-plus"></i> Add Question
+                    <i class="fa fa-plus"></i> Add Quiz Batch
                 </a>
             </div>
         </div>
@@ -25,63 +25,79 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Quiz Date</th>
-                                <th>Question</th>
-                                <th>Category</th>
-                                <th>Time Limit</th>
-                                <th>Correct Ans</th>
+                                <th>Title</th>
+                                <th>Starts At</th>
+                                <th>Ends At</th>
+                                <th>Duration</th>
+                                <th>Questions</th>
                                 <th>Status</th>
                                 <th>Attempts</th>
                                 <th class="text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($questions as $q)
+                            @forelse($batches as $batch)
+                            @php
+                                $now = now();
+                                $isLive = $batch->is_active && $now->between($batch->starts_at, $batch->ends_at);
+                                $isUpcoming = $batch->is_active && $now->lt($batch->starts_at);
+                                $isPast = $now->gt($batch->ends_at);
+                                $diffMins = $batch->starts_at->diffInMinutes($batch->ends_at);
+                                $duration = $diffMins >= 60
+                                    ? floor($diffMins/60).'h '.($diffMins%60 > 0 ? ($diffMins%60).'m' : '')
+                                    : $diffMins.'m';
+                                $totalAttempts = \App\Models\DailyQuizAttempt::whereIn('question_id', $batch->questions->pluck('id'))->count();
+                            @endphp
                             <tr>
-                                <td>{{ $q->id }}</td>
+                                <td>{{ $batch->id }}</td>
                                 <td>
-                                    <strong>{{ $q->quiz_date->format('d M Y') }}</strong>
-                                    @if($q->quiz_date->isToday())
-                                        <span class="custom-badge status-green">Today</span>
-                                    @elseif($q->quiz_date->isFuture())
-                                        <span class="custom-badge status-blue">Upcoming</span>
-                                    @else
-                                        <span class="custom-badge status-grey">Past</span>
-                                    @endif
+                                    <strong>{{ $batch->title ?: 'Batch #'.$batch->id }}</strong>
                                 </td>
-                                <td>{{ Str::limit($q->question, 60) }}</td>
-                                <td><span class="custom-badge status-blue">{{ $q->category }}</span></td>
-                                <td>{{ $q->time_limit }}s</td>
                                 <td>
-                                    <span class="badge badge-success" style="font-size:14px;">
-                                        {{ $q->correct_answer }}
+                                    <strong>{{ $batch->starts_at->format('d M Y') }}</strong><br>
+                                    <small class="text-muted">{{ $batch->starts_at->format('h:i A') }}</small>
+                                </td>
+                                <td>
+                                    <strong>{{ $batch->ends_at->format('d M Y') }}</strong><br>
+                                    <small class="text-muted">{{ $batch->ends_at->format('h:i A') }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge badge-info">{{ trim($duration) }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-primary" style="font-size:13px;">
+                                        {{ $batch->questions_count }} Qs
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.daily-quiz.toggle', $q->id) }}">
-                                        @if($q->is_active)
-                                            <span class="custom-badge status-green">Active</span>
+                                    <a href="{{ route('admin.daily-quiz.toggle', $batch->id) }}">
+                                        @if($isLive)
+                                            <span class="custom-badge status-green">🟢 Live</span>
+                                        @elseif($isUpcoming)
+                                            <span class="custom-badge status-blue">⏳ Upcoming</span>
+                                        @elseif($isPast)
+                                            <span class="custom-badge status-grey">Past</span>
                                         @else
                                             <span class="custom-badge status-red">Inactive</span>
                                         @endif
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.daily-quiz.results', $q->id) }}" class="btn btn-xs btn-info">
-                                        {{ $q->attempts()->count() }} attempts
+                                    <a href="{{ route('admin.daily-quiz.results', $batch->id) }}" class="btn btn-xs btn-info">
+                                        {{ $totalAttempts }} attempts
                                     </a>
                                 </td>
                                 <td class="text-right">
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="{{ route('admin.daily-quiz.edit', $q->id) }}">
+                                            <a class="dropdown-item" href="{{ route('admin.daily-quiz.edit', $batch->id) }}">
                                                 <i class="fa fa-pencil m-r-5"></i> Edit
                                             </a>
-                                            <a class="dropdown-item" href="{{ route('admin.daily-quiz.results', $q->id) }}">
+                                            <a class="dropdown-item" href="{{ route('admin.daily-quiz.results', $batch->id) }}">
                                                 <i class="fa fa-bar-chart m-r-5"></i> Results
                                             </a>
-                                            <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#delete_modal" data-url="{{ route('admin.daily-quiz.destroy', $q->id) }}">
+                                            <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#delete_modal" data-url="{{ route('admin.daily-quiz.destroy', $batch->id) }}">
                                                 <i class="fa fa-trash-o m-r-5"></i> Delete
                                             </a>
                                         </div>
@@ -90,7 +106,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="9" class="text-center text-muted py-4">No quiz questions added yet.</td>
+                                <td colspan="9" class="text-center text-muted py-4">No quiz batches added yet.</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -99,9 +115,7 @@
             </div>
         </div>
 
-        <div class="box-footer clearfix mt-3">
-            {{ $questions->links() }}
-        </div>
+        <div class="box-footer clearfix mt-3">{{ $batches->links() }}</div>
     </div>
 </div>
 
@@ -110,7 +124,8 @@
         <div class="modal-content">
             <div class="modal-body text-center">
                 <img src="{{ asset('admin/assets/img/sent.png') }}" alt="" width="50" height="46">
-                <h3>Delete this quiz question?</h3>
+                <h3>Delete this quiz batch?</h3>
+                <p class="text-muted">All questions in this batch will also be deleted.</p>
                 <div class="m-t-20">
                     <a href="#" class="btn btn-white" data-dismiss="modal">Cancel</a>
                     <form id="deleteForm" method="POST" style="display:inline;">
