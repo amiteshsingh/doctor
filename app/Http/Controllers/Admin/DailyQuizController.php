@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\DailyQuizBatch;
 use App\Models\DailyQuizQuestion;
 use App\Models\DailyQuizAttempt;
+use App\Models\User;
+use App\Services\FirebaseNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DailyQuizController extends Controller
 {
@@ -61,6 +64,10 @@ class DailyQuizController extends Controller
                 'quiz_date'      => now()->toDateString(),
             ]);
         }
+
+        // ── Push notification to all users ──────────────────────────────────
+        $this->sendQuizNotification($batch, count($request->questions));
+        // ────────────────────────────────────────────────────────────────────
 
         return redirect()->route('admin.daily-quiz.index')
             ->with('success', count($request->questions) . ' questions added in batch #' . $batch->id . '!');
@@ -119,6 +126,59 @@ class DailyQuizController extends Controller
         }
 
         return redirect()->route('admin.daily-quiz.index')->with('success', 'Batch updated successfully!');
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Push notification helper — called after a new quiz batch is created
+    // ─────────────────────────────────────────────────────────────────────────
+    private function sendQuizNotification(DailyQuizBatch $batch, int $questionCount): void
+    {
+        try {
+            // Collect FCM tokens of all regular users (deduplicated)
+            $tokens = User::whereHas('role', fn($q) => $q->where('role', 'user'))
+                ->whereNotNull('fcm_token')
+                ->distinct('fcm_token')
+                ->pluck('fcm_token')
+                ->toArray();
+
+            if (empty($tokens)) return;
+
+            // Compose an engaging message
+            $title = '🎯 Naya Daily Quiz Aa Gaya!';
+
+            if ($batch->title) {
+                $body = "\"" . $batch->title . "\" quiz abhi available hai! Apni knowledge test karo aur top leaderboard par aao. 🏆";
+            } else {
+                $body = "Aaj ka naya quiz available hai! " . $questionCount . " exciting sawaalon ke sath — kya aap tayaar hain? 💡";
+            }
+
+            $result = FirebaseNotification::sendBulk(
+                $tokens,
+                $title,
+                $body,
+                [
+                    'type'     => 'daily_quiz',
+                    'batch_id' => (string) $batch->id,
+                    'screen'   => 'DailyQuiz',
+                ]
+            );
+
+            // Log to notification_logs for audit trail
+            DB::table('notification_logs')->insert([
+                'title'        => $title,
+                'message'      => $body,
+                'target'       => 'all',
+                'user_id'      => null,
+                'sent_count'   => $result['sent'],
+                'failed_count' => $result['failed'],
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ]);
+
+        } catch (\Exception $e) {
+            // Log the error but don't block the quiz creation
+            \Log::error('Daily Quiz Notification Error: ' . $e->getMessage());
+        }
     }
 
     public function destroy($id)
