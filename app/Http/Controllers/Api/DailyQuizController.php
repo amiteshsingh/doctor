@@ -10,9 +10,35 @@ use Illuminate\Http\Request;
 
 class DailyQuizController extends Controller
 {
+    // GET /v1/daily-quiz/debug
+    public function debug(Request $request)
+    {
+        $now = now();
+        $tablesExist = [
+            'daily_quiz_batches'   => \Schema::hasTable('daily_quiz_batches'),
+            'daily_quiz_questions' => \Schema::hasTable('daily_quiz_questions'),
+            'batch_id_col'         => \Schema::hasColumn('daily_quiz_questions', 'batch_id'),
+            'starts_at_col'        => \Schema::hasColumn('daily_quiz_questions', 'starts_at'),
+        ];
+        $batches   = \Schema::hasTable('daily_quiz_batches') ? \DB::table('daily_quiz_batches')->get() : [];
+        $questions = \Schema::hasTable('daily_quiz_questions') ? \DB::table('daily_quiz_questions')->get() : [];
+        return response()->json([
+            'server_time' => $now->toDateTimeString(),
+            'timezone'    => config('app.timezone'),
+            'tables'      => $tablesExist,
+            'batches'     => $batches,
+            'questions'   => $questions,
+        ]);
+    }
+
     // GET /v1/daily-quiz/today
     public function today(Request $request)
     {
+        // Fallback: if batches table doesn't exist yet (migration pending)
+        if (!\Schema::hasTable('daily_quiz_batches') || !\Schema::hasColumn('daily_quiz_questions', 'batch_id')) {
+            return $this->todayLegacy($request);
+        }
+
         $batch = DailyQuizBatch::activeBatch();
 
         if (!$batch) {
@@ -66,6 +92,49 @@ class DailyQuizController extends Controller
                 'starts_at' => $batch->starts_at->toIso8601String(),
             ],
             'data' => $questions,
+        ]);
+    }
+
+    // Legacy fallback (before batch migration)
+    private function todayLegacy(Request $request)
+    {
+        $question = DailyQuizQuestion::where('quiz_date', today())
+            ->where('is_active', true)
+            ->first();
+
+        if (!$question) {
+            return response()->json(['status' => false, 'message' => 'No quiz for today'], 404);
+        }
+
+        $userId   = $request->auth_user->id ?? null;
+        $attempted = false;
+        $myAnswer  = null;
+
+        if ($userId) {
+            $attempt = DailyQuizAttempt::where('user_id', $userId)
+                ->where('question_id', $question->id)->first();
+            if ($attempt) { $attempted = true; $myAnswer = $attempt->selected_answer; }
+        }
+
+        return response()->json([
+            'status' => true,
+            'batch'  => [
+                'id'        => 0,
+                'title'     => 'Daily Quiz',
+                'starts_at' => now()->startOfDay()->toIso8601String(),
+                'ends_at'   => now()->endOfDay()->toIso8601String(),
+            ],
+            'data' => [[
+                'id'             => $question->id,
+                'question'       => $question->question,
+                'category'       => $question->category,
+                'time_limit'     => $question->time_limit,
+                'options'        => ['A'=>$question->option_a,'B'=>$question->option_b,'C'=>$question->option_c,'D'=>$question->option_d],
+                'attempted'      => $attempted,
+                'my_answer'      => $myAnswer,
+                'correct_answer' => $attempted ? $question->correct_answer : null,
+                'explanation'    => $attempted ? $question->explanation : null,
+            ]],
         ]);
     }
 

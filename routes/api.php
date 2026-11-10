@@ -82,6 +82,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/daily-quiz/today',   [\App\Http\Controllers\Api\DailyQuizController::class, 'today']);
         Route::post('/daily-quiz/submit', [\App\Http\Controllers\Api\DailyQuizController::class, 'submit']);
         Route::get('/daily-quiz/history', [\App\Http\Controllers\Api\DailyQuizController::class, 'history']);
+        Route::get('/daily-quiz/debug',   [\App\Http\Controllers\Api\DailyQuizController::class, 'debug']);
     });
 
     // One-time: migrate old doctor pics from storage to public/uploads/doctor
