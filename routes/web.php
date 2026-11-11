@@ -174,6 +174,9 @@ Route::middleware(['admin', 'admin.permission'])->prefix('admin')->group(functio
     Route::get('/daily-quiz',              [\App\Http\Controllers\Admin\DailyQuizController::class, 'index'])->name('admin.daily-quiz.index');
     Route::get('/daily-quiz/add',          [\App\Http\Controllers\Admin\DailyQuizController::class, 'create'])->name('admin.daily-quiz.create');
     Route::post('/daily-quiz',             [\App\Http\Controllers\Admin\DailyQuizController::class, 'store'])->name('admin.daily-quiz.store');
+    Route::get('/daily-quiz/import',       [\App\Http\Controllers\Admin\DailyQuizController::class, 'importForm'])->name('admin.daily-quiz.import-form');
+    Route::post('/daily-quiz/import',      [\App\Http\Controllers\Admin\DailyQuizController::class, 'importExcel'])->name('admin.daily-quiz.import');
+    Route::get('/daily-quiz/template',     [\App\Http\Controllers\Admin\DailyQuizController::class, 'downloadTemplate'])->name('admin.daily-quiz.template');
     Route::get('/daily-quiz/{id}/edit',    [\App\Http\Controllers\Admin\DailyQuizController::class, 'edit'])->name('admin.daily-quiz.edit');
     Route::put('/daily-quiz/{id}',         [\App\Http\Controllers\Admin\DailyQuizController::class, 'update'])->name('admin.daily-quiz.update');
     Route::delete('/daily-quiz/{id}',      [\App\Http\Controllers\Admin\DailyQuizController::class, 'destroy'])->name('admin.daily-quiz.destroy');

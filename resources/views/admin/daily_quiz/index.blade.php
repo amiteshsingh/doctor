@@ -8,6 +8,9 @@
                 <h4 class="page-title">🧠 Daily Quiz — BrainFit</h4>
             </div>
             <div class="col-sm-4 col-7 text-right m-b-30">
+                <a href="{{ route('admin.daily-quiz.import-form') }}" class="btn btn-success btn-rounded float-right mr-2">
+                    <i class="fa fa-file-excel-o"></i> Import Excel
+                </a>
                 <a href="{{ route('admin.daily-quiz.create') }}" class="btn btn-primary btn-rounded float-right">
                     <i class="fa fa-plus"></i> Add Quiz Batch
                 </a>

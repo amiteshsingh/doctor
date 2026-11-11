@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\FirebaseNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class DailyQuizController extends Controller
 {
@@ -129,6 +130,190 @@ class DailyQuizController extends Controller
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // Excel Import — show import form
+    // ─────────────────────────────────────────────────────────────────────────
+    public function importForm()
+    {
+        return view('admin.daily_quiz.import');
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Excel Import — process uploaded file
+    // ─────────────────────────────────────────────────────────────────────────
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
+            'title'      => 'nullable|string|max:200',
+            'starts_at'  => 'required|date',
+            'ends_at'    => 'required|date|after:starts_at',
+        ]);
+
+        try {
+            $file        = $request->file('excel_file');
+            $spreadsheet = IOFactory::load($file->getPathname());
+            $sheet       = $spreadsheet->getActiveSheet();
+            $rows        = $sheet->toArray(null, true, true, false); // 0-indexed
+
+            // Row 0 = header, data starts from row 1
+            $validCategories = ['General', 'Health', 'Science', 'History', 'Geography', 'Sports', 'Technology', 'Math'];
+            $questions       = [];
+            $errors          = [];
+
+            foreach ($rows as $rowIndex => $row) {
+                if ($rowIndex === 0) continue; // skip header
+
+                // Skip completely empty rows
+                $nonEmpty = array_filter(array_map('trim', array_map('strval', $row)));
+                if (empty($nonEmpty)) continue;
+
+                $lineNo  = $rowIndex + 1; // human-readable line number
+                $q       = trim((string)($row[0] ?? ''));
+                $optA    = trim((string)($row[1] ?? ''));
+                $optB    = trim((string)($row[2] ?? ''));
+                $optC    = trim((string)($row[3] ?? ''));
+                $optD    = trim((string)($row[4] ?? ''));
+                $correct = strtoupper(trim((string)($row[5] ?? '')));
+                $cat     = trim((string)($row[6] ?? 'General'));
+                $time    = (int)($row[7] ?? 30);
+                $expl    = trim((string)($row[8] ?? ''));
+
+                // Validate row
+                if (empty($q))                         { $errors[] = "Row {$lineNo}: Question khali hai."; continue; }
+                if (empty($optA))                      { $errors[] = "Row {$lineNo}: Option A khali hai."; continue; }
+                if (empty($optB))                      { $errors[] = "Row {$lineNo}: Option B khali hai."; continue; }
+                if (empty($optC))                      { $errors[] = "Row {$lineNo}: Option C khali hai."; continue; }
+                if (empty($optD))                      { $errors[] = "Row {$lineNo}: Option D khali hai."; continue; }
+                if (!in_array($correct, ['A','B','C','D'])) { $errors[] = "Row {$lineNo}: Correct answer '{$correct}' galat hai (A/B/C/D hona chahiye)."; continue; }
+                if (!in_array($cat, $validCategories)) $cat = 'General';
+                if ($time < 10 || $time > 300)         $time = 30;
+
+                $questions[] = [
+                    'question'       => $q,
+                    'option_a'       => $optA,
+                    'option_b'       => $optB,
+                    'option_c'       => $optC,
+                    'option_d'       => $optD,
+                    'correct_answer' => $correct,
+                    'category'       => $cat,
+                    'time_limit'     => $time,
+                    'explanation'    => $expl,
+                ];
+            }
+
+            if (!empty($errors)) {
+                return back()
+                    ->withInput()
+                    ->with('import_errors', $errors)
+                    ->with('error', count($errors) . ' row(s) me error hai. Neeche details dekho.');
+            }
+
+            if (empty($questions)) {
+                return back()->withInput()->with('error', 'Excel file me koi valid question nahi mila.');
+            }
+
+            // Create batch
+            $batch = DailyQuizBatch::create([
+                'title'     => $request->title,
+                'starts_at' => $request->starts_at,
+                'ends_at'   => $request->ends_at,
+            ]);
+
+            foreach ($questions as $i => $q) {
+                DailyQuizQuestion::create([
+                    'batch_id'       => $batch->id,
+                    'question'       => $q['question'],
+                    'option_a'       => $q['option_a'],
+                    'option_b'       => $q['option_b'],
+                    'option_c'       => $q['option_c'],
+                    'option_d'       => $q['option_d'],
+                    'correct_answer' => $q['correct_answer'],
+                    'explanation'    => $q['explanation'],
+                    'category'       => $q['category'],
+                    'time_limit'     => $q['time_limit'],
+                    'sort_order'     => $i,
+                    'quiz_date'      => now()->toDateString(),
+                ]);
+            }
+
+            // Push notification to all users
+            $this->sendQuizNotification($batch, count($questions));
+
+            return redirect()->route('admin.daily-quiz.index')
+                ->with('success', '✅ Excel se ' . count($questions) . ' questions import ho gaye! Batch #' . $batch->id . ' create hua.');
+
+        } catch (\Exception $e) {
+            \Log::error('Quiz Excel Import Error: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'File read karne me error aaya: ' . $e->getMessage());
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Sample Excel template download
+    // ─────────────────────────────────────────────────────────────────────────
+    public function downloadTemplate()
+    {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet       = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Quiz Questions');
+
+        // Header row — style karte hain
+        $headers = ['Question', 'Option A', 'Option B', 'Option C', 'Option D', 'Correct Answer (A/B/C/D)', 'Category', 'Time Limit (sec)', 'Explanation (optional)'];
+        foreach ($headers as $col => $header) {
+            $cell = $sheet->getCellByColumnAndRow($col + 1, 1);
+            $cell->setValue($header);
+            $cell->getStyle()->getFont()->setBold(true);
+            $cell->getStyle()->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('1A237E');
+            $cell->getStyle()->getFont()->getColor()->setRGB('FFFFFF');
+        }
+
+        // Sample rows
+        $samples = [
+            ['Human body me kitni haddiya hoti hain?', '206', '208', '210', '212', 'A', 'Health', 30, 'Adult human body me 206 bones hoti hain.'],
+            ['Paani ka chemical formula kya hai?', 'H2O', 'CO2', 'O2', 'H2SO4', 'A', 'Science', 20, 'Paani do hydrogen aur ek oxygen atom se bana hai.'],
+            ['India ka sabse bada state kaun sa hai (area me)?', 'Maharashtra', 'Madhya Pradesh', 'Rajasthan', 'Uttar Pradesh', 'C', 'Geography', 30, 'Rajasthan area ke hisaab se India ka sabse bada state hai.'],
+        ];
+
+        foreach ($samples as $rowIndex => $row) {
+            foreach ($row as $col => $value) {
+                $sheet->getCellByColumnAndRow($col + 1, $rowIndex + 2)->setValue($value);
+            }
+        }
+
+        // Auto-width for columns
+        foreach (range(1, count($headers)) as $col) {
+            $sheet->getColumnDimensionByColumn($col)->setAutoSize(true);
+        }
+
+        // Add dropdown validation for Correct Answer column (F)
+        $validation = $sheet->getDataValidation('F2:F1000');
+        $validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST)
+            ->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION)
+            ->setAllowBlank(false)
+            ->setShowDropDown(false)
+            ->setFormula1('"A,B,C,D"');
+
+        // Category dropdown validation (G column)
+        $catValidation = $sheet->getDataValidation('G2:G1000');
+        $catValidation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST)
+            ->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION)
+            ->setAllowBlank(true)
+            ->setShowDropDown(false)
+            ->setFormula1('"General,Health,Science,History,Geography,Sports,Technology,Math"');
+
+        $filename = 'quiz_import_template.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        exit;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // Push notification helper — called after a new quiz batch is created
     // ─────────────────────────────────────────────────────────────────────────
     private function sendQuizNotification(DailyQuizBatch $batch, int $questionCount): void
@@ -198,16 +383,34 @@ class DailyQuizController extends Controller
 
     public function results($id)
     {
-        $batch = DailyQuizBatch::with('questions')->findOrFail($id);
+        $batch       = DailyQuizBatch::with('questions')->findOrFail($id);
         $questionIds = $batch->questions->pluck('id');
+
         $attempts = DailyQuizAttempt::with(['user', 'question'])
             ->whereIn('question_id', $questionIds)
             ->latest()
             ->paginate(30);
+
         $stats = [
             'total'   => DailyQuizAttempt::whereIn('question_id', $questionIds)->count(),
             'correct' => DailyQuizAttempt::whereIn('question_id', $questionIds)->where('is_correct', true)->count(),
         ];
-        return view('admin.daily_quiz.results', compact('batch', 'attempts', 'stats'));
+
+        // ── Top 3 Winners ────────────────────────────────────────────────────
+        // Ranking: most correct answers first; tie-break = least total time taken
+        $winners = DailyQuizAttempt::with('user')
+            ->whereIn('question_id', $questionIds)
+            ->selectRaw('user_id,
+                         SUM(is_correct) as correct_count,
+                         SUM(time_taken) as total_time,
+                         COUNT(*) as answered')
+            ->groupBy('user_id')
+            ->orderByDesc('correct_count')
+            ->orderBy('total_time')
+            ->limit(3)
+            ->get();
+        // ─────────────────────────────────────────────────────────────────────
+
+        return view('admin.daily_quiz.results', compact('batch', 'attempts', 'stats', 'winners'));
     }
 }
