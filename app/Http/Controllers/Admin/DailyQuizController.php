@@ -571,13 +571,18 @@ XML;
 
             if (empty($tokens)) return;
 
-            // Compose an engaging message
-            $title = '🎯 Naya Daily Quiz Aa Gaya!';
+            // Format start time: "15 Nov 2026, 06:30 PM"
+            $startTime = $batch->starts_at->format('d M Y, h:i A');
+            // Short form for body: "15 Nov, 6:30 PM"
+            $startShort = $batch->starts_at->format('d M, g:i A');
+
+            // Compose title & body with start time
+            $title = '🎯 Naya Daily Quiz Add Ho Gaya!';
 
             if ($batch->title) {
-                $body = "\"" . $batch->title . "\" quiz abhi available hai! Apni knowledge test karo aur top leaderboard par aao. 🏆";
+                $body = "\"" . $batch->title . "\" — " . $questionCount . " sawaal | ⏰ Live: " . $startShort . "\nTaiyaar raho aur sabse pehle attempt karo! 🏆";
             } else {
-                $body = "Aaj ka naya quiz available hai! " . $questionCount . " exciting sawaalon ke sath — kya aap tayaar hain? 💡";
+                $body = $questionCount . " exciting sawaalon wala naya quiz aa raha hai!\n⏰ Live hoga: " . $startShort . "\nMiss mat karna! 💡";
             }
 
             $result = FirebaseNotification::sendBulk(
@@ -585,9 +590,11 @@ XML;
                 $title,
                 $body,
                 [
-                    'type'     => 'daily_quiz',
-                    'batch_id' => (string) $batch->id,
-                    'screen'   => 'DailyQuiz',
+                    'type'       => 'daily_quiz',
+                    'batch_id'   => (string) $batch->id,
+                    'screen'     => 'DailyQuiz',
+                    'start_time' => $batch->starts_at->toIso8601String(),
+                    'end_time'   => $batch->ends_at->toIso8601String(),
                 ]
             );
 
