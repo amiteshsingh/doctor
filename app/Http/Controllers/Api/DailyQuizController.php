@@ -206,6 +206,12 @@ class DailyQuizController extends Controller
             return [
                 'question'        => $a->question->question ?? '',
                 'category'        => $a->question->category ?? '',
+                'options'         => [
+                    'A' => $a->question->option_a ?? '',
+                    'B' => $a->question->option_b ?? '',
+                    'C' => $a->question->option_c ?? '',
+                    'D' => $a->question->option_d ?? '',
+                ],
                 'selected_answer' => $a->selected_answer,
                 'correct_answer'  => $a->question->correct_answer ?? '',
                 'is_correct'      => $a->is_correct,
