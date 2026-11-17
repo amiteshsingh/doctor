@@ -66,7 +66,7 @@ class DailyQuizController extends Controller
         }
 
         // ── Push notification to all users ──────────────────────────────────
-        $this->sendQuizNotification($batch, count($request->questions));
+        // $this->sendQuizNotification($batch, count($request->questions));
         // ────────────────────────────────────────────────────────────────────
 
         return redirect()->route('admin.daily-quiz.index')
