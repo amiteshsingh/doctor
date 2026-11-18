@@ -29,14 +29,34 @@
                 <div class="card-body" style="background:#E8EAF6;border-radius:8px;">
                     <h5 style="color:#1A237E;"><i class="fa fa-clock-o"></i> Quiz Schedule</h5>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Batch Title <small class="text-muted">(optional)</small></label>
                                 <input type="text" name="title" class="form-control" placeholder="e.g. Week 1 Health Quiz"
                                     value="{{ old('title', $batch->title ?? '') }}">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Max Participants <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" id="unlimited-check"
+                                                {{ old('max_participants', ($batch->max_participants ?? null)) === null || old('max_participants', ($batch->max_participants ?? 'all')) === 'all' ? 'checked' : '' }}
+                                                onchange="toggleLimit(this)">
+                                            &nbsp;All
+                                        </div>
+                                    </div>
+                                    <input type="number" name="max_participants" id="max-participants-input"
+                                        class="form-control" min="1" placeholder="e.g. 100"
+                                        value="{{ old('max_participants', $batch->max_participants ?? '') }}"
+                                        {{ old('max_participants', ($batch->max_participants ?? null)) === null ? 'disabled' : '' }}>
+                                </div>
+                                <small class="text-muted">Check "All" for unlimited participants</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Quiz Starts At <span class="text-danger">*</span></label>
                                 <input type="datetime-local" name="starts_at" class="form-control" required
@@ -44,7 +64,7 @@
                                 <small class="text-muted">Quiz will be available from this time</small>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Quiz Ends At <span class="text-danger">*</span></label>
                                 <input type="datetime-local" name="ends_at" class="form-control" required
@@ -155,6 +175,17 @@
 </div>
 
 <script>
+function toggleLimit(checkbox) {
+    const input = document.getElementById('max-participants-input');
+    if (checkbox.checked) {
+        input.disabled = true;
+        input.value = '';
+    } else {
+        input.disabled = false;
+        input.focus();
+    }
+}
+
 let qIndex = {{ isset($batch) ? $batch->questions->count() - 1 : 0 }};
 
 const questionTemplate = (index) => `

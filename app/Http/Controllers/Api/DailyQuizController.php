@@ -47,6 +47,25 @@ class DailyQuizController extends Controller
 
         $userId = $request->auth_user->id ?? null;
 
+        // ── Participant limit check ───────────────────────────────────────────
+        if ($batch->max_participants !== null) {
+            $participantCount = $batch->participantCount();
+            // Check if this user is already a participant
+            $userAlreadyIn = $userId && DailyQuizAttempt::whereIn('question_id', $batch->questions()->pluck('id'))
+                ->where('user_id', $userId)->exists();
+
+            if (!$userAlreadyIn && $participantCount >= $batch->max_participants) {
+                return response()->json([
+                    'status'           => false,
+                    'limit_full'       => true,
+                    'message'          => 'Is quiz mein participant limit full ho chuki hai. Agli quiz ka wait karein!',
+                    'max_participants' => $batch->max_participants,
+                    'current_count'    => $participantCount,
+                ], 403);
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
+
         $questions = $batch->questions()
             ->where('is_active', true)
             ->orderBy('sort_order')
@@ -155,6 +174,21 @@ class DailyQuizController extends Controller
             $batch = DailyQuizBatch::find($question->batch_id);
             if (!$batch || !now()->between($batch->starts_at, $batch->ends_at) || !$batch->is_active) {
                 return response()->json(['status' => false, 'message' => 'Quiz has ended'], 403);
+            }
+            // Participant limit check on submit too
+            if ($batch->max_participants !== null) {
+                $alreadyAttempted = DailyQuizAttempt::where('user_id', $userId)
+                    ->whereIn('question_id', $batch->questions()->pluck('id'))->exists();
+                if (!$alreadyAttempted) {
+                    $count = $batch->participantCount();
+                    if ($count >= $batch->max_participants) {
+                        return response()->json([
+                            'status'     => false,
+                            'limit_full' => true,
+                            'message'    => 'Participant limit full ho chuki hai.',
+                        ], 403);
+                    }
+                }
             }
         }
 
