@@ -650,9 +650,10 @@ XML;
             'correct' => DailyQuizAttempt::whereIn('question_id', $questionIds)->where('is_correct', true)->count(),
         ];
 
-        // ── Top 3 Winners ────────────────────────────────────────────────────
-        // Ranking: most correct answers first; tie-break = least total time taken
-        $winners = DailyQuizAttempt::with('user')
+        $totalQuestions = $batch->questions->count();
+
+        // ── All Users Leaderboard ─────────────────────────────────────────────
+        $userScores = DailyQuizAttempt::with('user')
             ->whereIn('question_id', $questionIds)
             ->selectRaw('user_id,
                          SUM(is_correct) as correct_count,
@@ -661,10 +662,14 @@ XML;
             ->groupBy('user_id')
             ->orderByDesc('correct_count')
             ->orderBy('total_time')
-            ->limit(3)
             ->get();
+
+        $totalParticipants = $userScores->count();
+
+        // ── Top 3 Winners ────────────────────────────────────────────────────
+        $winners = $userScores->take(3);
         // ─────────────────────────────────────────────────────────────────────
 
-        return view('admin.daily_quiz.results', compact('batch', 'attempts', 'stats', 'winners'));
+        return view('admin.daily_quiz.results', compact('batch', 'attempts', 'stats', 'winners', 'userScores', 'totalParticipants', 'totalQuestions'));
     }
 }

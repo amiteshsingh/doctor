@@ -22,8 +22,8 @@
             <div class="col-md-3">
                 <div class="card text-center" style="background:#E8F5E9;">
                     <div class="card-body py-3">
-                        <h3 style="color:#2E7D32;margin:0;">{{ $stats['total'] }}</h3>
-                        <small>Total Attempts</small>
+                        <h3 style="color:#2E7D32;margin:0;">{{ $totalParticipants }}</h3>
+                        <small>Total Participants</small>
                     </div>
                 </div>
             </div>
@@ -133,6 +133,71 @@
             </div>
         </div>
         @endif
+        {{-- ═══════════════════════════════════════════════════════════════ --}}
+
+        {{-- ═══ All Participants Leaderboard ══════════════════════════════ --}}
+        <div class="card mb-4" style="border:none; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+            <div class="card-body" style="padding:0;">
+                <div style="background:#1A237E; padding:14px 20px; border-radius:10px 10px 0 0; display:flex; align-items:center; justify-content:space-between;">
+                    <h5 class="mb-0 text-white">🏅 All Participants — {{ $totalParticipants }} Users</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead style="background:#E8EAF6;">
+                            <tr>
+                                <th style="width:50px;">#</th>
+                                <th>User</th>
+                                <th>Phone</th>
+                                <th class="text-center">Score</th>
+                                <th class="text-center">Accuracy</th>
+                                <th class="text-center">Total Time</th>
+                                <th class="text-center">Answered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($userScores as $rank => $u)
+                            @php
+                                $pos     = $rank + 1;
+                                $pct     = $totalQuestions > 0 ? round(($u->correct_count / $totalQuestions) * 100) : 0;
+                                $mins    = floor($u->total_time / 60);
+                                $secs    = $u->total_time % 60;
+                                $timeStr = $mins > 0 ? "{$mins}m {$secs}s" : "{$secs}s";
+                                $medal   = $pos === 1 ? '🥇' : ($pos === 2 ? '🥈' : ($pos === 3 ? '🥉' : $pos));
+                                $rowBg   = $pos <= 3 ? 'background:#FFFDE7;' : '';
+                            @endphp
+                            <tr style="{{ $rowBg }}">
+                                <td><strong>{{ $medal }}</strong></td>
+                                <td>
+                                    <div style="width:32px;height:32px;border-radius:50%;background:#1A237E;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;margin-right:8px;">
+                                        {{ strtoupper(substr($u->user->name ?? 'U', 0, 1)) }}
+                                    </div>
+                                    {{ $u->user->name ?? 'Unknown' }}
+                                </td>
+                                <td><small class="text-muted">{{ $u->user->phone_no ?? ($u->user->email ?? '—') }}</small></td>
+                                <td class="text-center">
+                                    <strong style="color:#1A237E;">{{ $u->correct_count }}/{{ $totalQuestions }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    @php
+                                        $color = $pct >= 80 ? '#2E7D32' : ($pct >= 50 ? '#E65100' : '#C62828');
+                                    @endphp
+                                    <span style="color:{{ $color }};font-weight:700;">{{ $pct }}%</span>
+                                </td>
+                                <td class="text-center"><small>{{ $timeStr }}</small></td>
+                                <td class="text-center">
+                                    <span class="badge badge-{{ $u->answered == $totalQuestions ? 'success' : 'warning' }}">
+                                        {{ $u->answered }}/{{ $totalQuestions }}
+                                    </span>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="7" class="text-center text-muted py-4">Kisi ne abhi tak attempt nahi kiya.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         {{-- ═══════════════════════════════════════════════════════════════ --}}
 
         {{-- Per-Question Summary --}}
