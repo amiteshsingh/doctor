@@ -163,10 +163,14 @@ class DailyQuizController extends Controller
         $request->validate([
             'question_id'     => 'required|exists:daily_quiz_questions,id',
             'selected_answer' => 'required|in:A,B,C,D',
-            'time_taken'      => 'nullable|integer|min:0',
+            'time_taken'      => 'nullable|integer|min:0|max:3600',
         ]);
 
-        $userId   = $request->auth_user->id;
+        $userId = $request->auth_user->id ?? null;
+        if (!$userId) {
+            return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
+        }
+
         $question = DailyQuizQuestion::findOrFail($request->question_id);
 
         // Check batch is still active
@@ -175,12 +179,14 @@ class DailyQuizController extends Controller
             if (!$batch || !now()->between($batch->starts_at, $batch->ends_at) || !$batch->is_active) {
                 return response()->json(['status' => false, 'message' => 'Quiz has ended'], 403);
             }
-            // Participant limit check on submit too
+            // Participant limit check — only for first question attempt
             if ($batch->max_participants !== null) {
+                $batchQuestionIds = $batch->questions()->pluck('id');
                 $alreadyAttempted = DailyQuizAttempt::where('user_id', $userId)
-                    ->whereIn('question_id', $batch->questions()->pluck('id'))->exists();
+                    ->whereIn('question_id', $batchQuestionIds)->exists();
                 if (!$alreadyAttempted) {
-                    $count = $batch->participantCount();
+                    $count = DailyQuizAttempt::whereIn('question_id', $batchQuestionIds)
+                        ->distinct('user_id')->count('user_id');
                     if ($count >= $batch->max_participants) {
                         return response()->json([
                             'status'     => false,
@@ -192,10 +198,9 @@ class DailyQuizController extends Controller
             }
         }
 
+        // Prevent double attempt
         $existing = DailyQuizAttempt::where('user_id', $userId)
-            ->where('question_id', $question->id)
-            ->first();
-
+            ->where('question_id', $question->id)->first();
         if ($existing) {
             return response()->json(['status' => false, 'message' => 'Already attempted'], 409);
         }
