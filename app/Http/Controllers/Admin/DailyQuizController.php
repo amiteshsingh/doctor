@@ -71,6 +71,8 @@ class DailyQuizController extends Controller
 
         return redirect()->route('admin.daily-quiz.index')
             ->with('success', count($request->questions) . ' questions added in batch #' . $batch->id . '!');
+        // TODO: Send FCM notification to all users when batch is created
+        // NotificationHelper::sendToAll('🧠 Daily Quiz Ready!', 'Aaj ka quiz available hai. Abhi khelo!');
     }
 
     public function edit($id)
@@ -126,6 +128,8 @@ class DailyQuizController extends Controller
         }
 
         return redirect()->route('admin.daily-quiz.index')->with('success', 'Batch updated successfully!');
+        // TODO: Send FCM notification to all users when batch is updated
+        // NotificationHelper::sendToAll('🧠 Daily Quiz Updated!', 'Quiz update ho gaya hai. Abhi khelo!');
     }
 
     // ─────────────────────────────────────────────────────────────────────────

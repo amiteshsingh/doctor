@@ -197,40 +197,69 @@ class DailyQuizController extends Controller
     {
         $userId = $request->auth_user->id;
 
-        $attempts = DailyQuizAttempt::with('question')
+        // All attempts with question + batch info
+        $attempts = DailyQuizAttempt::with(['question.batch'])
             ->where('user_id', $userId)
             ->latest()
-            ->paginate(20);
+            ->get();
 
-        $data = $attempts->map(function ($a) {
-            return [
-                'question'        => $a->question->question ?? '',
-                'category'        => $a->question->category ?? '',
-                'options'         => [
-                    'A' => $a->question->option_a ?? '',
-                    'B' => $a->question->option_b ?? '',
-                    'C' => $a->question->option_c ?? '',
-                    'D' => $a->question->option_d ?? '',
-                ],
-                'selected_answer' => $a->selected_answer,
-                'correct_answer'  => $a->question->correct_answer ?? '',
-                'is_correct'      => $a->is_correct,
-                'time_taken'      => $a->time_taken,
-                'attempted_at'    => $a->created_at->toIso8601String(),
-            ];
+        // Overall stats
+        $totalPlayed  = $attempts->count();
+        $totalCorrect = $attempts->where('is_correct', true)->count();
+
+        // Group by batch_id (or by date if no batch)
+        $grouped = $attempts->groupBy(function ($a) {
+            return $a->question->batch_id ?? 'no_batch_' . $a->created_at->toDateString();
         });
 
-        $totalCorrect = DailyQuizAttempt::where('user_id', $userId)->where('is_correct', true)->count();
-        $totalPlayed  = DailyQuizAttempt::where('user_id', $userId)->count();
+        $sessions = $grouped->map(function ($group) {
+            $first      = $group->first();
+            $batch      = $first->question->batch ?? null;
+            $correct    = $group->where('is_correct', true)->count();
+            $total      = $group->count();
+            $accuracy   = $total > 0 ? round(($correct / $total) * 100) : 0;
+
+            $questions = $group->map(function ($a) {
+                return [
+                    'question'        => $a->question->question ?? '',
+                    'category'        => $a->question->category ?? '',
+                    'options'         => [
+                        'A' => $a->question->option_a ?? '',
+                        'B' => $a->question->option_b ?? '',
+                        'C' => $a->question->option_c ?? '',
+                        'D' => $a->question->option_d ?? '',
+                    ],
+                    'explanation'     => $a->question->explanation ?? null,
+                    'selected_answer' => $a->selected_answer,
+                    'correct_answer'  => $a->question->correct_answer ?? '',
+                    'is_correct'      => (bool) $a->is_correct,
+                    'time_taken'      => $a->time_taken,
+                    'attempted_at'    => $a->created_at->toIso8601String(),
+                ];
+            })->values();
+
+            return [
+                'batch_id'    => $batch->id ?? null,
+                'batch_title' => $batch->title ?? 'Quiz',
+                'played_at'   => $first->created_at->toIso8601String(),
+                'total'       => $total,
+                'correct'     => $correct,
+                'wrong'       => $total - $correct,
+                'accuracy'    => $accuracy,
+                'questions'   => $questions,
+            ];
+        })->values();
 
         return response()->json([
             'status' => true,
             'stats'  => [
-                'total_played'  => $totalPlayed,
-                'total_correct' => $totalCorrect,
-                'accuracy'      => $totalPlayed > 0 ? round(($totalCorrect / $totalPlayed) * 100) : 0,
+                'total_sessions' => $sessions->count(),
+                'total_played'   => $totalPlayed,
+                'total_correct'  => $totalCorrect,
+                'total_wrong'    => $totalPlayed - $totalCorrect,
+                'accuracy'       => $totalPlayed > 0 ? round(($totalCorrect / $totalPlayed) * 100) : 0,
             ],
-            'data' => $data,
+            'sessions' => $sessions,
         ]);
     }
 }
